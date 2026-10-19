@@ -32,33 +32,46 @@ jobs:
         pip install "buildozer>=1.5.0" "cython<3.0.0" setuptools sh
         pip install kivy
 
-    - name: Generate Buildozer Spec
+    - name: Force Custom Buildozer Spec
       run: |
-        buildozer init
-        # Temel Ayarlar
-        sed -i 's/^title = My Application/title = Spider Android/g' buildozer.spec
-        sed -i 's/^package.name = myapp/package.name = spiderandroid/g' buildozer.spec
-        sed -i 's/^package.domain = org.test/package.domain = org.sabrierkin/g' buildozer.spec
-        sed -i 's/^source.include_exts = py,png,jpg,kv,atlas/source.include_exts = py,png,jpg,kv,atlas,json/g' buildozer.spec
+        # Önbellekteki veya eski spec dosyasını tamamen siliyoruz
+        rm -f buildozer.spec
         
-        # Python 3.14 sürüm çökmesini önlemek için doğrudan 3.11 sürümünü enjekte ediyoruz
-        sed -i 's/^requirements = python3,kivy/requirements = python3==3.11.9,kivy,pyjnius/g' buildozer.spec
+        # Sadece Android 14/16'yı hedefleyen sıfır hata garantili spec dosyasını el ile oluşturuyoruz
+        cat << 'EOF' > buildozer.spec
+        [app]
+        title = Spider Android
+        package.name = spiderandroid
+        package.domain = org.sabrierkin
+        source.dir = .
+        source.include_exts = py,png,jpg,kv,atlas,json
+        version = 1.4.0
+        requirements = python3,kivy,pyjnius
+        orientation = portrait
+        osx.kivy_version = 2.3.0
+        fullscreen = 1
         
-        # Sadece modern 64-bit mimariyi aktif et (Gereksiz armv7a derlemesini kapatarak süreyi kısaltır)
-        sed -i 's/^#android.archs = armeabi-v7a, arm64-v8a/android.archs = arm64-v8a/g' buildozer.spec
-        sed -i 's/^#android.accept_sdk_license = False/android.accept_sdk_license = True/g' buildozer.spec
+        # Android Yapılandırması
+        android.api = 34
+        android.minapi = 34
+        android.ndk = 27.3.13750724
+        android.ndk_api = 24
+        android.archs = arm64-v8a
+        android.accept_sdk_license = True
+        android.skip_apk_rescale = True
         
-        # Sadece Android 14 API Seviyesi
-        sed -i 's/^#android.api = 31/android.api = 34/g' buildozer.spec
-        sed -i 's/^#android.minapi = 21/android.minapi = 34/g' buildozer.spec
+        # Bağımlılık Çözümleri
+        android.gradle_dependencies = 'org.libsdl:SDL2_mixer:2.6.3'
         
-        # Çakışmaları önleyen ek parametreler
-        echo "android.gradle_dependencies = 'org.libsdl:SDL2_mixer:2.6.3'" >> buildozer.spec
-        echo "android.ndk_api = 24" >> buildozer.spec
+        [buildozer]
+        log_level = 2
+        warn_on_root = 1
+        EOF
 
     - name: Build APK with Buildozer
       run: |
-        # Hata veren clean komutunu kaldırarak doğrudan temiz kuruluma geçiyoruz
+        # Geçici platform dosyalarını tamamen silip en temiz başlangıcı yapıyoruz
+        rm -rf .buildozer/
         yes | buildozer -v android debug
 
     - name: Upload APK Artifact
