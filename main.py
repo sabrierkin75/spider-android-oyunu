@@ -1090,7 +1090,7 @@ class KivySpiderEntity:
         # --- YUVARLANMA SÖNÜMLEME MOTORU ---
         if abs(self.roll_speed) > 0.1:
             self.roll_angle += self.roll_speed * dt
-            self.roll_speed *= 0.5  # Her karede %8 sönümlenerek durur
+            self.roll_speed *= 0.15  # Her karede %8 sönümlenerek durur
         else:
             self.roll_speed = 0.0
             # Açıyı yavaşça sıfıra veya en yakın katına eşitlemek yerine serbest bırakabiliriz, 
@@ -1240,7 +1240,7 @@ class KivySpiderEntity:
                     # --- ANLIK YUVARLANMA (ROLL) MOTORUNU BAŞLATMA ---
                     # Bağıl çarpışma hızı şiddetinde dönme hızı tetikliyoruz
                     rel_vel_n = v1n - v2n
-                    roll_intensity = max(400.0, abs(rel_vel_n) * 3.0) 
+                    roll_intensity = max(20.0, abs(rel_vel_n) * 3.0) 
                     
                     self.roll_speed = -roll_intensity if rel_vel_n > 0 else roll_intensity
                     other.roll_speed = roll_intensity if rel_vel_n > 0 else -roll_intensity
@@ -1285,7 +1285,7 @@ class KivySpiderEntity:
         # --- YUVARLANMA DURUM KONTROLÜ VE YAVAŞÇA DÜZELME MOTORU ---
         if abs(self.roll_speed) > 1.0:
             self.roll_angle += self.roll_speed * dt
-            self.roll_speed *= 0.5  # Dönüş hızı zamanla sıfıra yaklaşır
+            self.roll_speed *= 0.15  # Dönüş hızı zamanla sıfıra yaklaşır
         else:
             # Yuvarlanma hızı tamamen bittiğinde açıyı yumuşakça (Lerp) 0 dereceye geri çekiyoruz
             self.roll_speed = 0.0
