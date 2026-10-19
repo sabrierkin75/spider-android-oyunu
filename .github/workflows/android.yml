@@ -13,23 +13,6 @@ jobs:
     - name: Checkout Code
       uses: actions/checkout@v4
 
-    - name: Get Date
-      id: get-date
-      run: |
-        echo "date=$(date +'%Y-%m-%d')" >> $GITHUB_OUTPUT
-
-    - name: Cache Buildozer Global Directory
-      uses: actions/cache@v4
-      with:
-        path: ~/.buildozer
-        key: buildozer-global-android14-${{ runner.os }}
-
-    - name: Cache Buildozer Project Directory
-      uses: actions/cache@v4
-      with:
-        path: .buildozer
-        key: buildozer-project-android14-${{ runner.os }}
-
     - name: Set up JDK 17
       uses: actions/setup-java@v4
       with:
@@ -52,21 +35,26 @@ jobs:
     - name: Generate Buildozer Spec
       run: |
         buildozer init
-        # spec dosyasını Android 14 (API 34) için yapılandır
+        # Spec dosyasını Android 14 (API 34) standartlarına göre hatasız olarak yapılandır
         sed -i 's/^title = My Application/title = Spider Android/g' buildozer.spec
         sed -i 's/^package.name = myapp/package.name = spiderandroid/g' buildozer.spec
         sed -i 's/^package.domain = org.test/package.domain = org.sabrierkin/g' buildozer.spec
         sed -i 's/^source.include_exts = py,png,jpg,kv,atlas/source.include_exts = py,png,jpg,kv,atlas,json/g' buildozer.spec
-        sed -i 's/^requirements = python3,kivy/requirements = python3==3.11.9,kivy,pyjnius/g' buildozer.spec
+        
+        # Sürüm hatasına sebep olan '==' ifadesini kaldırıp kararlı paket sıralamasını yazıyoruz
+        sed -i 's/^requirements = python3,kivy/requirements = python3,kivy,pyjnius/g' buildozer.spec
+        
         sed -i 's/^#android.archs = armeabi-v7a, arm64-v8a/android.archs = arm64-v8a/g' buildozer.spec
         sed -i 's/^#android.accept_sdk_license = False/android.accept_sdk_license = True/g' buildozer.spec
         
-        # --- SADECE ANDROID 14 (API 34) AYARLARI ---
+        # Android 14 (API 34) Değerlerini zorunlu kıl
         sed -i 's/^#android.api = 31/android.api = 34/g' buildozer.spec
         sed -i 's/^#android.minapi = 21/android.minapi = 34/g' buildozer.spec
 
     - name: Build APK with Buildozer
       run: |
+        # Önbellekteki eski hatalı Android paket kalıntılarını tamamen yok sayarak sıfırdan temiz derleme yapar
+        yes | buildozer -v android clean
         yes | buildozer -v android debug
 
     - name: Upload APK Artifact
