@@ -44,7 +44,10 @@ jobs:
         source.dir = .
         source.include_exts = py,png,jpg,kv,atlas,json
         version = 1.4.0
-        requirements = python3,kivy,pyjnius
+        
+        # Python'un 3.14'e kaçmasını önleyen ve Buildozer'ın resmi olarak kabul ettiği kararlı format
+        requirements = python3==3.11.1,kivy,pyjnius
+        
         orientation = portrait
         osx.kivy_version = 2.3.0
         fullscreen = 1
