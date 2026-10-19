@@ -34,10 +34,8 @@ jobs:
 
     - name: Force Custom Buildozer Spec
       run: |
-        # Önbellekteki veya eski spec dosyasını tamamen siliyoruz
         rm -f buildozer.spec
         
-        # Sadece Android 14/16'yı hedefleyen sıfır hata garantili spec dosyasını el ile oluşturuyoruz
         cat << 'EOF' > buildozer.spec
         [app]
         title = Spider Android
@@ -51,10 +49,9 @@ jobs:
         osx.kivy_version = 2.3.0
         fullscreen = 1
         
-        # Android Yapılandırması
+        # Android Yapılandırması (Android 14 Hedefi)
         android.api = 34
         android.minapi = 34
-        android.ndk = 27.3.13750724
         android.ndk_api = 24
         android.archs = arm64-v8a
         android.accept_sdk_license = True
@@ -70,7 +67,6 @@ jobs:
 
     - name: Build APK with Buildozer
       run: |
-        # Geçici platform dosyalarını tamamen silip en temiz başlangıcı yapıyoruz
         rm -rf .buildozer/
         yes | buildozer -v android debug
 
