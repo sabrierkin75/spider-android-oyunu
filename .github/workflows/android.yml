@@ -40,20 +40,26 @@ jobs:
         sed -i 's/^package.name = myapp/package.name = spiderandroid/g' buildozer.spec
         sed -i 's/^package.domain = org.test/package.domain = org.sabrierkin/g' buildozer.spec
         sed -i 's/^source.include_exts = py,png,jpg,kv,atlas/source.include_exts = py,png,jpg,kv,atlas,json/g' buildozer.spec
-        sed -i 's/^requirements = python3,kivy/requirements = python3,kivy,pyjnius/g' buildozer.spec
+        
+        # Python 3.14 çökmesini önlemek için doğrudan 3.11 sürümünü enjekte ediyoruz
+        sed -i 's/^requirements = python3,kivy/requirements = python3==3.11.9,kivy,pyjnius/g' buildozer.spec
+        
+        # Sadece modern 64-bit mimariyi aktif et (Derleme süresini yarı yarıya düşürür ve armv7a hatasını engeller)
         sed -i 's/^#android.archs = armeabi-v7a, arm64-v8a/android.archs = arm64-v8a/g' buildozer.spec
         sed -i 's/^#android.accept_sdk_license = False/android.accept_sdk_license = True/g' buildozer.spec
         
-        # --- ANDROID 14 HEDEFI VE SES MOTORU HATASINI ÖNLEYEN AYARLAR ---
+        # Android 14 Hedefi
         sed -i 's/^#android.api = 31/android.api = 34/g' buildozer.spec
         sed -i 's/^#android.minapi = 21/android.minapi = 34/g' buildozer.spec
         
-        # Modern Gradle ve NDK sürümlerinin çakışmasını engellemek için spec dosyasına doğrudan eklemeler yapıyoruz
+        # Hataları önleyen ek parametreler
         echo "android.gradle_dependencies = 'org.libsdl:SDL2_mixer:2.6.3'" >> buildozer.spec
         echo "android.ndk_api = 24" >> buildozer.spec
 
     - name: Build APK with Buildozer
       run: |
+        # Eski bozuk Python 3.14 klasörlerini sunucudan tamamen temizleyip sıfırdan başlasın
+        buildozer android clean
         yes | buildozer -v android debug
 
     - name: Upload APK Artifact
