@@ -33,16 +33,18 @@ jobs:
           openjdk-17-jdk \
           unzip \
           zip \
-          zlib1g-dev
+          zlib1g-dev \
+          aidl # Sistem paketini de her ihtimale karşı kuruyoruz
 
     - name: Install Buildozer and Dependencies
       run: |
         pip install --upgrade pip
         pip install Cython==3.0.10 buildozer
 
-    - name: Build APK with Buildozer
+    - name: Build APK with Buildozer (Auto Accept Licenses)
       run: |
-        buildozer android debug
+        # yes | komutu otomatik olarak tüm Android SDK lisans sorularına 'y' (evet) yanıtını verir
+        yes | buildozer android debug
       env:
         ACCEPT_SDK_LICENSE_AGREEMENT: "y"
 
