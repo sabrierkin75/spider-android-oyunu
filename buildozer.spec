@@ -1,28 +1,24 @@
 [app]
 title = Spider Android
-package.name = com.spiderandroid
+package.name = spiderandroid
 package.domain = org.sabrierkin
-
-# --- BU SATIR EKSİK OLDUĞU İÇİN HATA ALIYORDUNUZ ---
-# Nokta (.), ana dizindeki tüm dosyaları (main.py dahil) kaynak olarak kabul eder.
 source.dir = .
-
-# Kaynak kodların uzantıları
 source.include_exts = py,png,jpg,kv,atlas,json
-
-# Proje dizinindeki alt klasörler (anims klasörünü dahil etmek için)
 source.include_patterns = anims/*, *.png
-
 version = 1.4.0
-requirements = python3,kivy,pyjnius,android
 
-# --- ANDROID 14 (API 34) İÇİN KRİTİK AYARLAR ---
+# Gerekli kütüphaneler (hostpython3 eklenerek derleme kararlı hale getirildi)
+requirements = python3,kivy,pyjnius,android,hostpython3
+
+# --- ANDROID 14 (API 34) KARARLI AYARLARI ---
 android.api = 34
 android.minapi = 21
 android.ndk = 26b
 android.ndk_api = 21
 
-# Ekran yönü ve tam ekran ayarları
+# Derlenecek işlemci mimarileri (Yeni nesil cihazlar için)
+android.archs = arm64-v8a, armeabi-v7a
+
 orientation = portrait
 android.fullscreen = 1
 
