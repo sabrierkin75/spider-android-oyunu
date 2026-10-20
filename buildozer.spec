@@ -9,7 +9,7 @@ version = 1.4.0
 
 # --- SÜRÜMLER BİRBİRİNE KİLİTLENDİ (HATAYI KÖKTEN ÇÖZER) ---
 # Hem cihaz hem derleyici sürümü eşitlendiği için 3.11.9 != 3.14.2 hatası tamamen aşılır.
-requirements = python3==3.11.9,hostpython3==3.11.9,kivy,pyjnius,android
+requirements = python3,kivy,pyjnius,android
 
 # --- ANDROID 14 (API 34) REHBER AYARLARI ---
 android.api = 34
