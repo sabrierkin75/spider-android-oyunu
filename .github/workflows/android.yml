@@ -41,7 +41,6 @@ jobs:
     - name: Install Buildozer and Dependencies
       run: |
         pip install --upgrade pip
-        # Bu hata spesifik olarak Cython ve Buildozer'ın belirli alt versiyonlarında pip çakışması yaratır.
         pip install "Cython<3.0.0" buildozer
 
     - name: Set up Android SDK Environment Variables
@@ -49,17 +48,27 @@ jobs:
         mkdir -p ~/.android
         touch ~/.android/repositories.cfg
 
-    - name: Build APK with Buildozer (Fix Pip ImportError)
+    - name: Build APK with Buildozer
       run: |
         export BUILDOZER_ALLOW_KIVY_ANDROID_NEW_PERMISSIONS=1
-        
-        # --- HATAYI ÇÖZEN KRİTİK AYARLAR ---
-        # python-for-android'in sanal ortam içinde pip'i yükseltip çökmesini engelliyoruz.
         export P4A_pip_upgrade=0
         export PIP_DISABLE_PIP_VERSION_CHECK=1
         
-        # Linux arabelleğe alma mekanizmasını temizleyerek kararlı şekilde derlemeyi başlatıyoruz.
+        # --- SİSTEMDEKİ ÇAKIŞAN NDK TANIMLAMALARINI SİLİYORUZ ---
+        unset ANDROID_NDK
+        unset ANDROID_NDK_HOME
+        unset ANDROID_NDK_ROOT
+        unset ANDROID_NDK_LATEST_HOME
+        
+        # Kararlı ve kesintisiz akış başlatılıyor
         stdbuf -oL yes | buildozer android debug
       env:
         ACCEPT_SDK_LICENSE_AGREEMENT: "y"
         GRADLE_OPTS: "-Dorg.gradle.jvmargs=-Xmx4g"
+        NDK_CCACHE: 1
+
+    - name: Upload APK Artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: spider-android-apk
+        path: bin/*.apk
