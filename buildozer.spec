@@ -7,11 +7,11 @@ source.include_exts = py,png,jpg,kv,atlas,json
 source.include_patterns = anims/*, *.png
 version = 1.4.0
 
-# --- KRİTİK DEĞİŞİKLİK ---
-# hostpython3'ü tamamen kaldırıyoruz. Böylece sistem sıfırdan Python derleme döngüsüne girip kilitlenmeyecek.
-requirements = python3==3.11.9,kivy,pyjnius,android
+# --- SÜRÜMLER BİRBİRİNE KİLİTLENDİ (HATAYI KÖKTEN ÇÖZER) ---
+# Hem cihaz hem derleyici sürümü eşitlendiği için 3.11.9 != 3.14.2 hatası tamamen aşılır.
+requirements = python3==3.11.9,hostpython3==3.11.9,kivy,pyjnius,android
 
-# --- ANDROID 14 (API 34) GÜVENLİ AYARLARI ---
+# --- ANDROID 14 (API 34) REHBER AYARLARI ---
 android.api = 34
 android.minapi = 21
 android.ndk = 26b
