@@ -41,20 +41,24 @@ jobs:
     - name: Install Buildozer and Dependencies
       run: |
         pip install --upgrade pip
+        # Bu hata spesifik olarak Cython ve Buildozer'ın belirli alt versiyonlarında pip çakışması yaratır.
         pip install "Cython<3.0.0" buildozer
 
-    - name: Clean Buildozer Cache Environment
+    - name: Set up Android SDK Environment Variables
       run: |
-        # Önceki hatalı denemelerden kalan yapay klasörleri tamamen temizliyoruz.
-        # Böylece Buildozer temiz bir kurulum yapması gerektiğini anlayacak.
-        rm -rf ~/.buildozer
+        mkdir -p ~/.android
+        touch ~/.android/repositories.cfg
 
-    - name: Build APK with Buildozer
+    - name: Build APK with Buildozer (Fix Pip ImportError)
       run: |
         export BUILDOZER_ALLOW_KIVY_ANDROID_NEW_PERMISSIONS=1
         
-        # 'yes' komutu yerine Linux 'stdbuf' kullanarak arabelleğe almayı (buffering) kapatıyoruz.
-        # Bu sayede 'sdkmanager' aracı sorunsuz inecek ve 'Broken pipe' hatası tetiklenmeden lisanslar geçilecek.
+        # --- HATAYI ÇÖZEN KRİTİK AYARLAR ---
+        # python-for-android'in sanal ortam içinde pip'i yükseltip çökmesini engelliyoruz.
+        export P4A_pip_upgrade=0
+        export PIP_DISABLE_PIP_VERSION_CHECK=1
+        
+        # Linux arabelleğe alma mekanizmasını temizleyerek kararlı şekilde derlemeyi başlatıyoruz.
         stdbuf -oL yes | buildozer android debug
       env:
         ACCEPT_SDK_LICENSE_AGREEMENT: "y"
