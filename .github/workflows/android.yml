@@ -9,69 +9,22 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-latest # En güncel ve hızlı Action sunucusuna geçildi
 
     steps:
     - name: Checkout Source Code
       uses: actions/checkout@v4
 
-    - name: Set up Python
-      uses: actions/setup-python@v5
+    - name: Build APK with Pre-built Buildozer Action
+      uses: ArtemSBulgakov/buildozer-action@v1
+      id: buildozer
       with:
-        python-version: '3.10'
-
-    - name: Install System Dependencies
-      run: |
-        sudo apt-get update
-        sudo apt-get install -y \
-          build-essential \
-          ccache \
-          git \
-          libffi-dev \
-          libssl-dev \
-          openjdk-17-jdk \
-          unzip \
-          zip \
-          zlib1g-dev \
-          autoconf \
-          automake \
-          libtool \
-          aidl
-
-    - name: Install Buildozer and Dependencies
-      run: |
-        pip install --upgrade pip
-        pip install "Cython<3.0.0" buildozer
-
-    - name: Set up Android SDK Environment Variables
-      run: |
-        mkdir -p ~/.android
-        touch ~/.android/repositories.cfg
-
-    - name: Build APK with Buildozer (Fix GitHub Actions Timeout)
-      run: |
-        export BUILDOZER_ALLOW_KIVY_ANDROID_NEW_PERMISSIONS=1
-        export P4A_pip_upgrade=0
-        export PIP_DISABLE_PIP_VERSION_CHECK=1
-        
-        unset ANDROID_NDK
-        unset ANDROID_NDK_HOME
-        unset ANDROID_NDK_ROOT
-        unset ANDROID_NDK_LATEST_HOME
-        
-        # --- TIMEOUT VE DONMAYI ÖNLEYEN JOKER DÖNGÜ MIMARISI ---
-        # Arka planda ağır C derlemeleri yapılırken GitHub sunucusunun kapanmasını önler.
-        (while true; do echo "...derleme devam ediyor, lutfen bekleyin..."; sleep 30; done) &
-        
-        stdbuf -oL yes | buildozer android debug
-      env:
-        ACCEPT_SDK_LICENSE_AGREEMENT: "y"
-        GRADLE_OPTS: "-Dorg.gradle.jvmargs=-Xmx4g"
-        NDK_CCACHE: 1
+        workdir: .
+        buildozer_version: stable
 
     - name: Upload APK Artifact
       uses: actions/upload-artifact@v4
       with:
         name: spider-android-apk
-        path: bin/*.apk
+        path: ${{ steps.buildozer.outputs.filename }}
         
