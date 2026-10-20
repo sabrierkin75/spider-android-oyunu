@@ -60,8 +60,8 @@ jobs:
         unset ANDROID_NDK_LATEST_HOME
         
         # --- TIMEOUT VE DONMAYI ÖNLEYEN JOKER DÖNGÜ MIMARISI ---
-        # Arka planda derleme akarken terminalin sessiz kalıp kapanmasını engeller.
-        (while true; do echo "...derleme devam ediyor..."; sleep 30; done) &
+        # Arka planda ağır C derlemeleri yapılırken GitHub sunucusunun kapanmasını önler.
+        (while true; do echo "...derleme devam ediyor, lutfen bekleyin..."; sleep 30; done) &
         
         stdbuf -oL yes | buildozer android debug
       env:
