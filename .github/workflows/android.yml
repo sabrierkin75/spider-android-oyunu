@@ -43,12 +43,22 @@ jobs:
         pip install --upgrade pip
         pip install "Cython<3.0.0" buildozer
 
-    - name: Set up Android SDK Environment Variables
+    - name: Inject System Aidl into Buildozer Paths (Bypass Aidl Error)
       run: |
-        mkdir -p ~/.android
-        touch ~/.android/repositories.cfg
+        # Buildozer'ın ileride oluşturacağı tüm olası Android SDK build-tools yollarını şimdiden hazırlıyoruz
+        mkdir -p ~/.buildozer/android/platform/android-sdk/build-tools/34.0.0/
+        mkdir -p ~/.buildozer/android/platform/android-sdk/build-tools/35.0.0/
+        mkdir -p ~/.buildozer/android/platform/android-sdk/build-tools/37.0.0/
+        
+        # Ubuntu sistemindeki resmi aidl aracını bu klasörlerin tamamına şimdiden enjekte ediyoruz
+        cp /usr/bin/aidl ~/.buildozer/android/platform/android-sdk/build-tools/34.0.0/aidl
+        cp /usr/bin/aidl ~/.buildozer/android/platform/android-sdk/build-tools/35.0.0/aidl
+        cp /usr/bin/aidl ~/.buildozer/android/platform/android-sdk/build-tools/37.0.0/aidl
+        
+        # Çalıştırılma yetkilerini veriyoruz
+        chmod +x ~/.buildozer/android/platform/android-sdk/build-tools/*/aidl
 
-    - name: Build APK with Buildozer (Prevent Timeout)
+    - name: Build APK with Buildozer
       run: |
         export BUILDOZER_ALLOW_KIVY_ANDROID_NEW_PERMISSIONS=1
         export P4A_pip_upgrade=0
@@ -59,10 +69,8 @@ jobs:
         unset ANDROID_NDK_ROOT
         unset ANDROID_NDK_LATEST_HOME
         
-        # --- DONMAYI ÖNLEYEN KAPSÜL KOMUT ---
-        # Bu komut arka planda derleme yaparken terminale sürekli canlılık sinyali gönderir.
-        # Böylece GitHub Actions sunucusu işlemi yarıda kesip kapatamaz.
-        buildozer android debug
+        # Hem lisansları otomatik onaylıyoruz hem de veri akış kanalının kilitlenmesini önlüyoruz
+        stdbuf -oL yes | buildozer android debug
       env:
         ACCEPT_SDK_LICENSE_AGREEMENT: "y"
         GRADLE_OPTS: "-Dorg.gradle.jvmargs=-Xmx4g"
@@ -73,4 +81,3 @@ jobs:
       with:
         name: spider-android-apk
         path: bin/*.apk
-        
