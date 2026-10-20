@@ -1,8 +1,11 @@
-
 [app]
 title = Spider Android
-package.name = spiderandroid
+package.name = com.spiderandroid
 package.domain = org.sabrierkin
+
+# --- BU SATIR EKSİK OLDUĞU İÇİN HATA ALIYORDUNUZ ---
+# Nokta (.), ana dizindeki tüm dosyaları (main.py dahil) kaynak olarak kabul eder.
+source.dir = .
 
 # Kaynak kodların uzantıları
 source.include_exts = py,png,jpg,kv,atlas,json
@@ -22,9 +25,6 @@ android.ndk_api = 21
 # Ekran yönü ve tam ekran ayarları
 orientation = portrait
 android.fullscreen = 1
-
-# İzinler (Gerekliyse ekleyin, kodunuzda özel bir izin görünmüyor)
-# android.permissions = INTERNET
 
 [buildozer]
 log_level = 2
