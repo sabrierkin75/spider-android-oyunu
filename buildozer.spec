@@ -7,8 +7,8 @@ source.include_exts = py,png,jpg,kv,atlas,json
 source.include_patterns = anims/*, *.png
 version = 1.4.0
 
-# --- PYTHON SÜRÜMÜNÜ 3.11 OLARAK SABİTLEDİK (HIZLI DERLEME SAĞLAR) ---
-requirements = python3==3.11.9,kivy,pyjnius,android
+# --- SADECE python3 OLARAK GÜNCELLENDİ (ÇAKIŞMALARI ÖNLER) ---
+requirements = python3,kivy,pyjnius,android
 
 # --- ANDROID 14 (API 34) REHBER AYARLARI ---
 android.api = 34
