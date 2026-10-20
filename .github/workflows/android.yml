@@ -10,8 +10,6 @@ on:
 jobs:
   build:
     runs-on: ubuntu-22.04
-    # --- GİTHUB'IN İŞLEMİ YARIDA KESMESİNİ ÖNLEYEN KRİTİK SÜRE SINIRI (90 DAKİKA) ---
-    timeout-minutes: 90 
 
     steps:
     - name: Checkout Source Code
@@ -37,28 +35,26 @@ jobs:
           zlib1g-dev \
           autoconf \
           automake \
-          libtool \
-          aidl
+          libtool
 
     - name: Install Buildozer and Cython
       run: |
         pip install --upgrade pip
         pip install "Cython<3.0.0" buildozer
 
-    - name: Cache Buildozer Android Platform
-      uses: actions/cache@v4
-      with:
-        path: ~/.buildozer
-        key: ${{ runner.os }}-buildozer-${{ hashFiles('buildozer.spec') }}
-        restore-keys: |
-          ${{ runner.os }}-buildozer-
-
-    - name: Pre-accept Android SDK Licenses
+    - name: Pre-accept Google & Android Licenses (Force Accept)
       run: |
+        # Buildozer'ın ileride oluşturacağı tüm Android SDK klasör yollarını şimdiden var ediyoruz
+        mkdir -p ~/.buildozer/android/platform/android-sdk/licenses
+        
+        # Resmi lisans hash kodlarını doğrudan dosyalara yazarak Google sözleşmelerini sistem düzeyinde KİLİTLİYORUZ
+        echo -e "\n89334d701ee692324b1b1c8e1d326f0d4d27d4fa\n24333f8a63b6825ea9c5514f83c2829b004d1fee\n84831b9409646a918e30573bab4c9c91346d8abd" > ~/.buildozer/android/platform/android-sdk/licenses/android-sdk-license
+        echo -e "\n84831b9409646a918e30573bab4c9c91346d8abd" > ~/.buildozer/android/platform/android-sdk/licenses/android-sdk-preview-license
+        
         mkdir -p ~/.android
         touch ~/.android/repositories.cfg
 
-    - name: Build APK with Buildozer (Force Active Stream)
+    - name: Build APK with Buildozer
       run: |
         export BUILDOZER_ALLOW_KIVY_ANDROID_NEW_PERMISSIONS=1
         export P4A_pip_upgrade=0
@@ -69,19 +65,8 @@ jobs:
         unset ANDROID_NDK_ROOT
         unset ANDROID_NDK_LATEST_HOME
         
-        # Saniyede bir arka planda tetikleme yaparak sunucuyu uyanık tutan hafif Linux motoru
-        (while true; do echo "...derleme devam ediyor, lutfen sunucuyu kapatmayin..."; sleep 15; done) &
-        
-        # stdbuf -oL -eL komutları derleme esnasındaki tüm C çıktılarını anlık olarak terminale basmaya zorlar.
-        # Bu sayede sunucu asla 'sessiz kaldı' uyarısıyla donamaz.
-        stdbuf -oL -eL buildozer android debug
+        # Artık 'yes |' veya 'stdbuf' boru hattı yok. Lisanslar yukarıda enjekte edildiği için doğrudan çalışacaktır.
+        buildozer android debug
       env:
         ACCEPT_SDK_LICENSE_AGREEMENT: "y"
         GRADLE_OPTS: "-Dorg.gradle.jvmargs=-Xmx4g"
-        NDK_CCACHE: 1
-
-    - name: Upload APK Artifact
-      uses: actions/upload-artifact@v4
-      with:
-        name: spider-android-apk
-        path: "**/*.apk"
