@@ -7,11 +7,11 @@ source.include_exts = py,png,jpg,kv,atlas,json
 source.include_patterns = anims/*, *.png
 version = 1.4.0
 
-# --- PYTHON SÜRÜMÜNÜ DETAYLI DESTEK PARAMETRELERİYLE SABİTLEDİK ---
-# Bu sayede sıfırdan Python 3.14 derleme kilitlenmesi tamamen aşılır.
-requirements = python3==3.11.9,kivy,pyjnius,android,hostpython3==3.11.9
+# --- KRİTİK DEĞİŞİKLİK ---
+# hostpython3'ü tamamen kaldırıyoruz. Böylece sistem sıfırdan Python derleme döngüsüne girip kilitlenmeyecek.
+requirements = python3==3.11.9,kivy,pyjnius,android
 
-# --- ANDROID 14 (API 34) REHBER AYARLARI ---
+# --- ANDROID 14 (API 34) GÜVENLİ AYARLARI ---
 android.api = 34
 android.minapi = 21
 android.ndk = 26b
