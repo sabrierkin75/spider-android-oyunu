@@ -35,48 +35,35 @@ jobs:
           zlib1g-dev \
           autoconf \
           automake \
-          libtool
+          libtool \
+          aidl
 
     - name: Install Buildozer and Dependencies
       run: |
         pip install --upgrade pip
         pip install "Cython<3.0.0" buildozer
 
-    - name: Fix Android SDK Layout for Buildozer (Bypass Sdkmanager & Aidl Error)
+    - name: Set up Android SDK Environment Variables
       run: |
-        # 1. Temel Buildozer platform dizinini oluşturuyoruz
-        mkdir -p ~/.buildozer/android/platform/android-sdk
-        
-        # 2. Sistemde kurulu olan resmi Android SDK klasörünün içeriğini Buildozer'a köprülüyoruz
-        ln -s $ANDROID_HOME/* ~/.buildozer/android/platform/android-sdk/ 2>/dev/null || true
-        
-        # 3. CRITICAL FIX: Buildozer'ın aradığı eski 'tools/bin' yolunu oluşturup 
-        # sistemdeki modern 'cmdline-tools' içindeki sdkmanager'ı buraya bağlıyoruz.
-        mkdir -p ~/.buildozer/android/platform/android-sdk/tools/bin
-        ln -s /usr/local/lib/android/sdk/cmdline-tools/latest/bin/sdkmanager ~/.buildozer/android/platform/android-sdk/tools/bin/sdkmanager
-        
-        # 4. Sistemdeki en güncel NDK sürümünü (r26b/r27) Buildozer'ın arayacağı yola bağlıyoruz
-        ln -s $ANDROID_NDK_LATEST_HOME ~/.buildozer/android/platform/android-ndk-r26b 2>/dev/null || true
-        
-        # 5. Tüm lisansları önceden onaylıyoruz
-        mkdir -p ~/.buildozer/android/platform/android-sdk/licenses
-        echo -e "\n89334d701ee692324b1b1c8e1d326f0d4d27d4fa" > ~/.buildozer/android/platform/android-sdk/licenses/android-sdk-license
-        echo -e "\n84831b9409646a918e30573bab4c9c91346d8abd" > ~/.buildozer/android/platform/android-sdk/licenses/android-sdk-preview-license
+        mkdir -p ~/.android
+        touch ~/.android/repositories.cfg
 
-    - name: Build APK with Buildozer
+    - name: Build APK with Buildozer (Fix GitHub Actions Timeout)
       run: |
         export BUILDOZER_ALLOW_KIVY_ANDROID_NEW_PERMISSIONS=1
         export P4A_pip_upgrade=0
         export PIP_DISABLE_PIP_VERSION_CHECK=1
         
-        # Çakışmaları önlemek için sistem çevre değişkenlerini Buildozer'a göre temizliyoruz
         unset ANDROID_NDK
         unset ANDROID_NDK_HOME
         unset ANDROID_NDK_ROOT
         unset ANDROID_NDK_LATEST_HOME
         
-        # Artık internet indirmesi ve yes döngüsü yok, doğrudan yerel derleme başlıyor
-        buildozer android debug
+        # --- TIMEOUT VE DONMAYI ÖNLEYEN JOKER DÖNGÜ MIMARISI ---
+        # Arka planda derleme akarken terminalin sessiz kalıp kapanmasını engeller.
+        (while true; do echo "...derleme devam ediyor..."; sleep 30; done) &
+        
+        stdbuf -oL yes | buildozer android debug
       env:
         ACCEPT_SDK_LICENSE_AGREEMENT: "y"
         GRADLE_OPTS: "-Dorg.gradle.jvmargs=-Xmx4g"
@@ -87,3 +74,4 @@ jobs:
       with:
         name: spider-android-apk
         path: bin/*.apk
+        
