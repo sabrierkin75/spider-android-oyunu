@@ -40,10 +40,9 @@ jobs:
     - name: Install Buildozer and Cython
       run: |
         pip install --upgrade pip
-        制造_ZAMAN_ASIMI_ICIN="Cython<3.0.0"
-        pip install "$制造_ZAMAN_ASIMI_ICIN" buildozer
+        # Türkçe karakter ve yönlendirme hatası giderildi, sürüm tırnak içine alınarak güvenli hale getirildi
+        pip install "Cython<3.0.0" buildozer
 
-    # --- ZAMAN AŞIMINI ÖNLEYEN VE DOCKER HATALARINI BİTİREN ÖNBELLEK KATMANI ---
     - name: Cache Buildozer Android Platform
       uses: actions/cache@v4
       with:
@@ -63,13 +62,12 @@ jobs:
         export P4A_pip_upgrade=0
         export PIP_DISABLE_PIP_VERSION_CHECK=1
         
-        # GitHub'ın dahili NDK kütüphaneleriyle çakışmayı önlemek için çevre değişkenlerini temizliyoruz
         unset ANDROID_NDK
         unset ANDROID_NDK_HOME
         unset ANDROID_NDK_ROOT
         unset ANDROID_NDK_LATEST_HOME
         
-        # Terminalin sessiz kalıp kilitlenmesini önlemek için arka planda canlılık sinyali gönderiyoruz
+        # Terminalin sessiz kalıp kilitlenmesini önleyen canlılık döngüsü
         (while true; do echo "...derleme kararlı şekilde akıyor, lütfen bekleyin..."; sleep 30; done) &
         
         stdbuf -oL yes | buildozer android debug
