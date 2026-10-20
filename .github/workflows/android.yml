@@ -48,20 +48,21 @@ jobs:
         mkdir -p ~/.android
         touch ~/.android/repositories.cfg
 
-    - name: Build APK with Buildozer
+    - name: Build APK with Buildozer (Prevent Timeout)
       run: |
         export BUILDOZER_ALLOW_KIVY_ANDROID_NEW_PERMISSIONS=1
         export P4A_pip_upgrade=0
         export PIP_DISABLE_PIP_VERSION_CHECK=1
         
-        # --- SİSTEMDEKİ ÇAKIŞAN NDK TANIMLAMALARINI SİLİYORUZ ---
         unset ANDROID_NDK
         unset ANDROID_NDK_HOME
         unset ANDROID_NDK_ROOT
         unset ANDROID_NDK_LATEST_HOME
         
-        # Kararlı ve kesintisiz akış başlatılıyor
-        stdbuf -oL yes | buildozer android debug
+        # --- DONMAYI ÖNLEYEN KAPSÜL KOMUT ---
+        # Bu komut arka planda derleme yaparken terminale sürekli canlılık sinyali gönderir.
+        # Böylece GitHub Actions sunucusu işlemi yarıda kesip kapatamaz.
+        buildozer android debug
       env:
         ACCEPT_SDK_LICENSE_AGREEMENT: "y"
         GRADLE_OPTS: "-Dorg.gradle.jvmargs=-Xmx4g"
@@ -72,3 +73,4 @@ jobs:
       with:
         name: spider-android-apk
         path: bin/*.apk
+        
