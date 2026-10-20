@@ -35,42 +35,33 @@ jobs:
           zlib1g-dev \
           autoconf \
           automake \
-          libtool \
-          aidl
+          libtool
 
     - name: Install Buildozer and Dependencies
       run: |
         pip install --upgrade pip
         pip install "Cython<3.0.0" buildozer
 
-    - name: Inject System Aidl into Buildozer Paths (Bypass Aidl Error)
+    - name: Build APK using GitHub Pre-installed Android SDK (Bypass All Downloads)
       run: |
-        # Buildozer'ın ileride oluşturacağı tüm olası Android SDK build-tools yollarını şimdiden hazırlıyoruz
-        mkdir -p ~/.buildozer/android/platform/android-sdk/build-tools/34.0.0/
-        mkdir -p ~/.buildozer/android/platform/android-sdk/build-tools/35.0.0/
-        mkdir -p ~/.buildozer/android/platform/android-sdk/build-tools/37.0.0/
+        # 1. Buildozer'ın kendi klasör yapısını taklit ederek sistemdeki hazır SDK/NDK'ya köprü kuruyoruz
+        mkdir -p ~/.buildozer/android/platform
         
-        # Ubuntu sistemindeki resmi aidl aracını bu klasörlerin tamamına şimdiden enjekte ediyoruz
-        cp /usr/bin/aidl ~/.buildozer/android/platform/android-sdk/build-tools/34.0.0/aidl
-        cp /usr/bin/aidl ~/.buildozer/android/platform/android-sdk/build-tools/35.0.0/aidl
-        cp /usr/bin/aidl ~/.buildozer/android/platform/android-sdk/build-tools/37.0.0/aidl
+        # GitHub'da hazır kurulu gelen resmi Android SDK ve NDK r25b-r26b yapılarını Buildozer klasörüne bağlıyoruz
+        ln -s $ANDROID_HOME ~/.buildozer/android/platform/android-sdk
+        ln -s $ANDROID_NDK_LATEST_HOME ~/.buildozer/android/platform/android-ndk-r26b
         
-        # Çalıştırılma yetkilerini veriyoruz
-        chmod +x ~/.buildozer/android/platform/android-sdk/build-tools/*/aidl
-
-    - name: Build APK with Buildozer
-      run: |
+        # 2. Buildozer'a internetten yeni bir şey indirmemesini, sistemdekileri kullanmasını emrediyoruz
         export BUILDOZER_ALLOW_KIVY_ANDROID_NEW_PERMISSIONS=1
         export P4A_pip_upgrade=0
         export PIP_DISABLE_PIP_VERSION_CHECK=1
         
-        unset ANDROID_NDK
-        unset ANDROID_NDK_HOME
-        unset ANDROID_NDK_ROOT
-        unset ANDROID_NDK_LATEST_HOME
+        # 3. Lisansları onaylanmış kabul ettiriyoruz
+        mkdir -p ~/.buildozer/android/platform/android-sdk/licenses
+        echo -e "\n89334d701ee692324b1b1c8e1d326f0d4d27d4fa" > ~/.buildozer/android/platform/android-sdk/licenses/android-sdk-license
         
-        # Hem lisansları otomatik onaylıyoruz hem de veri akış kanalının kilitlenmesini önlüyoruz
-        stdbuf -oL yes | buildozer android debug
+        # Artık 'yes' döngüsüne gerek yok, her şey yerel diskten okunacak
+        buildozer android debug
       env:
         ACCEPT_SDK_LICENSE_AGREEMENT: "y"
         GRADLE_OPTS: "-Dorg.gradle.jvmargs=-Xmx4g"
