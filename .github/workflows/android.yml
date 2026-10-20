@@ -9,21 +9,77 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-latest # En güncel ve hızlı Action sunucusuna geçildi
+    runs-on: ubuntu-22.04
 
     steps:
     - name: Checkout Source Code
       uses: actions/checkout@v4
 
-    - name: Build APK with Pre-built Buildozer Action
-      uses: ArtemSBulgakov/buildozer-action@v1
-      id: buildozer
+    - name: Set up Python
+      uses: actions/setup-python@v5
       with:
-        workdir: .
-        buildozer_version: stable
+        python-version: '3.10'
+
+    - name: Install System Dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y \
+          build-essential \
+          ccache \
+          git \
+          libffi-dev \
+          libssl-dev \
+          openjdk-17-jdk \
+          unzip \
+          zip \
+          zlib1g-dev \
+          autoconf \
+          automake \
+          libtool
+
+    - name: Install Buildozer and Cython
+      run: |
+        pip install --upgrade pip
+        制造_ZAMAN_ASIMI_ICIN="Cython<3.0.0"
+        pip install "$制造_ZAMAN_ASIMI_ICIN" buildozer
+
+    # --- ZAMAN AŞIMINI ÖNLEYEN VE DOCKER HATALARINI BİTİREN ÖNBELLEK KATMANI ---
+    - name: Cache Buildozer Android Platform
+      uses: actions/cache@v4
+      with:
+        path: ~/.buildozer
+        key: ${{ runner.os }}-buildozer-${{ hashFiles('buildozer.spec') }}
+        restore-keys: |
+          ${{ runner.os }}-buildozer-
+
+    - name: Pre-accept Android SDK Licenses
+      run: |
+        mkdir -p ~/.android
+        touch ~/.android/repositories.cfg
+
+    - name: Build APK with Buildozer
+      run: |
+        export BUILDOZER_ALLOW_KIVY_ANDROID_NEW_PERMISSIONS=1
+        export P4A_pip_upgrade=0
+        export PIP_DISABLE_PIP_VERSION_CHECK=1
+        
+        # GitHub'ın dahili NDK kütüphaneleriyle çakışmayı önlemek için çevre değişkenlerini temizliyoruz
+        unset ANDROID_NDK
+        unset ANDROID_NDK_HOME
+        unset ANDROID_NDK_ROOT
+        unset ANDROID_NDK_LATEST_HOME
+        
+        # Terminalin sessiz kalıp kilitlenmesini önlemek için arka planda canlılık sinyali gönderiyoruz
+        (while true; do echo "...derleme kararlı şekilde akıyor, lütfen bekleyin..."; sleep 30; done) &
+        
+        stdbuf -oL yes | buildozer android debug
+      env:
+        ACCEPT_SDK_LICENSE_AGREEMENT: "y"
+        GRADLE_OPTS: "-Dorg.gradle.jvmargs=-Xmx4g"
+        NDK_CCACHE: 1
 
     - name: Upload APK Artifact
       uses: actions/upload-artifact@v4
       with:
         name: spider-android-apk
-        path: ${{ steps.buildozer.outputs.filename }}
+        path: bin/*.apk
