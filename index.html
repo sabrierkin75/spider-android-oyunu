@@ -26,57 +26,102 @@
 </head>
 <body>
 
-    <!-- Oyun Ekranı -->
     <canvas id="gameCanvas"></canvas>
 
     <script>
         const canvas = document.getElementById('gameCanvas');
         const ctx = canvas.getContext('2d');
 
-        // Sabit Oyun Çözünürlüğü (Dikey Mod)
+        // Android Cihazlar İçin Dikey Çözünürlük Standardı
         canvas.width = 1080;
         canvas.height = 1920;
 
-        // Görsel Varlıkların Yüklenmesi
+        // Görsellerin Tanımlanması
         const bg = new Image();
-        bg.src = 'anims/bg_v.png'; // Gönderdiğiniz dikey arka plan görseli
+        bg.src = 'anims/bg_v.png';
 
         const eye = new Image();
         eye.src = 'eye.png';
 
-        // Görseller yüklendiğinde döngüyü başlat
+        const closeBtn = new Image();
+        closeBtn.src = 'close.png'; // Yeni eklenen kapatma butonu görseli
+
         let imagesLoaded = 0;
-        const totalImages = 2;
+        const totalImages = 3;
 
         function imageLoaded() {
             imagesLoaded++;
             if (imagesLoaded === totalImages) {
+                initTouchControls();
                 gameLoop();
             }
         }
 
         bg.onload = imageLoaded;
         eye.onload = imageLoaded;
+        closeBtn.onload = imageLoaded;
 
-        // Uygulama Mantığı ve Çizim Döngüsü
+        // Kapatma Butonunun Ekranda Duracağı Koordinatlar ve Boyutlar
+        const closeBtnConfig = {
+            x: 950,
+            y: 50,
+            width: 80,
+            height: 80
+        };
+
         function draw() {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             
-            // Arka Plan Çizimi
+            // Arka Plan
             ctx.drawImage(bg, 0, 0, canvas.width, canvas.height);
             
-            // Göz Çizimi (Örnek merkez konumu)
+            // Örümcek Gözü (Merkezde)
             ctx.drawImage(eye, (canvas.width / 2) - (eye.width / 2), (canvas.height / 2) - (eye.height / 2));
+
+            // Kapatma Butonu (Sağ Üst Köşede)
+            ctx.drawImage(closeBtn, closeBtnConfig.x, closeBtnConfig.y, closeBtnConfig.width, closeBtnConfig.height);
         }
 
         function update() {
-            // main.py içerisindeki spider/animasyon mantığı buraya eklenecektir
+            // Animasyonlar ve mantıksal güncellemeler buraya gelecek
         }
 
         function gameLoop() {
             update();
             draw();
             requestAnimationFrame(gameLoop);
+        }
+
+        // Dokunma (Touch) ve Tıklama Kontrolleri
+        function initTouchControls() {
+            const eventType = 'ontouchstart' in window ? 'touchstart' : 'mousedown';
+            
+            canvas.addEventListener(eventType, function(e) {
+                e.preventDefault();
+                
+                // Dokunulan noktanın canvas ölçeğine göre hesaplanması
+                const rect = canvas.getBoundingClientRect();
+                const scaleX = canvas.width / rect.width;
+                const scaleY = canvas.height / rect.height;
+                
+                const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+                const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+                
+                const touchX = (clientX - rect.left) * scaleX;
+                const touchY = (clientY - rect.top) * scaleY;
+
+                // Kapatma butonuna basılıp basılmadığının kontrolü
+                if (touchX >= closeBtnConfig.x && touchX <= closeBtnConfig.x + closeBtnConfig.width &&
+                    touchY >= closeBtnConfig.y && touchY <= closeBtnConfig.y + closeBtnConfig.height) {
+                    
+                    // AppCreator24 veya Web WebView kapatma tetikleyicisi
+                    if (navigator.app && navigator.app.exitApp) {
+                        navigator.app.exitApp(); // Android uygulamasını kapatır
+                    } else {
+                        window.close(); // Tarayıcı sekmesini kapatır
+                    }
+                }
+            });
         }
     </script>
 </body>
