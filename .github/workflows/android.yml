@@ -18,7 +18,7 @@ jobs:
     - name: Set up Python
       uses: actions/setup-python@v5
       with:
-        python-version: '3.10' # En kararlı Python sürümüne çekildi
+        python-version: '3.10'
 
     - name: Install System Dependencies
       run: |
@@ -35,24 +35,35 @@ jobs:
           zlib1g-dev \
           autoconf \
           automake \
-          libtool
+          libtool \
+          aidl
 
     - name: Install Buildozer and Dependencies
       run: |
         pip install --upgrade pip
-        pip install "Cython<3.0.0" buildozer # Kivy/Buildozer için en kararlı Cython sürümü
+        pip install "Cython<3.0.0" buildozer
 
-    - name: Pre-accept Android SDK Licenses
+    - name: Pre-configure Android SDK Licenses (Fix Aidl & Broken Pipe)
       run: |
+        # Buildozer'ın Android SDK'yı kuracağı dizini önceden oluşturuyoruz
+        mkdir -p ~/.buildozer/android/platform/android-sdk/licenses
+        
+        # Güncel tüm Google, Android ve NDK lisans hash'lerini sisteme 'Onaylandı' olarak enjekte ediyoruz
+        echo -e "\n89334d701ee692324b1b1c8e1d326f0d4d27d4fa" > ~/.buildozer/android/platform/android-sdk/licenses/android-sdk-license
+        echo -e "\n84831b9409646a918e30573bab4c9c91346d8abd" > ~/.buildozer/android/platform/android-sdk/licenses/android-sdk-preview-license
+        echo -e "\n24333f8a63b6825ea9c5514f83c2829b004d1fee" > ~/.buildozer/android/platform/android-sdk/licenses/android-googletv-license
+        
+        # repositories.cfg dosyasını hazır hale getiriyoruz
         mkdir -p ~/.android
         touch ~/.android/repositories.cfg
 
     - name: Build APK with Buildozer
       run: |
+        # Artık 'yes |' kullanmıyoruz, lisanslar üstteki adımda onaylandığı için doğrudan güvenli moda geçiyoruz
         buildozer android debug
       env:
         ACCEPT_SDK_LICENSE_AGREEMENT: "y"
-        GRADLE_OPTS: "-Dorg.gradle.jvmargs=-Xmx4g" # Gradle bellek hatasını önler
+        GRADLE_OPTS: "-Dorg.gradle.jvmargs=-Xmx4g"
 
     - name: Upload APK Artifact
       uses: actions/upload-artifact@v4
