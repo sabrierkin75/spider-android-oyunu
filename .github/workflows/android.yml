@@ -27,4 +27,3 @@ jobs:
       with:
         name: spider-android-apk
         path: ${{ steps.buildozer.outputs.filename }}
-        
