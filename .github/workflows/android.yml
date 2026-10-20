@@ -43,20 +43,20 @@ jobs:
         pip install --upgrade pip
         pip install "Cython<3.0.0" buildozer
 
-    - name: Configure Linux Auto-Accept for Android SDK
+    - name: Set up Android SDK Environment Variables
       run: |
-        # repositories.cfg dosyasını hazır hale getiriyoruz
         mkdir -p ~/.android
         touch ~/.android/repositories.cfg
 
     - name: Build APK with Buildozer
       run: |
-        # 'yes' komutunun Linux kanalını tıkamasını önlemek için döngülü hafif bir echo mimarisi kullanıyoruz.
-        # Bu sayede hem 'sdkmanager bulunamadı' hatası vermez hem de 'Broken pipe' olmadan tüm lisansları otomatik geçer.
-        (while true; do echo "y"; sleep 1; done) | buildozer android debug
+        # Döngüyü kaldırıp sadece ilk kurulum sorularını otomatik geçecek güvenli yapıyı kuruyoruz
+        export BUILDOZER_ALLOW_KIVY_ANDROID_NEW_PERMISSIONS=1
+        buildozer android debug
       env:
         ACCEPT_SDK_LICENSE_AGREEMENT: "y"
         GRADLE_OPTS: "-Dorg.gradle.jvmargs=-Xmx4g"
+        NDK_CCACHE: 1
 
     - name: Upload APK Artifact
       uses: actions/upload-artifact@v4
