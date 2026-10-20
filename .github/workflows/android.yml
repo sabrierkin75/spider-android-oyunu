@@ -40,7 +40,6 @@ jobs:
     - name: Install Buildozer and Cython
       run: |
         pip install --upgrade pip
-        # Türkçe karakter ve yönlendirme hatası giderildi, sürüm tırnak içine alınarak güvenli hale getirildi
         pip install "Cython<3.0.0" buildozer
 
     - name: Cache Buildozer Android Platform
@@ -67,7 +66,7 @@ jobs:
         unset ANDROID_NDK_ROOT
         unset ANDROID_NDK_LATEST_HOME
         
-        # Terminalin sessiz kalıp kilitlenmesini önleyen canlılık döngüsü
+        # Terminalin donmasını engelleyen canlılık döngüsü
         (while true; do echo "...derleme kararlı şekilde akıyor, lütfen bekleyin..."; sleep 30; done) &
         
         stdbuf -oL yes | buildozer android debug
@@ -80,4 +79,6 @@ jobs:
       uses: actions/upload-artifact@v4
       with:
         name: spider-android-apk
-        path: bin/*.apk
+        # --- KLASÖR YOLU HATASINI GİDEREN GÜNCEL SATIR ---
+        # Proje dizininde üretilen tüm .apk dosyalarını nerede olursa olsun bulur ve yakalar.
+        path: "**/*.apk"
