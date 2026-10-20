@@ -42,25 +42,40 @@ jobs:
         pip install --upgrade pip
         pip install "Cython<3.0.0" buildozer
 
-    - name: Build APK using GitHub Pre-installed Android SDK (Bypass All Downloads)
+    - name: Fix Android SDK Layout for Buildozer (Bypass Sdkmanager & Aidl Error)
       run: |
-        # 1. Buildozer'ın kendi klasör yapısını taklit ederek sistemdeki hazır SDK/NDK'ya köprü kuruyoruz
-        mkdir -p ~/.buildozer/android/platform
+        # 1. Temel Buildozer platform dizinini oluşturuyoruz
+        mkdir -p ~/.buildozer/android/platform/android-sdk
         
-        # GitHub'da hazır kurulu gelen resmi Android SDK ve NDK r25b-r26b yapılarını Buildozer klasörüne bağlıyoruz
-        ln -s $ANDROID_HOME ~/.buildozer/android/platform/android-sdk
-        ln -s $ANDROID_NDK_LATEST_HOME ~/.buildozer/android/platform/android-ndk-r26b
+        # 2. Sistemde kurulu olan resmi Android SDK klasörünün içeriğini Buildozer'a köprülüyoruz
+        ln -s $ANDROID_HOME/* ~/.buildozer/android/platform/android-sdk/ 2>/dev/null || true
         
-        # 2. Buildozer'a internetten yeni bir şey indirmemesini, sistemdekileri kullanmasını emrediyoruz
+        # 3. CRITICAL FIX: Buildozer'ın aradığı eski 'tools/bin' yolunu oluşturup 
+        # sistemdeki modern 'cmdline-tools' içindeki sdkmanager'ı buraya bağlıyoruz.
+        mkdir -p ~/.buildozer/android/platform/android-sdk/tools/bin
+        ln -s /usr/local/lib/android/sdk/cmdline-tools/latest/bin/sdkmanager ~/.buildozer/android/platform/android-sdk/tools/bin/sdkmanager
+        
+        # 4. Sistemdeki en güncel NDK sürümünü (r26b/r27) Buildozer'ın arayacağı yola bağlıyoruz
+        ln -s $ANDROID_NDK_LATEST_HOME ~/.buildozer/android/platform/android-ndk-r26b 2>/dev/null || true
+        
+        # 5. Tüm lisansları önceden onaylıyoruz
+        mkdir -p ~/.buildozer/android/platform/android-sdk/licenses
+        echo -e "\n89334d701ee692324b1b1c8e1d326f0d4d27d4fa" > ~/.buildozer/android/platform/android-sdk/licenses/android-sdk-license
+        echo -e "\n84831b9409646a918e30573bab4c9c91346d8abd" > ~/.buildozer/android/platform/android-sdk/licenses/android-sdk-preview-license
+
+    - name: Build APK with Buildozer
+      run: |
         export BUILDOZER_ALLOW_KIVY_ANDROID_NEW_PERMISSIONS=1
         export P4A_pip_upgrade=0
         export PIP_DISABLE_PIP_VERSION_CHECK=1
         
-        # 3. Lisansları onaylanmış kabul ettiriyoruz
-        mkdir -p ~/.buildozer/android/platform/android-sdk/licenses
-        echo -e "\n89334d701ee692324b1b1c8e1d326f0d4d27d4fa" > ~/.buildozer/android/platform/android-sdk/licenses/android-sdk-license
+        # Çakışmaları önlemek için sistem çevre değişkenlerini Buildozer'a göre temizliyoruz
+        unset ANDROID_NDK
+        unset ANDROID_NDK_HOME
+        unset ANDROID_NDK_ROOT
+        unset ANDROID_NDK_LATEST_HOME
         
-        # Artık 'yes' döngüsüne gerek yok, her şey yerel diskten okunacak
+        # Artık internet indirmesi ve yes döngüsü yok, doğrudan yerel derleme başlıyor
         buildozer android debug
       env:
         ACCEPT_SDK_LICENSE_AGREEMENT: "y"
