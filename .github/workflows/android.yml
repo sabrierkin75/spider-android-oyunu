@@ -10,6 +10,8 @@ on:
 jobs:
   build:
     runs-on: ubuntu-22.04
+    # --- GİTHUB'IN İŞLEMİ YARIDA KESMESİNİ ÖNLEYEN KRİTİK SÜRE SINIRI (90 DAKİKA) ---
+    timeout-minutes: 90 
 
     steps:
     - name: Checkout Source Code
@@ -35,7 +37,8 @@ jobs:
           zlib1g-dev \
           autoconf \
           automake \
-          libtool
+          libtool \
+          aidl
 
     - name: Install Buildozer and Cython
       run: |
@@ -55,7 +58,7 @@ jobs:
         mkdir -p ~/.android
         touch ~/.android/repositories.cfg
 
-    - name: Build APK with Buildozer
+    - name: Build APK with Buildozer (Force Active Stream)
       run: |
         export BUILDOZER_ALLOW_KIVY_ANDROID_NEW_PERMISSIONS=1
         export P4A_pip_upgrade=0
@@ -66,10 +69,12 @@ jobs:
         unset ANDROID_NDK_ROOT
         unset ANDROID_NDK_LATEST_HOME
         
-        # Terminalin donmasını engelleyen canlılık döngüsü
-        (while true; do echo "...derleme kararlı şekilde akıyor, lütfen bekleyin..."; sleep 30; done) &
+        # Saniyede bir arka planda tetikleme yaparak sunucuyu uyanık tutan hafif Linux motoru
+        (while true; do echo "...derleme devam ediyor, lutfen sunucuyu kapatmayin..."; sleep 15; done) &
         
-        stdbuf -oL yes | buildozer android debug
+        # stdbuf -oL -eL komutları derleme esnasındaki tüm C çıktılarını anlık olarak terminale basmaya zorlar.
+        # Bu sayede sunucu asla 'sessiz kaldı' uyarısıyla donamaz.
+        stdbuf -oL -eL buildozer android debug
       env:
         ACCEPT_SDK_LICENSE_AGREEMENT: "y"
         GRADLE_OPTS: "-Dorg.gradle.jvmargs=-Xmx4g"
@@ -79,6 +84,4 @@ jobs:
       uses: actions/upload-artifact@v4
       with:
         name: spider-android-apk
-        # --- KLASÖR YOLU HATASINI GİDEREN GÜNCEL SATIR ---
-        # Proje dizininde üretilen tüm .apk dosyalarını nerede olursa olsun bulur ve yakalar.
         path: "**/*.apk"
