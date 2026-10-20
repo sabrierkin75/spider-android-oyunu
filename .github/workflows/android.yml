@@ -5,7 +5,7 @@ on:
     branches: [ "main" ]
   pull_request:
     branches: [ "main" ]
-  workflow_dispatch: # Manuel tetikleme butonu ekler
+  workflow_dispatch:
 
 jobs:
   build:
@@ -18,8 +18,7 @@ jobs:
     - name: Set up Python
       uses: actions/setup-python@v5
       with:
-        python-cache-dependency-path: 'buildozer.spec'
-        python-version: '3.11'
+        python-version: '3.10' # En kararlı Python sürümüne çekildi
 
     - name: Install System Dependencies
       run: |
@@ -34,19 +33,26 @@ jobs:
           unzip \
           zip \
           zlib1g-dev \
-          aidl # Sistem paketini de her ihtimale karşı kuruyoruz
+          autoconf \
+          automake \
+          libtool
 
     - name: Install Buildozer and Dependencies
       run: |
         pip install --upgrade pip
-        pip install Cython==3.0.10 buildozer
+        pip install "Cython<3.0.0" buildozer # Kivy/Buildozer için en kararlı Cython sürümü
 
-    - name: Build APK with Buildozer (Auto Accept Licenses)
+    - name: Pre-accept Android SDK Licenses
       run: |
-        # yes | komutu otomatik olarak tüm Android SDK lisans sorularına 'y' (evet) yanıtını verir
-        yes | buildozer android debug
+        mkdir -p ~/.android
+        touch ~/.android/repositories.cfg
+
+    - name: Build APK with Buildozer
+      run: |
+        buildozer android debug
       env:
         ACCEPT_SDK_LICENSE_AGREEMENT: "y"
+        GRADLE_OPTS: "-Dorg.gradle.jvmargs=-Xmx4g" # Gradle bellek hatasını önler
 
     - name: Upload APK Artifact
       uses: actions/upload-artifact@v4
