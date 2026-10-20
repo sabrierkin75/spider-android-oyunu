@@ -43,24 +43,17 @@ jobs:
         pip install --upgrade pip
         pip install "Cython<3.0.0" buildozer
 
-    - name: Pre-configure Android SDK Licenses (Fix Aidl & Broken Pipe)
+    - name: Configure Linux Auto-Accept for Android SDK
       run: |
-        # Buildozer'ın Android SDK'yı kuracağı dizini önceden oluşturuyoruz
-        mkdir -p ~/.buildozer/android/platform/android-sdk/licenses
-        
-        # Güncel tüm Google, Android ve NDK lisans hash'lerini sisteme 'Onaylandı' olarak enjekte ediyoruz
-        echo -e "\n89334d701ee692324b1b1c8e1d326f0d4d27d4fa" > ~/.buildozer/android/platform/android-sdk/licenses/android-sdk-license
-        echo -e "\n84831b9409646a918e30573bab4c9c91346d8abd" > ~/.buildozer/android/platform/android-sdk/licenses/android-sdk-preview-license
-        echo -e "\n24333f8a63b6825ea9c5514f83c2829b004d1fee" > ~/.buildozer/android/platform/android-sdk/licenses/android-googletv-license
-        
         # repositories.cfg dosyasını hazır hale getiriyoruz
         mkdir -p ~/.android
         touch ~/.android/repositories.cfg
 
     - name: Build APK with Buildozer
       run: |
-        # Artık 'yes |' kullanmıyoruz, lisanslar üstteki adımda onaylandığı için doğrudan güvenli moda geçiyoruz
-        buildozer android debug
+        # 'yes' komutunun Linux kanalını tıkamasını önlemek için döngülü hafif bir echo mimarisi kullanıyoruz.
+        # Bu sayede hem 'sdkmanager bulunamadı' hatası vermez hem de 'Broken pipe' olmadan tüm lisansları otomatik geçer.
+        (while true; do echo "y"; sleep 1; done) | buildozer android debug
       env:
         ACCEPT_SDK_LICENSE_AGREEMENT: "y"
         GRADLE_OPTS: "-Dorg.gradle.jvmargs=-Xmx4g"
