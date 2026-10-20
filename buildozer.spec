@@ -7,16 +7,16 @@ source.include_exts = py,png,jpg,kv,atlas,json
 source.include_patterns = anims/*, *.png
 version = 1.4.0
 
-# Gerekli kütüphaneler (hostpython3 eklenerek derleme kararlı hale getirildi)
-requirements = python3,kivy,pyjnius,android,hostpython3
+# --- PYTHON SÜRÜMÜNÜ 3.11 OLARAK SABİTLEDİK (HIZLI DERLEME SAĞLAR) ---
+requirements = python3==3.11.9,kivy,pyjnius,android
 
-# --- ANDROID 14 (API 34) KARARLI AYARLARI ---
+# --- ANDROID 14 (API 34) REHBER AYARLARI ---
 android.api = 34
 android.minapi = 21
 android.ndk = 26b
 android.ndk_api = 21
 
-# Derlenecek işlemci mimarileri (Yeni nesil cihazlar için)
+# İşlemci mimarileri
 android.archs = arm64-v8a, armeabi-v7a
 
 orientation = portrait
