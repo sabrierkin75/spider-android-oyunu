@@ -31,7 +31,6 @@
             width: 100%;
             height: 100%;
             z-index: 1;
-            pointer-events: none; /* Butonların tıklanmasını engellememesi için tamamen geçirgen yapıldı */
         }
         .ui-layer {
             position: absolute;
@@ -40,28 +39,7 @@
             width: 100%;
             height: 100%;
             z-index: 10;
-            pointer-events: none;
-        }
-        .interactive {
-            pointer-events: auto !important; /* Butonların ve panellerin tıklamaları yakalaması sağlandı */
-        }
-        #toggle-btn {
-            position: absolute;
-            right: 5%;
-            top: 2%;
-            width: 15%;
-            height: 8%;
-            max-width: 80px;
-            max-height: 60px;
-            background-color: #334054;
-            border: none;
-            border-radius: 8px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.3);
-            z-index: 100;
+            pointer-events: none; /* Arka plandaki yaratıklara dokunabilmek için geçirgen */
         }
         .view-panel {
             position: absolute;
@@ -72,6 +50,11 @@
             align-items: center;
             gap: 12px;
             z-index: 50;
+            pointer-events: none; /* Panel kutusunun ekranı kör noktaya çevirmesini engeller */
+        }
+        .interactive-element {
+            pointer-events: auto !important; /* Yalnızca butonların tıklamaları kesin almasını sağlar */
+            cursor: pointer;
         }
         #main-view {
             top: 30%;
@@ -111,7 +94,6 @@
             color: white;
             border: none;
             border-radius: 12px;
-            cursor: pointer;
             box-shadow: 0 4px 6px rgba(0,0,0,0.2);
             transition: transform 0.06s ease;
         }
@@ -130,6 +112,7 @@
             align-items: center;
             justify-content: space-between;
             gap: 5px;
+            pointer-events: none;
         }
         .setting-label {
             flex: 1;
@@ -153,7 +136,6 @@
             font-weight: bold;
             border: none;
             border-radius: 12px;
-            cursor: pointer;
         }
         .control-btn.edge-min { background-color: #ed4242; }
         .control-btn.edge-max { background-color: #21c444; }
@@ -168,6 +150,7 @@
             line-height: 1.6;
             text-align: center;
             overflow-y: auto;
+            pointer-events: auto;
         }
         .bold-green { color: #45b870; font-weight: bold; }
         .bold-text { font-weight: bold; }
@@ -179,34 +162,34 @@
         <canvas id="gameCanvas"></canvas>
         
         <div class="ui-layer">
-            <button id="toggle-btn" class="interactive" onclick="toggleUiVisibility()">
+            <button id="toggle-btn" class="interactive-element" onclick="toggleUiVisibility()">
                 <svg id="eye-icon" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
                 <svg id="close-icon" class="hidden" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
             </button>
             
-            <div id="main-view" class="view-panel interactive">
+            <div id="main-view" class="view-panel">
                 <div id="main-title" class="title-label">Yaratık duruyor</div>
-                <button id="status-btn" class="visual-btn btn-green" onclick="toggleSpider()">Hareketi başlat</button>
-                <button class="visual-btn btn-blue" onclick="switchView('settings')">Ayarlar</button>
-                <button class="visual-btn btn-teal" onclick="switchView('about')">Hakkında</button>
-                <button class="visual-btn btn-red" onclick="window.close()">Çıkış</button>
+                <button id="status-btn" class="visual-btn btn-green interactive-element" onclick="toggleSpider()">Hareketi başlat</button>
+                <button class="visual-btn btn-blue interactive-element" onclick="switchView('settings')">Ayarlar</button>
+                <button class="visual-btn btn-teal interactive-element" onclick="switchView('about')">Hakkında</button>
+                <button class="visual-btn btn-red interactive-element" onclick="window.close()">Çıkış</button>
             </div>
             
-            <div id="settings-view" class="view-panel interactive hidden">
+            <div id="settings-view" class="view-panel hidden">
                 <div class="setting-row">
                     <div id="lbl-type" class="setting-label">Tür (Type): <span class="bold-green">VARSAYILAN</span></div>
-                    <button id="btn-t-min" class="control-btn" onclick="changeCreatureTypeStep(-1)">&lt;</button>
-                    <button id="btn-t-plus" class="control-btn" onclick="changeCreatureTypeStep(1)">&gt;</button>
+                    <button id="btn-t-min" class="control-btn interactive-element" onclick="changeCreatureTypeStep(-1)">&lt;</button>
+                    <button id="btn-t-plus" class="control-btn interactive-element" onclick="changeCreatureTypeStep(1)">&gt;</button>
                 </div>
                 <div class="setting-row">
                     <div id="lbl-face" class="setting-label">Img Face: <span style="color:#4080e0; font-weight:bold;">0° (SAĞ)</span></div>
-                    <button class="control-btn" style="background-color:#4080e0;" onclick="changeSettingFaceStep(-1)">&lt;</button>
-                    <button class="control-btn" style="background-color:#ed4242;" onclick="changeSettingFaceStep(1)">&gt;</button>
+                    <button class="control-btn interactive-element" style="background-color:#4080e0;" onclick="changeSettingFaceStep(-1)">&lt;</button>
+                    <button class="control-btn interactive-element" style="background-color:#ed4242;" onclick="changeSettingFaceStep(1)">&gt;</button>
                 </div>
                 <div class="setting-row">
                     <div id="lbl-bg" class="setting-label">Arka Plan (BG): <span style="color:#e0a040; font-weight:bold;">Varsayılan (bg)</span></div>
-                    <button class="control-btn" style="background-color:#b36633;" onclick="changeBgImageStep(-1)">&lt;</button>
-                    <button class="control-btn" style="background-color:#b36633;" onclick="changeBgImageStep(1)">&gt;</button>
+                    <button class="control-btn interactive-element" style="background-color:#b36633;" onclick="changeBgImageStep(-1)">&lt;</button>
+                    <button class="control-btn interactive-element" style="background-color:#b36633;" onclick="changeBgImageStep(1)">&gt;</button>
                 </div>
                 <div class="setting-row">
                     <div id="lbl-size" class="setting-label">Boyut (Size): 120 px</div>
