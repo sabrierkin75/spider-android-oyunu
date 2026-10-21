@@ -449,61 +449,21 @@
                 this.roll_angle = 0.0;
                 this.roll_speed = 0.0;
                 
-                this.legs_phase = Math.random() * Math.PI * 2;
+                // Klasördeki 0.png, 1.png, 2.png, 3.png resimlerini yükleme dizisi
+                this.total_frames = 4; 
+                this.loaded_images = [];
+                this.loadFrames();
             }
             
-            activateSuperPower(duration = 15.0) {
-                this.is_super = true;
-                this.super_timer = duration;
-            }
-            
-            update(dt, sw, sh) {
-                if (this.is_grabbed) return;
-                this.anim_time += dt;
-                
-                if (Math.abs(this.roll_speed) > 0.1) {
-                    this.roll_angle += this.roll_speed * dt;
-                    this.roll_speed *= 0.15;
-                } else {
-                    this.roll_speed = 0.0;
-                    if (Math.abs(this.roll_angle) > 0.1) this.roll_angle += (0.0 - this.roll_angle) * (dt * 8.0);
-                    else this.roll_angle = 0.0;
-                }
-                
-                if (this.is_super) {
-                    this.super_timer -= dt;
-                    if (this.super_timer <= 0) this.is_super = false;
-                }
-                
+            loadFrames() {
                 let current_folder = animation_folders[settings["animation_folder_idx"] % animation_folders.length];
-                let local = settings["folder_settings"][current_folder];
-                
-                let base_spd = local["move_speed"] * 30;
-                if (this.is_super) base_spd *= local["super_speed_mult"];
-                
-                if (this.is_flung) {
-                    let current_speed = Math.sqrt(this.vx * this.vx + this.vy * this.vy);
-                    if (current_speed > base_spd) {
-                        this.vx *= 0.975; this.vy *= 0.975;
-                        this.angle = Math.atan2(this.vy, this.vx) % (Math.PI * 2);
-                    } else { this.is_flung = false; }
-                } else if (!this.is_orbiting) {
-                    this.vx = Math.cos(this.angle) * base_spd;
-                    this.vy = Math.sin(this.angle) * base_spd;
+                let path_root = current_folder === "default" ? "anims" : `anims/${current_folder}`;
+                for (let i = 0; i < this.total_frames; i++) {
+                    let img = new Image();
+                    img.src = `${path_root}/${i}.png`;
+                    this.loaded_images.push(img);
                 }
-                
-                if (this.is_orbiting) {
-                    let x_m = this.orbit_wx - this.size + 15 + this.visual_offset;
-                    let x_mx = this.orbit_wx + this.orbit_ww - 15 - this.visual_offset;
-                    let y_m = this.orbit_wy - this.size + 15 + this.visual_offset;
-                    let y_mx = this.orbit_wy + this.orbit_wh - 15 - this.visual_offset;
-                    
-                    let t_ang = Math.PI;
-                    if (this.orbit_phase === 1) t_ang = Math.PI * 0.5;
-                    else if (this.orbit_phase === 2) t_ang = 0.0;
-                    else if (this.orbit_phase === 3) t_ang = Math.PI * 1.5;
-                    
-                    let c_spd = base_spd * Math.max(0.5, 1.0 - (Math.abs((t_ang - this.angle + Math.PI) % (Math.PI * 2) - Math.PI) / (Math.PI * 0.5)) * 0.5);
+            }
                     if (this.orbit_phase === 0) {
                         this.y = y_m; this.x -= c_spd * dt;
                         if (this.x <= x_m) { this.x = x_m; this.orbit_phase = 1; }
@@ -698,77 +658,36 @@
                     ctx.fill();
                 }
                 
-                let theme = current_folder;
-                ctx.strokeStyle = theme === "cyber" ? "#00ffcc" : (theme === "plasma" ? "#ff00ff" : (theme === "shadow" ? "#444" : "#a05a2c"));
-                ctx.lineWidth = this.size / 24;
-                
-                for (let i = 0; i < 8; i++) {
-                    let isTopSide = i < 4;
-                    let legIdx = i % 4;
-                    
-                    let baseAngle = isTopSide ? (-Math.PI/2 - (legIdx * 0.25 - 0.375)) : (Math.PI/2 + (legIdx * 0.25 - 0.375));
-                    let osc = Math.sin(this.legs_phase + i) * 0.22;
-                    let finalAngle = baseAngle + osc;
-                    
-                    ctx.beginPath();
-                    ctx.moveTo(0, 0);
-                    let extX = Math.cos(finalAngle) * (this.size * 0.45);
-                    let extY = Math.sin(finalAngle) * (this.size * 0.45);
-                    ctx.quadraticCurveTo(extX * 0.7, extY * 1.2, extX * 1.2, extY * 1.2);
-                    ctx.stroke();
+                // EĞER ARKA PLANDA KLASÖR RESİMLERİ YÜKLENDİYSE RESMİ ÇİZ, YOKSA VEKTÖREL YEDEK PLANI ÇALIŞTIR
+                let active_img = this.loaded_images[this.current_frame];
+                if (active_img && active_img.complete && active_img.naturalWidth !== 0) {
+                    ctx.drawImage(active_img, -this.size/2, -this.size/2, this.size, this.size);
+                } else {
+                    // Yedek Çizim Planı (Anatomik Çizgiler)
+                    let theme = current_folder;
+                    ctx.strokeStyle = theme === "cyber" ? "#00ffcc" : (theme === "plasma" ? "#ff00ff" : (theme === "shadow" ? "#444" : "#a05a2c"));
+                    ctx.lineWidth = this.size / 24;
+                    for (let i = 0; i < 8; i++) {
+                        let isTopSide = i < 4; let legIdx = i % 4;
+                        let baseAngle = isTopSide ? (-Math.PI/2 - (legIdx * 0.25 - 0.375)) : (Math.PI/2 + (legIdx * 0.25 - 0.375));
+                        let osc = Math.sin(this.legs_phase + i) * 0.22;
+                        let finalAngle = baseAngle + osc;
+                        ctx.beginPath(); ctx.moveTo(0, 0);
+                        let extX = Math.cos(finalAngle) * (this.size * 0.45); let extY = Math.sin(finalAngle) * (this.size * 0.45);
+                        ctx.quadraticCurveTo(extX * 0.7, extY * 1.2, extX * 1.2, extY * 1.2); ctx.stroke();
+                    }
+                    ctx.beginPath(); ctx.arc(0, 0, this.size / 4, 0, Math.PI * 2);
+                    ctx.fillStyle = theme === "cyber" ? "#112233" : (theme === "plasma" ? "#330033" : (theme === "shadow" ? "#1a1a1a" : "#4a2d1b"));
+                    ctx.fill(); ctx.stroke();
+                    ctx.beginPath(); ctx.arc(this.size / 4, 0, this.size / 7, 0, Math.PI * 2);
+                    ctx.fillStyle = theme === "cyber" ? "#00ffcc" : (theme === "plasma" ? "#ff00ff" : (theme === "shadow" ? "#222" : "#2d1a10"));
+                    ctx.fill(); ctx.stroke();
+                    ctx.fillStyle = this.is_super ? "#ffd700" : (theme === "cyber" ? "#ff0055" : "#ff0000");
+                    ctx.beginPath(); ctx.arc(this.size * 0.34, -this.size * 0.05, this.size / 35, 0, Math.PI * 2); ctx.fill();
+                    ctx.beginPath(); ctx.arc(this.size * 0.34, this.size * 0.05, this.size / 35, 0, Math.PI * 2); ctx.fill();
                 }
                 
-                ctx.beginPath();
-                ctx.arc(0, 0, this.size / 4, 0, Math.PI * 2);
-                ctx.fillStyle = theme === "cyber" ? "#112233" : (theme === "plasma" ? "#330033" : (theme === "shadow" ? "#1a1a1a" : "#4a2d1b"));
-                ctx.fill();
-                ctx.stroke();
-                
-                ctx.beginPath();
-                ctx.arc(this.size / 4, 0, this.size / 7, 0, Math.PI * 2);
-                ctx.fillStyle = theme === "cyber" ? "#00ffcc" : (theme === "plasma" ? "#ff00ff" : (theme === "shadow" ? "#222" : "#2d1a10"));
-                ctx.fill();
-                ctx.stroke();
-                
-                ctx.fillStyle = this.is_super ? "#ffd700" : (theme === "cyber" ? "#ff0055" : "#ff0000");
-                ctx.beginPath(); ctx.arc(this.size * 0.34, -this.size * 0.05, this.size / 35, 0, Math.PI * 2); ctx.fill();
-                ctx.beginPath(); ctx.arc(this.size * 0.34, this.size * 0.05, this.size / 35, 0, Math.PI * 2); ctx.fill();
-                
                 ctx.restore();
-            }
-        }
-        
-        function spawnRandomWall() {
-            if (walls.length >= 2) return;
-            let is_hz = Math.random() > 0.5;
-            let w = is_hz ? Math.floor(Math.random() * 250) + 200 : Math.floor(Math.random() * 50) + 40;
-            let h = is_hz ? Math.floor(Math.random() * 50) + 40 : Math.floor(Math.random() * 250) + 200;
-            let x = Math.floor(Math.random() * (SCREEN_WIDTH - w - 100)) + 50;
-            let y = Math.floor(Math.random() * (SCREEN_HEIGHT - h - 240)) + 120;
-            
-            for (let wall of walls) {
-                let r = wall.rect;
-                if (x - 120 < r + r && x + w + 120 > r && y - 120 < r + r && y + h + 120 > r) return;
-            }
-            walls.push({
-                rect: [x, y, w, h],
-                color: [Math.random(), Math.random(), Math.random(), 1.0],
-                life: 0.0, is_big: false
-            });
-        }
-        
-        function spawnBigCentralWall() {
-            let w = 150, h = 150;
-            let x = (SCREEN_WIDTH - w) / 2 + (Math.random() * 100 - 50);
-            let y = (SCREEN_HEIGHT - h) / 2 + (Math.random() * 100 - 50);
-            walls.push({
-                rect: [x, y, w, h],
-                color: [0.85, 0.18, 0.18, 1.0],
-                life: 0.0, is_big: true
-            });
-            let avail = spider_list.filter(s => !s.is_orbiting);
-            if (avail.length > 0) {
-                avail[Math.floor(Math.random() * avail.length)].startOrbiting(x, y, w, h);
             }
         }
         function spawnGoldOrb() {
