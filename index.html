@@ -167,14 +167,11 @@
             text-align: center;
             overflow-y: auto;
             position: relative;
+            z-index: 11;
         }
         .bold-green { color: #45b870; font-weight: bold; }
         .bold-text { font-weight: bold; }
         .hidden { display: none !important; }
-        
-        svg icon {
-            fill: white;
-        }
     </style>
 </head>
 <body>
@@ -261,7 +258,7 @@
                     • Süper modda engelleri ve rakip yaratıkları yok edin.<br>
                     • Ayarlar menüsünden tüm fiziksel sınırları canlı olarak yönetin.
                 </div>
-                <button class="visual-btn btn-green" onclick="switchView('main')">Ana Menü</button>
+                <button class="visual-btn btn-green" style="z-index: 12;" onclick="switchView('main')">Ana Menü</button>
             </div>
         </div>
     </div>
@@ -300,9 +297,6 @@
         
         let about_sparkles = [];
         let sparkle_spawn_timer = 0.0;
-        
-        // Prosedürel Yaratık Çizim Önbelleği (Görseller yerine Canvas vektörü kullanılacak)
-        let generated_textures = {};
 
         function loadSettings() {
             try {
@@ -803,7 +797,7 @@
                         x: Math.random() * (SCREEN_WIDTH * 0.86) + (SCREEN_WIDTH * 0.07),
                         y: Math.random() * (SCREEN_HEIGHT * 0.48) + (SCREEN_HEIGHT * 0.32),
                         size: Math.random() * 10 + 12,
-                        base_color: Math.random() > 0.5 ? [255, 215, 0] :,
+                        base_color: Math.random() > 0.5 ? "255, 215, 0" : "255, 255, 255",
                         form: Math.random() > 0.5 ? "plus" : "star",
                         state: "fade_in", alpha: 0.0, speed: Math.random() * 1.5 + 1.5
                     });
@@ -821,7 +815,7 @@
                     
                     ctx.save();
                     ctx.translate(sp.x, sp.y);
-                    ctx.strokeStyle = `rgba(${sp.base_color[0]}, ${sp.base_color[1]}, ${sp.base_color[2]}, ${sp.alpha})`;
+                    ctx.strokeStyle = `rgba(${sp.base_color}, ${sp.alpha})`;
                     ctx.lineWidth = sp.size / 10;
                     
                     if (sp.form === "plus") {
@@ -863,7 +857,6 @@
                 wall_timer += dt;
                 if (wall_timer > next_wall_time) { spawnRandomWall(); wall_timer = 0; next_wall_time = Math.random() * 6.0 + 6.0; }
                 
-                let w_ch = false;
                 for (let i = walls.length - 1; i >= 0; i--) {
                     walls[i].life += dt;
                     if (walls[i].life >= 30.0) {
@@ -918,12 +911,24 @@
         
         function drawBackground() {
             let current_folder = animation_folders[settings["animation_folder_idx"] % animation_folders.length];
-            ctx.fillStyle = "#121212";
+            let local = settings["folder_settings"][current_folder] || settings;
+            let bg_idx = local["bg_image_idx"] || 0;
+            let is_portrait = SCREEN_HEIGHT >= SCREEN_WIDTH;
+            
+            // Canlı Tematik Arka Plan Motoru (Kivy Window.clearcolor & Prosedürel PNG Taklidi)
+            if (bg_idx === 0) {
+                ctx.fillStyle = "#1e1e1e"; // Window.clearcolor (0.12, 0.12, 0.12, 1)
+            } else if (bg_idx === 1) {
+                ctx.fillStyle = is_portrait ? "#141d26" : "#1c2833"; // Tema 1 Dikey/Yatay Farklı Renk Sinyali
+            } else {
+                ctx.fillStyle = is_portrait ? "#251820" : "#1f1424"; // Tema 2 Dikey/Yatay Farklı Renk Sinyali
+            }
             ctx.fillRect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
             
+            // Kivy OpenGL Izgara Motoru (Görseller yokken boş kalmaması için zenginleştirildi)
             ctx.strokeStyle = "rgba(255, 255, 255, 0.03)";
             ctx.lineWidth = 1;
-            let step = 40;
+            let step = is_portrait ? 45 : 60; // Akıllı ızgara ölçeklemesi
             for (let x = 0; x < SCREEN_WIDTH; x += step) { ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, SCREEN_HEIGHT); ctx.stroke(); }
             for (let y = 0; y < SCREEN_HEIGHT; y += step) { ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(SCREEN_WIDTH, y); ctx.stroke(); }
         }
@@ -931,13 +936,13 @@
         // --- ETKİLEŞİM VE DOKUNMA MOTORU ---
         let drag_spider = null;
         
-        window.addEventListener('mousedown', handleTouchStart);
-        window.addEventListener('mousemove', handleTouchMove);
-        window.addEventListener('mouseup', handleTouchEnd);
+        window.addEventListener('mousedown', (e) => handleTouchStart(e));
+        window.addEventListener('mousemove', (e) => handleTouchMove(e));
+        window.addEventListener('mouseup', (e) => handleTouchEnd(e));
         
-        window.addEventListener('touchstart', (e) => handleTouchStart(e.touches[0]), { passive: false });
-        window.addEventListener('touchmove', (e) => handleTouchMove(e.touches[0]), { passive: false });
-        window.addEventListener('touchend', (e) => handleTouchEnd(e.changedTouches[0]), { passive: false });
+        window.addEventListener('touchstart', (e) => { handleTouchStart(e.touches[0]); e.preventDefault(); }, { passive: false });
+        window.addEventListener('touchmove', (e) => { handleTouchMove(e.touches[0]); e.preventDefault(); }, { passive: false });
+        window.addEventListener('touchend', (e) => { handleTouchEnd(e.changedTouches[0]); e.preventDefault(); }, { passive: false });
         
         function handleTouchStart(e) {
             let clientX = e.clientX;
@@ -1118,7 +1123,6 @@
             document.getElementById('lbl-offset').textContent = `Ofset (Margin): ${local["visual_offset"]} px`;
             document.getElementById('lbl-mult').textContent = `Süper Hız (Mult): ${local["super_speed_mult"].toFixed(1)} x`;
             
-            // Limitlerde buton renk değişimi kontrolü (Kivy OpenGL Arayüz taklidi)
             document.getElementById('btn-sz-minus').className = `control-btn ${local["creature_size"] <= 40 ? 'edge-min' : ''}`;
             document.getElementById('btn-sz-plus').className = `control-btn ${local["creature_size"] >= 400 ? 'edge-max' : ''}`;
             document.getElementById('btn-s-minus').className = `control-btn ${local["move_speed"] <= 1 ? 'edge-min' : ''}`;
@@ -1151,7 +1155,7 @@
         canvas.height = SCREEN_HEIGHT;
         syncActiveFolderSettings();
         updateUiState();
-        if(spider_active) { spider_active = false; toggleSpider(); } // Arayüzü tetikle
+        if(spider_active) { spider_active = false; toggleSpider(); }
         
         requestAnimationFrame(updateGame);
     </script>
