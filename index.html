@@ -705,13 +705,50 @@
             
             particle_emitter.update(dt);
             
+            if (spider_active) {
+                let current_folder = animation_folders[settings["animation_folder_idx"] % animation_folders.length];
+                let local = settings["folder_settings"][current_folder];
+                
+                if (spider_list.length >= 6) {
+                    if (!gold_orb) {
+                        gold_orb_timer += dt;
+                        if (gold_orb_timer >= gold_orb_spawn_time) {
+                            spawnGoldOrb();
+                            gold_orb_timer = 0.0;
+                            gold_orb_spawn_time = Math.random() * 20.0 + 20.0;
+                        }
+                    }
+                } else {
+                    gold_orb_timer = 0.0;
+                    gold_orb = null;
+                }
+                
+                big_wall_timer += dt;
+                if (big_wall_timer >= big_wall_interval) { big_wall_timer = 0; spawnBigCentralWall(); }
+                
+                wall_timer += dt;
+                if (wall_timer > next_wall_time) { spawnRandomWall(); wall_timer = 0; next_wall_time = Math.random() * 6.0 + 6.0; }
+                
+                for (let i = walls.length - 1; i >= 0; i--) {
+                    walls[i].life += dt;
+                    if (walls[i].life >= 30.0) {
+                        if (walls[i].is_big) {
+                            for (let s of spider_list) { if (s.is_orbiting) s.is_orbiting = false; }
+                        }
+                        particle_emitter.spawnShatteredWall(walls[i].rect, walls[i].color);
+                        walls.splice(i, 1);
+                    }
+                }
+            }
+            
+            // --- HAKKINDA EKRANI IŞILTI MOTORU (EN ÜST KATMAN ÇİZİM ALANI) ---
             if (current_view === "about" && ui_visible) {
                 sparkle_spawn_timer += dt;
                 if (sparkle_spawn_timer >= 0.25 && about_sparkles.length < 15) {
                     sparkle_spawn_timer = 0.0;
                     about_sparkles.push({
                         x: Math.random() * (SCREEN_WIDTH * 0.86) + (SCREEN_WIDTH * 0.07),
-                        y: Math.random() * (SCREEN_HEIGHT * 0.48) + (SCREEN_HEIGHT * 0.32),
+                        y: Math.random() * (SCREEN_HEIGHT * 0.48) + (SCREEN_HEIGHT * 0.15),
                         size: Math.random() * 10 + 12,
                         base_color: Math.random() > 0.5 ? "255, 215, 0" : "255, 255, 255",
                         form: Math.random() > 0.5 ? "plus" : "star",
