@@ -83,8 +83,9 @@
             gap: 8px;
         }
         #about-view {
-            top: 15%;
-            height: 80%;
+            top: 10%;
+            height: 85%;
+            justify-content: space-between;
         }
         .title-label {
             width: 80%;
@@ -158,7 +159,7 @@
         .control-btn.edge-max { background-color: #21c444; }
         .about-card {
             width: 100%;
-            height: 60%;
+            flex: 1;
             background-color: rgba(13, 13, 13, 0.85);
             border-radius: 15px;
             color: white;
@@ -167,6 +168,7 @@
             line-height: 1.5;
             text-align: center;
             overflow-y: auto;
+            margin-bottom: 10px;
         }
         .bold-green { color: #45b870; font-weight: bold; }
         .bold-text { font-weight: bold; }
@@ -251,7 +253,7 @@
                     <span class="bold-text">Geliştiren:</span> Sabri Erkin<br>
                     <span class="bold-text">Altyapı:</span> HTML Canvas 2D Engine<br><br>
                     Orijinali <span class="bold-text">Desperado</span>'nun <span class="bold-text">Spider v0.9.5</span> adlı symbian uygulamasıdır. Ben biraz geliştirmeye çalıştım ve web/android ortamında çalışacak hale getirdim.<br><br>
-                    Bu uygulama, ekran üzerinde rastgele gezinen yaratıklar, parçalanabilir dinamik duvarlar og özel güçler içeren interaktif bir simülasyondur.<br><br>
+                    Bu uygulama, ekran üzerinde rastgele gezinen yaratıklar, parçalanabilir dinamik duvarlar ve özel güçler içeren interaktif bir simülasyondur.<br><br>
                     <span class="bold-text">Özellikler:</span><br>
                     • Altın küreleri toplayarak süper hıza ulaşın.<br>
                     • Süper modda engelleri ve rakip yaratıkları yok edin.<br>
@@ -345,9 +347,9 @@
                         vx: Math.cos(angle) * speed, vy: Math.sin(angle) * speed,
                         size: Math.random() * 12 + 8,
                         color: [
-                            Math.min(1, Math.max(0, color[0] + (Math.random() * 0.3 - 0.15))),
-                            Math.min(1, Math.max(0, color[1] + (Math.random() * 0.3 - 0.15))),
-                            Math.min(1, Math.max(0, color[2] + (Math.random() * 0.3 - 0.15))),
+                            Math.min(1, Math.max(0, color + (Math.random() * 0.3 - 0.15))),
+                            Math.min(1, Math.max(0, color + (Math.random() * 0.3 - 0.15))),
+                            Math.min(1, Math.max(0, color + (Math.random() * 0.3 - 0.15))),
                             1.0
                         ],
                         life: 1.5, decay: Math.random() * 1.0 + 1.0,
@@ -362,7 +364,7 @@
                     type: 2, x: x + Math.random() * size, y: y + Math.random() * size,
                     vx: Math.random() * 30 - 15, vy: Math.random() * 30 - 15,
                     size: Math.random() * 6 + 6,
-                    color: [Math.min(1, Math.max(0.8, color[0] + (Math.random() * 0.2 - 0.1))), Math.min(1, Math.max(0.7, color[1] + (Math.random() * 0.2 - 0.1))), Math.random() * 0.3, 1.0],
+                    color: [Math.min(1, Math.max(0.8, color + (Math.random() * 0.2 - 0.1))), Math.min(1, Math.max(0.7, color + (Math.random() * 0.2 - 0.1))), Math.random() * 0.3, 1.0],
                     life: 0.6, decay: Math.random() * 0.6 + 1.2,
                     rot: Math.random() * 360, rot_speed: Math.random() * 90 - 45
                 });
@@ -381,14 +383,14 @@
                     if(p.type === 2) {
                         p.vx *= 0.92; p.vy *= 0.92;
                         p.size += dt * 25.0;
-                        ctx.fillStyle = `rgba(${Math.floor(p.color[0]*255)}, ${Math.floor(p.color[1]*255)}, ${Math.floor(p.color[2]*255)}, ${alpha})`;
+                        ctx.fillStyle = `rgba(${Math.floor(p.color*255)}, ${Math.floor(p.color*255)}, ${Math.floor(p.color*255)}, ${alpha})`;
                         ctx.fillRect(p.x - p.size/2, p.y - p.size/2, p.size, p.size);
                     } else {
                         p.rot += p.rot_speed * dt;
                         ctx.save();
                         ctx.translate(p.x, p.y);
                         ctx.rotate(p.rot * Math.PI / 180);
-                        ctx.fillStyle = `rgba(${Math.floor(p.color[0]*255)}, ${Math.floor(p.color[1]*255)}, ${Math.floor(p.color[2]*255)}, ${alpha})`;
+                        ctx.fillStyle = `rgba(${Math.floor(p.color*255)}, ${Math.floor(p.color*255)}, ${Math.floor(p.color*255)}, ${alpha})`;
                         
                         if(p.type === 0) {
                             ctx.fillRect(-p.size/2, -p.size/2, p.size, p.size);
@@ -530,8 +532,8 @@
                 
                 for (let i = walls.length - 1; i >= 0; i--) {
                     let r = walls[i].rect;
-                    if (n_x + this.visual_offset < r[0] + r[2] && n_x + this.visual_offset + r_sz > r[0] &&
-                        n_y + this.visual_offset < r[1] + r[3] && n_y + this.visual_offset + r_sz > r[1]) {
+                    if (n_x + this.visual_offset < r + r && n_x + this.visual_offset + r_sz > r &&
+                        n_y + this.visual_offset < r + r && n_y + this.visual_offset + r_sz > r) {
                         
                         if (this.is_super) {
                             particle_emitter.spawnShatteredWall(r, walls[i].color);
@@ -539,13 +541,13 @@
                             continue;
                         }
                         
-                        if (Math.min(this.x + this.visual_offset + r_sz - r[0], r[0] + r[2] - (this.x + this.visual_offset)) <
-                            Math.min(this.y + this.visual_offset + r_sz - r[1], r[1] + r[3] - (this.y + this.visual_offset))) {
+                        if (Math.min(this.x + this.visual_offset + r_sz - r, r + r - (this.x + this.visual_offset)) <
+                            Math.min(this.y + this.visual_offset + r_sz - r, r + r - (this.y + this.visual_offset))) {
                             this.vx = -this.vx;
-                            n_x = this.x + this.size/2 < r[0] + r[2]/2 ? r[0] - this.size + this.visual_offset - 2 : r[0] + r[2] - this.visual_offset + 2;
+                            n_x = this.x + this.size/2 < r + r/2 ? r - this.size + this.visual_offset - 2 : r + r - this.visual_offset + 2;
                         } else {
                             this.vy = -this.vy;
-                            n_y = this.y + this.size/2 < r[0] + r[2]/2 ? r[1] - this.size + this.visual_offset - 2 : r[1] + r[3] - this.visual_offset + 2;
+                            n_y = this.y + this.size/2 < r + r/2 ? r - this.size + this.visual_offset - 2 : r + r - this.visual_offset + 2;
                         }
                         this.angle = (Math.atan2(this.vy, this.vx) + (Math.random() * 0.2 - 0.1)) % (Math.PI * 2);
                         let current_speed = Math.sqrt(this.vx * this.vx + this.vy * this.vy);
@@ -746,7 +748,7 @@
             
             for (let wall of walls) {
                 let r = wall.rect;
-                if (x - 120 < r[0] + r[2] && x + w + 120 > r[0] && y - 120 < r[1] + r[3] && y + h + 120 > r[1]) return;
+                if (x - 120 < r + r && x + w + 120 > r && y - 120 < r + r && y + h + 120 > r) return;
             }
             walls.push({
                 rect: [x, y, w, h],
@@ -756,7 +758,7 @@
         }
         
         function spawnBigCentralWall() {
-            let w = 150, h = 150; // Boyut tam yarı yarıya düşürüldü (300 -> 150)
+            let w = 150, h = 150;
             let x = (SCREEN_WIDTH - w) / 2 + (Math.random() * 100 - 50);
             let y = (SCREEN_HEIGHT - h) / 2 + (Math.random() * 100 - 50);
             walls.push({
@@ -880,8 +882,8 @@
                 
                 for (let wall of walls) {
                     let r = wall.rect;
-                    ctx.fillStyle = `rgba(${Math.floor(wall.color[0]*255)}, ${Math.floor(wall.color[1]*255)}, ${Math.floor(wall.color[2]*255)}, 1.0)`;
-                    ctx.fillRect(r[0], r[1], r[2], r[3]);
+                    ctx.fillStyle = `rgba(${Math.floor(wall.color*255)}, ${Math.floor(wall.color*255)}, ${Math.floor(wall.color*255)}, 1.0)`;
+                    ctx.fillRect(r, r, r, r);
                 }
                 
                 for (let spider of spider_list) {
@@ -930,10 +932,10 @@
         window.addEventListener('mouseup', (e) => triggerInputEnd());
         
         window.addEventListener('touchstart', (e) => {
-            if(e.touches.length > 0) triggerInputStart(e.touches[0].clientX, e.touches[0].clientY);
+            if(e.touches.length > 0) triggerInputStart(e.touches.clientX, e.touches.clientY);
         }, { passive: true });
         window.addEventListener('touchmove', (e) => {
-            if(e.touches.length > 0) triggerInputMove(e.touches[0].clientX, e.touches[0].clientY);
+            if(e.touches.length > 0) triggerInputMove(e.touches.clientX, e.touches.clientY);
         }, { passive: true });
         window.addEventListener('touchend', () => triggerInputEnd(), { passive: true });
         
@@ -942,15 +944,15 @@
                 if (clientY < SCREEN_HEIGHT * 0.90) {
                     if (clientX > SCREEN_WIDTH * 0.1 && clientX < SCREEN_WIDTH * 0.9) {
                         if (current_view === "main" && clientY > SCREEN_HEIGHT * 0.30) return;
-                        if (current_view === "settings" && clientY > SCREEN_HEIGHT * 0.12) return; // Görsel engelleme limiti güncellendi
-                        if (current_view === "about" && clientY > SCREEN_HEIGHT * 0.15) return;
+                        if (current_view === "settings" && clientY > SCREEN_HEIGHT * 0.12) return;
+                        if (current_view === "about" && clientY > SCREEN_HEIGHT * 0.10) return;
                     }
                 }
             }
             
             for (let i = walls.length - 1; i >= 0; i--) {
                 let r = walls[i].rect;
-                if (clientX >= r[0] && clientX <= r[0] + r[2] && clientY >= r[1] && clientY <= r[1] + r[3]) {
+                if (clientX >= r && clientX <= r + r && clientY >= r && clientY <= r + r) {
                     if (walls[i].is_big) { for (let s of spider_list) { if (s.is_orbiting) s.is_orbiting = false; } }
                     particle_emitter.spawnShatteredWall(r, walls[i].color);
                     walls.splice(i, 1);
@@ -983,7 +985,7 @@
             let history = drag_spider.touch_history;
             
             if (history.length >= 2) {
-                let [t1, x1, y1] = history[0];
+                let [t1, x1, y1] = history;
                 let [t2, x2, y2] = history[history.length - 1];
                 let dt = (t2 - t1) / 1000;
                 
