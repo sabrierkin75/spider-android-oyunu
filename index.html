@@ -2,29 +2,21 @@
 <html lang="tr">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>SpiderAndroid</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Spider Android HTML5 Edition</title>
     <style>
-        body, html {
-            margin: 0;
-            padding: 0;
-            width: 100%;
-            height: 100%;
-            overflow: hidden;
-            background-color: #000;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-        canvas {
-            display: block;
-            max-width: 100%;
-            max-height: 100%;
-            box-shadow: 0 0 20px rgba(0,0,0,0.8);
-        }
+        body, html { margin: 0; padding: 0; overflow: hidden; background: #1f1f1f; width: 100%; height: 100%; }
+        canvas { display: block; width: 100vw; height: 100vh; }
+        #ui-panel { position: absolute; top: 10px; left: 10px; z-index: 10; display: flex; flex-direction: column; gap: 5px; }
+        button { background: #27c15b; color: white; border: none; padding: 8px 15px; border-radius: 5px; font-weight: bold; cursor: pointer; }
+        button.stop { background: #ed4242; }
     </style>
 </head>
 <body>
+
+    <div id="ui-panel">
+        <button id="toggle-btn" onclick="toggleSpiders()">Hareketi Durdur</button>
+    </div>
 
     <canvas id="gameCanvas"></canvas>
 
@@ -32,97 +24,141 @@
         const canvas = document.getElementById('gameCanvas');
         const ctx = canvas.getContext('2d');
 
-        // Android Cihazlar İçin Dikey Çözünürlük Standardı
-        canvas.width = 1080;
-        canvas.height = 1920;
+        // Ekran boyutlarını ayarla
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
 
-        // Görsellerin Tanımlanması
-        const bg = new Image();
-        bg.src = 'anims/bg_v.png';
+        let spiderActive = true;
+        let spiders = [];
+        const maxSpiders = 6;
+        const creatureSize = 80;
+        const moveSpeed = 3;
 
-        const eye = new Image();
-        eye.src = 'eye.png';
+        // Yaratık (Spider) Sınıfı
+        class Spider {
+            constructor() {
+                this.size = creatureSize;
+                // Ekran kenarlarından rastgele spawn olma
+                const edge = Math.floor(Math.random() * 4);
+                if (edge === 0) { this.x = -this.size; this.y = Math.random() * canvas.height; }
+                else if (edge === 1) { this.x = canvas.width; this.y = Math.random() * canvas.height; }
+                else if (edge === 2) { this.x = Math.random() * canvas.width; this.y = -this.size; }
+                else { this.x = Math.random() * canvas.width; this.y = canvas.height; }
 
-        const closeBtn = new Image();
-        closeBtn.src = 'close.png'; // Yeni eklenen kapatma butonu görseli
+                this.angle = Math.random() * Math.PI * 2;
+                this.isGrabbed = false;
+            }
 
-        let imagesLoaded = 0;
-        const totalImages = 3;
+            update() {
+                if (this.isGrabbed || !spiderActive) return;
 
-        function imageLoaded() {
-            imagesLoaded++;
-            if (imagesLoaded === totalImages) {
-                initTouchControls();
-                gameLoop();
+                // İleri hareket vektörleri
+                this.x += Math.cos(this.angle) * moveSpeed;
+                this.y += Math.sin(this.angle) * moveSpeed;
+
+                // Ekran dışına çıkma kontrolü (Sizin Python kodundaki mantık)
+                if (this.x < -100 || this.x > canvas.width + 100 || this.y < -100 || this.y > canvas.height + 100) {
+                    this.x = canvas.width / 2;
+                    this.y = canvas.height / 2;
+                    this.angle = Math.random() * Math.PI * 2;
+                }
+            }
+
+            draw() {
+                ctx.save();
+                ctx.translate(this.x + this.size / 2, this.y + this.size / 2);
+                ctx.rotate(this.angle);
+
+                // Kivy görseli yerine HTML5 Canvas çizimi (Örnek böcek formu)
+                ctx.fillStyle = "#e0a040";
+                ctx.beginPath();
+                ctx.arc(0, 0, this.size / 3, 0, Math.PI * 2); // Gövde
+                ctx.fill();
+
+                // Gözler
+                ctx.fillStyle = "white";
+                ctx.beginPath(); ctx.arc(10, -5, 4, 0, Math.PI * 2); ctx.arc(10, 5, 4, 0, Math.PI * 2);
+                ctx.fill();
+
+                ctx.restore();
             }
         }
 
-        bg.onload = imageLoaded;
-        eye.onload = imageLoaded;
-        closeBtn.onload = imageLoaded;
-
-        // Kapatma Butonunun Ekranda Duracağı Koordinatlar ve Boyutlar
-        const closeBtnConfig = {
-            x: 950,
-            y: 50,
-            width: 80,
-            height: 80
-        };
-
-        function draw() {
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            
-            // Arka Plan
-            ctx.drawImage(bg, 0, 0, canvas.width, canvas.height);
-            
-            // Örümcek Gözü (Merkezde)
-            ctx.drawImage(eye, (canvas.width / 2) - (eye.width / 2), (canvas.height / 2) - (eye.height / 2));
-
-            // Kapatma Butonu (Sağ Üst Köşede)
-            ctx.drawImage(closeBtn, closeBtnConfig.x, closeBtnConfig.y, closeBtnConfig.width, closeBtnConfig.height);
+        // Başlangıçta yaratıkları oluştur
+        for (let i = 0; i < maxSpiders; i++) {
+            spiders.push(new Spider());
         }
 
-        function update() {
-            // Animasyonlar ve mantıksal güncellemeler buraya gelecek
-        }
+        // Dokunma / Mouse Kontrolleri (Sürükleyip Bırakma Mekaniği)
+        let activeSpider = null;
 
-        function gameLoop() {
-            update();
-            draw();
-            requestAnimationFrame(gameLoop);
-        }
+        canvas.addEventListener('mousedown', e => touchStart(e.clientX, e.clientY));
+        canvas.addEventListener('mousemove', e => touchMove(e.clientX, e.clientY));
+        canvas.addEventListener('mouseup', () => touchEnd());
 
-        // Dokunma (Touch) ve Tıklama Kontrolleri
-        function initTouchControls() {
-            const eventType = 'ontouchstart' in window ? 'touchstart' : 'mousedown';
-            
-            canvas.addEventListener(eventType, function(e) {
-                e.preventDefault();
-                
-                // Dokunulan noktanın canvas ölçeğine göre hesaplanması
-                const rect = canvas.getBoundingClientRect();
-                const scaleX = canvas.width / rect.width;
-                const scaleY = canvas.height / rect.height;
-                
-                const clientX = e.touches ? e.touches[0].clientX : e.clientX;
-                const clientY = e.touches ? e.touches[0].clientY : e.clientY;
-                
-                const touchX = (clientX - rect.left) * scaleX;
-                const touchY = (clientY - rect.top) * scaleY;
+        canvas.addEventListener('touchstart', e => {
+            const touch = e.touches[0];
+            touchStart(touch.clientX, touch.clientY);
+        });
+        canvas.addEventListener('touchmove', e => {
+            const touch = e.touches[0];
+            touchMove(touch.clientX, touch.clientY);
+        });
+        canvas.addEventListener('touchend', () => touchEnd());
 
-                // Kapatma butonuna basılıp basılmadığının kontrolü
-                if (touchX >= closeBtnConfig.x && touchX <= closeBtnConfig.x + closeBtnConfig.width &&
-                    touchY >= closeBtnConfig.y && touchY <= closeBtnConfig.y + closeBtnConfig.height) {
-                    
-                    // AppCreator24 veya Web WebView kapatma tetikleyicisi
-                    if (navigator.app && navigator.app.exitApp) {
-                        navigator.app.exitApp(); // Android uygulamasını kapatır
-                    } else {
-                        window.close(); // Tarayıcı sekmesini kapatır
-                    }
+        function touchStart(x, y) {
+            spiders.forEach(spider => {
+                if (x >= spider.x && x <= spider.x + spider.size && y >= spider.y && y <= spider.y + spider.size) {
+                    spider.isGrabbed = true;
+                    activeSpider = spider;
                 }
             });
         }
+
+        function touchMove(x, y) {
+            if (activeSpider) {
+                activeSpider.x = x - activeSpider.size / 2;
+                activeSpider.y = y - activeSpider.size / 2;
+            }
+        }
+
+        function touchEnd() {
+            if (activeSpider) {
+                activeSpider.isGrabbed = false;
+                activeSpider.angle = Math.random() * Math.PI * 2; // Bırakınca yeni yöne gitsin
+                activeSpider = null;
+            }
+        }
+
+        function toggleSpiders() {
+            spiderActive = !spiderActive;
+            const btn = document.getElementById('toggle-btn');
+            if (spiderActive) {
+                btn.textContent = "Hareketi Durdur";
+                btn.classList.remove('stop');
+            } else {
+                btn.textContent = "Hareketi Başlat";
+                btn.classList.add('stop');
+            }
+        }
+
+        // Ana Oyun Döngüsü (Kivy içindeki Clock.schedule_interval karşılığı)
+        function gameLoop() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            spiders.forEach(spider => {
+                spider.update();
+                spider.draw();
+            });
+
+            requestAnimationFrame(gameLoop);
+        }
+
+        gameLoop();
     </script>
 </body>
 </html>
