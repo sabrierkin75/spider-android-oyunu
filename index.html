@@ -83,9 +83,8 @@
             gap: 8px;
         }
         #about-view {
-            top: 10%;
-            height: 85%;
-            justify-content: space-between;
+            top: 15%;
+            height: 80%;
         }
         .title-label {
             width: 80%;
@@ -159,7 +158,7 @@
         .control-btn.edge-max { background-color: #21c444; }
         .about-card {
             width: 100%;
-            flex: 1;
+            height: 60%;
             background-color: rgba(13, 13, 13, 0.85);
             border-radius: 15px;
             color: white;
@@ -168,7 +167,6 @@
             line-height: 1.5;
             text-align: center;
             overflow-y: auto;
-            margin-bottom: 10px;
         }
         .bold-green { color: #45b870; font-weight: bold; }
         .bold-text { font-weight: bold; }
@@ -256,7 +254,7 @@
                     Bu uygulama, ekran üzerinde rastgele gezinen yaratıklar, parçalanabilir dinamik duvarlar ve özel güçler içeren interaktif bir simülasyondur.<br><br>
                     <span class="bold-text">Özellikler:</span><br>
                     • Altın küreleri toplayarak süper hıza ulaşın.<br>
-                    • Süper modda engelleri ve rakip yaratıkları yok edin.<br>
+                    • Süper modda engelleri ve rakip yaratıkları yok edin.\n"
                     • Ayarlar menüsünden tüm fiziksel sınırları canlı olarak yönetin.
                 </div>
                 <button class="visual-btn btn-green" onclick="switchView('main')">Ana Menü</button>
@@ -347,9 +345,9 @@
                         vx: Math.cos(angle) * speed, vy: Math.sin(angle) * speed,
                         size: Math.random() * 12 + 8,
                         color: [
-                            Math.min(1, Math.max(0, color + (Math.random() * 0.3 - 0.15))),
-                            Math.min(1, Math.max(0, color + (Math.random() * 0.3 - 0.15))),
-                            Math.min(1, Math.max(0, color + (Math.random() * 0.3 - 0.15))),
+                            Math.min(1, Math.max(0, color[0] + (Math.random() * 0.3 - 0.15))),
+                            Math.min(1, Math.max(0, color[1] + (Math.random() * 0.3 - 0.15))),
+                            Math.min(1, Math.max(0, color[2] + (Math.random() * 0.3 - 0.15))),
                             1.0
                         ],
                         life: 1.5, decay: Math.random() * 1.0 + 1.0,
@@ -364,7 +362,7 @@
                     type: 2, x: x + Math.random() * size, y: y + Math.random() * size,
                     vx: Math.random() * 30 - 15, vy: Math.random() * 30 - 15,
                     size: Math.random() * 6 + 6,
-                    color: [Math.min(1, Math.max(0.8, color + (Math.random() * 0.2 - 0.1))), Math.min(1, Math.max(0.7, color + (Math.random() * 0.2 - 0.1))), Math.random() * 0.3, 1.0],
+                    color: [Math.min(1, Math.max(0.8, color[0] + (Math.random() * 0.2 - 0.1))), Math.min(1, Math.max(0.7, color[1] + (Math.random() * 0.2 - 0.1))), Math.random() * 0.3, 1.0],
                     life: 0.6, decay: Math.random() * 0.6 + 1.2,
                     rot: Math.random() * 360, rot_speed: Math.random() * 90 - 45
                 });
@@ -383,14 +381,14 @@
                     if(p.type === 2) {
                         p.vx *= 0.92; p.vy *= 0.92;
                         p.size += dt * 25.0;
-                        ctx.fillStyle = `rgba(${Math.floor(p.color*255)}, ${Math.floor(p.color*255)}, ${Math.floor(p.color*255)}, ${alpha})`;
+                        ctx.fillStyle = `rgba(${Math.floor(p.color[0]*255)}, ${Math.floor(p.color[1]*255)}, ${Math.floor(p.color[2]*255)}, ${alpha})`;
                         ctx.fillRect(p.x - p.size/2, p.y - p.size/2, p.size, p.size);
                     } else {
                         p.rot += p.rot_speed * dt;
                         ctx.save();
                         ctx.translate(p.x, p.y);
                         ctx.rotate(p.rot * Math.PI / 180);
-                        ctx.fillStyle = `rgba(${Math.floor(p.color*255)}, ${Math.floor(p.color*255)}, ${Math.floor(p.color*255)}, ${alpha})`;
+                        ctx.fillStyle = `rgba(${Math.floor(p.color[0]*255)}, ${Math.floor(p.color[1]*255)}, ${Math.floor(p.color[2]*255)}, ${alpha})`;
                         
                         if(p.type === 0) {
                             ctx.fillRect(-p.size/2, -p.size/2, p.size, p.size);
@@ -449,7 +447,8 @@
                 this.roll_angle = 0.0;
                 this.roll_speed = 0.0;
                 
-                // Klasördeki 0.png, 1.png, 2.png, 3.png resimlerini yükleme dizisi
+                this.legs_phase = Math.random() * Math.PI * 2;
+                
                 this.total_frames = 4; 
                 this.loaded_images = [];
                 this.loadFrames();
@@ -464,6 +463,53 @@
                     this.loaded_images.push(img);
                 }
             }
+            update(dt, sw, sh) {
+                if (this.is_grabbed) return;
+                this.anim_time += dt;
+                
+                if (Math.abs(this.roll_speed) > 0.1) {
+                    this.roll_angle += this.roll_speed * dt;
+                    this.roll_speed *= 0.15;
+                } else {
+                    this.roll_speed = 0.0;
+                    if (Math.abs(this.roll_angle) > 0.1) this.roll_angle += (0.0 - this.roll_angle) * (dt * 8.0);
+                    else this.roll_angle = 0.0;
+                }
+                
+                if (this.is_super) {
+                    this.super_timer -= dt;
+                    if (this.super_timer <= 0) this.is_super = false;
+                }
+                
+                let current_folder = animation_folders[settings["animation_folder_idx"] % animation_folders.length];
+                let local = settings["folder_settings"][current_folder];
+                
+                let base_spd = local["move_speed"] * 30;
+                if (this.is_super) base_spd *= local["super_speed_mult"];
+                
+                if (this.is_flung) {
+                    let current_speed = Math.sqrt(this.vx * this.vx + this.vy * this.vy);
+                    if (current_speed > base_spd) {
+                        this.vx *= 0.975; this.vy *= 0.975;
+                        this.angle = Math.atan2(this.vy, this.vx) % (Math.PI * 2);
+                    } else { this.is_flung = false; }
+                } else if (!this.is_orbiting) {
+                    this.vx = Math.cos(this.angle) * base_spd;
+                    this.vy = Math.sin(this.angle) * base_spd;
+                }
+                
+                if (this.is_orbiting) {
+                    let x_m = this.orbit_wx - this.size + 15 + this.visual_offset;
+                    let x_mx = this.orbit_wx + this.orbit_ww - 15 - this.visual_offset;
+                    let y_m = this.orbit_wy - this.size + 15 + this.visual_offset;
+                    let y_mx = this.orbit_wy + this.orbit_wh - 15 - this.visual_offset;
+                    
+                    let t_ang = Math.PI;
+                    if (this.orbit_phase === 1) t_ang = Math.PI * 0.5;
+                    else if (this.orbit_phase === 2) t_ang = 0.0;
+                    else if (this.orbit_phase === 3) t_ang = Math.PI * 1.5;
+                    
+                    let c_spd = base_spd * Math.max(0.5, 1.0 - (Math.abs((t_ang - this.angle + Math.PI) % (Math.PI * 2) - Math.PI) / (Math.PI * 0.5)) * 0.5);
                     if (this.orbit_phase === 0) {
                         this.y = y_m; this.x -= c_spd * dt;
                         if (this.x <= x_m) { this.x = x_m; this.orbit_phase = 1; }
@@ -492,8 +538,8 @@
                 
                 for (let i = walls.length - 1; i >= 0; i--) {
                     let r = walls[i].rect;
-                    if (n_x + this.visual_offset < r + r && n_x + this.visual_offset + r_sz > r &&
-                        n_y + this.visual_offset < r + r && n_y + this.visual_offset + r_sz > r) {
+                    if (n_x + this.visual_offset < r[0] + r[2] && n_x + this.visual_offset + r_sz > r[0] &&
+                        n_y + this.visual_offset < r[1] + r[3] && n_y + this.visual_offset + r_sz > r[1]) {
                         
                         if (this.is_super) {
                             particle_emitter.spawnShatteredWall(r, walls[i].color);
@@ -501,13 +547,13 @@
                             continue;
                         }
                         
-                        if (Math.min(this.x + this.visual_offset + r_sz - r, r + r - (this.x + this.visual_offset)) <
-                            Math.min(this.y + this.visual_offset + r_sz - r, r + r - (this.y + this.visual_offset))) {
+                        if (Math.min(this.x + this.visual_offset + r_sz - r[0], r[0] + r[2] - (this.x + this.visual_offset)) <
+                            Math.min(this.y + this.visual_offset + r_sz - r[1], r[1] + r[3] - (this.y + this.visual_offset))) {
                             this.vx = -this.vx;
-                            n_x = this.x + this.size/2 < r + r/2 ? r - this.size + this.visual_offset - 2 : r + r - this.visual_offset + 2;
+                            n_x = this.x + this.size/2 < r[0] + r[2]/2 ? r[0] - this.size + this.visual_offset - 2 : r[0] + r[2] - this.visual_offset + 2;
                         } else {
                             this.vy = -this.vy;
-                            n_y = this.y + this.size/2 < r + r/2 ? r - this.size + this.visual_offset - 2 : r + r - this.visual_offset + 2;
+                            n_y = this.y + this.size/2 < r[0] + r[2]/2 ? r[1] - this.size + this.visual_offset - 2 : r[1] + r[3] - this.visual_offset + 2;
                         }
                         this.angle = (Math.atan2(this.vy, this.vx) + (Math.random() * 0.2 - 0.1)) % (Math.PI * 2);
                         let current_speed = Math.sqrt(this.vx * this.vx + this.vy * this.vy);
@@ -518,7 +564,6 @@
                         return;
                     }
                 }
-                
                 if (this.is_super) particle_emitter.spawnSuperTrail(this.x, this.y, this.size, [1.0, 0.84, 0.0]);
                 
                 for (let other of spider_list) {
@@ -553,6 +598,7 @@
                         let v1t = this.vx * tx_vec + this.vy * ty_vec;
                         let v2n = other.vx * nx_vec + other.vy * ny_vec;
                         let v2t = other.vx * tx_vec + other.vy * ty_vec;
+                        
                         let v1n_new = v2n;
                         let v2n_new = v1n;
                         
@@ -597,21 +643,7 @@
                     this.vx = Math.cos(this.angle) * base_spd;
                     this.vy = Math.sin(this.angle) * base_spd;
                 }
-                
-                if (this.anim_time > (local["anim_speed"] / 1000.0)) {
-                    if (Math.sqrt(this.vx * this.vx + this.vy * this.vy) > 5) {
-                        this.legs_phase += 0.4;
-                    }
-                    this.anim_time = 0;
-                }
             }
-            
-            startOrbiting(wx, wy, ww, wh) {
-                if (this.is_grabbed) return;
-                this.is_orbiting = true; this.orbit_wx = wx; this.orbit_wy = wy; this.orbit_ww = ww; this.orbit_wh = wh;
-                this.orbit_phase = 0; this.x = wx - 15; this.y = wy - this.size - 5 + this.visual_offset;
-            }
-            
             draw() {
                 ctx.save();
                 ctx.translate(this.x + this.size/2, this.y + this.size/2);
@@ -648,6 +680,7 @@
                         fx = -1;
                     }
                 }
+                
                 ctx.rotate((t_ang + (this.roll_angle * fx)) * Math.PI / 180);
                 ctx.scale(fx, fy);
                 
@@ -658,15 +691,14 @@
                     ctx.fill();
                 }
                 
-                // EĞER ARKA PLANDA KLASÖR RESİMLERİ YÜKLENDİYSE RESMİ ÇİZ, YOKSA VEKTÖREL YEDEK PLANI ÇALIŞTIR
                 let active_img = this.loaded_images[this.current_frame];
                 if (active_img && active_img.complete && active_img.naturalWidth !== 0) {
                     ctx.drawImage(active_img, -this.size/2, -this.size/2, this.size, this.size);
                 } else {
-                    // Yedek Çizim Planı (Anatomik Çizgiler)
                     let theme = current_folder;
                     ctx.strokeStyle = theme === "cyber" ? "#00ffcc" : (theme === "plasma" ? "#ff00ff" : (theme === "shadow" ? "#444" : "#a05a2c"));
                     ctx.lineWidth = this.size / 24;
+                    
                     for (let i = 0; i < 8; i++) {
                         let isTopSide = i < 4; let legIdx = i % 4;
                         let baseAngle = isTopSide ? (-Math.PI/2 - (legIdx * 0.25 - 0.375)) : (Math.PI/2 + (legIdx * 0.25 - 0.375));
@@ -686,17 +718,49 @@
                     ctx.beginPath(); ctx.arc(this.size * 0.34, -this.size * 0.05, this.size / 35, 0, Math.PI * 2); ctx.fill();
                     ctx.beginPath(); ctx.arc(this.size * 0.34, this.size * 0.05, this.size / 35, 0, Math.PI * 2); ctx.fill();
                 }
-                
                 ctx.restore();
             }
         }
+        function spawnRandomWall() {
+            if (walls.length >= 2) return;
+            let is_hz = Math.random() > 0.5;
+            let w = is_hz ? Math.floor(Math.random() * 250) + 200 : Math.floor(Math.random() * 50) + 40;
+            let h = is_hz ? Math.floor(Math.random() * 50) + 40 : Math.floor(Math.random() * 250) + 200;
+            let x = Math.floor(Math.random() * (SCREEN_WIDTH - w - 100)) + 50;
+            let y = Math.floor(Math.random() * (SCREEN_HEIGHT - h - 240)) + 120;
+            
+            for (let wall of walls) {
+                let r = wall.rect;
+                if (x - 120 < r[0] + r[2] && x + w + 120 > r[0] && y - 120 < r[1] + r[3] && y + h + 120 > r[1]) return;
+            }
+            walls.push({
+                rect: [x, y, w, h],
+                color: [Math.random(), Math.random(), Math.random(), 1.0],
+                life: 0.0, is_big: false
+            });
+        }
+        
+        function spawnBigCentralWall() {
+            let w = 150, h = 150;
+            let x = (SCREEN_WIDTH - w) / 2 + (Math.random() * 100 - 50);
+            let y = (SCREEN_HEIGHT - h) / 2 + (Math.random() * 100 - 50);
+            walls.push({
+                rect: [x, y, w, h],
+                color: [0.85, 0.18, 0.18, 1.0],
+                life: 0.0, is_big: true
+            });
+            let avail = spider_list.filter(s => !s.is_orbiting);
+            if (avail.length > 0) {
+                avail[Math.floor(Math.random() * avail.length)].startOrbiting(x, y, w, h);
+            }
+        }
+        
         function spawnGoldOrb() {
             let size = 50.0;
             let x = Math.random() * (SCREEN_WIDTH - size - 100) + 50;
             let y = Math.random() * (SCREEN_HEIGHT - size - 300) + 150;
             gold_orb = { x: x, y: y, size: size };
         }
-        
         function updateGame(timestamp) {
             let dt = 1 / 60;
             
@@ -739,9 +803,50 @@
                         walls.splice(i, 1);
                     }
                 }
+                
+                if (spider_list.length < local["max_creatures"]) {
+                    spider_list.push(new KivySpiderEntity(SCREEN_WIDTH, SCREEN_HEIGHT));
+                }
+                
+                if (gold_orb) {
+                    ctx.beginPath();
+                    ctx.arc(gold_orb.x + gold_orb.size/2, gold_orb.y + gold_orb.size/2, gold_orb.size * 0.7, 0, Math.PI * 2);
+                    ctx.fillStyle = "rgba(255, 215, 0, 0.4)";
+                    ctx.fill();
+                    
+                    ctx.beginPath();
+                    ctx.arc(gold_orb.x + gold_orb.size/2, gold_orb.y + gold_orb.size/2, gold_orb.size/2, 0, Math.PI * 2);
+                    ctx.fillStyle = "rgba(255, 215, 0, 1.0)";
+                    ctx.fill();
+                }
+                
+                for (let wall of walls) {
+                    let r = wall.rect;
+                    ctx.fillStyle = `rgba(${Math.floor(wall.color[0]*255)}, ${Math.floor(wall.color[1]*255)}, ${Math.floor(wall.color[2]*255)}, 1.0)`;
+                    ctx.fillRect(r[0], r[1], r[2], r[3]);
+                }
+                for (let spider of spider_list) {
+                    spider.update(dt, SCREEN_WIDTH, SCREEN_HEIGHT);
+                    spider.draw();
+                    
+                    if (gold_orb) {
+                        let dist = Math.sqrt(Math.pow((spider.x + spider.size/2) - (gold_orb.x + gold_orb.size/2), 2) + Math.pow((spider.y + spider.size/2) - (gold_orb.y + gold_orb.size/2), 2));
+                        if (dist < (spider.size / 2 + gold_orb.size / 2 - spider.visual_offset)) {
+                            spider.activateSuperPower(15.0);
+                            gold_orb = null;
+                        }
+                    }
+                    
+                    spider.anim_time += dt;
+                    if (spider.anim_time > (local["anim_speed"] / 1000.0)) {
+                        if (Math.sqrt(spider.vx * spider.vx + spider.vy * spider.vy) > 5) {
+                            spider.current_frame = (spider.current_frame + 1) % spider.total_frames;
+                        }
+                        spider.anim_time = 0;
+                    }
+                }
             }
             
-            // --- HAKKINDA EKRANI IŞILTI MOTORU (EN ÜST KATMAN ÇİZİM ALANI) ---
             if (current_view === "about" && ui_visible) {
                 sparkle_spawn_timer += dt;
                 if (sparkle_spawn_timer >= 0.25 && about_sparkles.length < 15) {
@@ -785,93 +890,17 @@
                     ctx.restore();
                 }
             }
-            
-            if (spider_active) {
-                let current_folder = animation_folders[settings["animation_folder_idx"] % animation_folders.length];
-                let local = settings["folder_settings"][current_folder];
-                
-                if (spider_list.length >= 6) {
-                    if (!gold_orb) {
-                        gold_orb_timer += dt;
-                        if (gold_orb_timer >= gold_orb_spawn_time) {
-                            spawnGoldOrb();
-                            gold_orb_timer = 0.0;
-                            gold_orb_spawn_time = Math.random() * 20.0 + 20.0;
-                        }
-                    }
-                } else {
-                    gold_orb_timer = 0.0;
-                    gold_orb = null;
-                }
-                
-                big_wall_timer += dt;
-                if (big_wall_timer >= big_wall_interval) { big_wall_timer = 0; spawnBigCentralWall(); }
-                
-                wall_timer += dt;
-                if (wall_timer > next_wall_time) { spawnRandomWall(); wall_timer = 0; next_wall_time = Math.random() * 6.0 + 6.0; }
-                
-                for (let i = walls.length - 1; i >= 0; i--) {
-                    walls[i].life += dt;
-                    if (walls[i].life >= 30.0) {
-                        if (walls[i].is_big) {
-                            for (let s of spider_list) { if (s.is_orbiting) s.is_orbiting = false; }
-                        }
-                        particle_emitter.spawnShatteredWall(walls[i].rect, walls[i].color);
-                        walls.splice(i, 1);
-                    }
-                }
-                if (spider_list.length < local["max_creatures"]) {
-                    spider_list.push(new KivySpiderEntity(SCREEN_WIDTH, SCREEN_HEIGHT));
-                }
-                
-                if (gold_orb) {
-                    ctx.beginPath();
-                    ctx.arc(gold_orb.x + gold_orb.size/2, gold_orb.y + gold_orb.size/2, gold_orb.size * 0.7, 0, Math.PI * 2);
-                    ctx.fillStyle = "rgba(255, 215, 0, 0.4)";
-                    ctx.fill();
-                    
-                    ctx.beginPath();
-                    ctx.arc(gold_orb.x + gold_orb.size/2, gold_orb.y + gold_orb.size/2, gold_orb.size/2, 0, Math.PI * 2);
-                    ctx.fillStyle = "rgba(255, 215, 0, 1.0)";
-                    ctx.fill();
-                }
-                
-                for (let wall of walls) {
-                    let r = wall.rect;
-                    ctx.fillStyle = `rgba(${Math.floor(wall.color*255)}, ${Math.floor(wall.color*255)}, ${Math.floor(wall.color*255)}, 1.0)`;
-                    ctx.fillRect(r, r, r, r);
-                }
-                
-                for (let spider of spider_list) {
-                    spider.update(dt, SCREEN_WIDTH, SCREEN_HEIGHT);
-                    spider.draw();
-                    
-                    if (gold_orb) {
-                        let dist = Math.sqrt(Math.pow((spider.x + spider.size/2) - (gold_orb.x + gold_orb.size/2), 2) + Math.pow((spider.y + spider.size/2) - (gold_orb.y + gold_orb.size/2), 2));
-                        if (dist < (spider.size / 2 + gold_orb.size / 2 - spider.visual_offset)) {
-                            spider.activateSuperPower(15.0);
-                            gold_orb = null;
-                        }
-                    }
-                }
-            }
-            
             requestAnimationFrame(updateGame);
         }
-        
         function drawBackground() {
             let current_folder = animation_folders[settings["animation_folder_idx"] % animation_folders.length];
             let local = settings["folder_settings"][current_folder] || settings;
             let bg_idx = local["bg_image_idx"] || 0;
             let is_portrait = SCREEN_HEIGHT >= SCREEN_WIDTH;
             
-            if (bg_idx === 0) {
-                ctx.fillStyle = "#1e1e1e";
-            } else if (bg_idx === 1) {
-                ctx.fillStyle = is_portrait ? "#141d26" : "#1c2833";
-            } else {
-                ctx.fillStyle = is_portrait ? "#251820" : "#1f1424";
-            }
+            if (bg_idx === 0) { ctx.fillStyle = "#1e1e1e"; } 
+            else if (bg_idx === 1) { ctx.fillStyle = is_portrait ? "#141d26" : "#1c2833"; } 
+            else { ctx.fillStyle = is_portrait ? "#251820" : "#1f1424"; }
             ctx.fillRect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
             
             ctx.strokeStyle = "rgba(255, 255, 255, 0.03)";
@@ -881,17 +910,15 @@
             for (let y = 0; y < SCREEN_HEIGHT; y += step) { ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(SCREEN_WIDTH, y); ctx.stroke(); }
         }
         
-        let drag_spider = null;
-        
         window.addEventListener('mousedown', (e) => triggerInputStart(e.clientX, e.clientY));
         window.addEventListener('mousemove', (e) => triggerInputMove(e.clientX, e.clientY));
         window.addEventListener('mouseup', (e) => triggerInputEnd());
         
         window.addEventListener('touchstart', (e) => {
-            if(e.touches.length > 0) triggerInputStart(e.touches.clientX, e.touches.clientY);
+            if(e.touches && e.touches.length > 0) triggerInputStart(e.touches[0].clientX, e.touches[0].clientY);
         }, { passive: true });
         window.addEventListener('touchmove', (e) => {
-            if(e.touches.length > 0) triggerInputMove(e.touches.clientX, e.touches.clientY);
+            if(e.touches && e.touches.length > 0) triggerInputMove(e.touches[0].clientX, e.touches[0].clientY);
         }, { passive: true });
         window.addEventListener('touchend', () => triggerInputEnd(), { passive: true });
         
@@ -901,20 +928,21 @@
                     if (clientX > SCREEN_WIDTH * 0.1 && clientX < SCREEN_WIDTH * 0.9) {
                         if (current_view === "main" && clientY > SCREEN_HEIGHT * 0.30) return;
                         if (current_view === "settings" && clientY > SCREEN_HEIGHT * 0.12) return;
-                        if (current_view === "about" && clientY > SCREEN_HEIGHT * 0.10) return;
+                        if (current_view === "about" && clientY > SCREEN_HEIGHT * 0.15) return;
                     }
                 }
             }
             
             for (let i = walls.length - 1; i >= 0; i--) {
                 let r = walls[i].rect;
-                if (clientX >= r && clientX <= r + r && clientY >= r && clientY <= r + r) {
+                if (clientX >= r[0] && clientX <= r[0] + r[2] && clientY >= r[1] && clientY <= r[1] + r[3]) {
                     if (walls[i].is_big) { for (let s of spider_list) { if (s.is_orbiting) s.is_orbiting = false; } }
                     particle_emitter.spawnShatteredWall(r, walls[i].color);
                     walls.splice(i, 1);
                     return;
                 }
             }
+            
             for (let spider of spider_list) {
                 if (clientX >= spider.x && clientX <= spider.x + spider.size && clientY >= spider.y && clientY <= spider.y + spider.size) {
                     drag_spider = spider;
@@ -926,7 +954,6 @@
                 }
             }
         }
-        
         function triggerInputMove(clientX, clientY) {
             if (!drag_spider) return;
             drag_spider.touch_history.push([Date.now(), clientX, clientY]);
@@ -941,7 +968,7 @@
             let history = drag_spider.touch_history;
             
             if (history.length >= 2) {
-                let [t1, x1, y1] = history;
+                let [t1, x1, y1] = history[0];
                 let [t2, x2, y2] = history[history.length - 1];
                 let dt = (t2 - t1) / 1000;
                 
@@ -978,82 +1005,6 @@
             document.getElementById('about-view').classList.add('hidden');
             
             if (ui_visible) document.getElementById(`${view_name}-view`).classList.remove('hidden');
-        }
-        function toggleSpider() {
-            spider_active = !spider_active;
-            const btn = document.getElementById('status-btn');
-            const lbl = document.getElementById('main-title');
-            
-            if (spider_active) {
-                btn.textContent = "Hareketi durdur"; btn.className = "visual-btn btn-red";
-                lbl.textContent = "Yaratık yürüyor"; lbl.className = "title-label title-active";
-                settings["start_program"] = 1;
-            } else {
-                btn.textContent = "Hareketi başlat"; btn.className = "visual-btn btn-green";
-                lbl.textContent = "Yaratık duruyor"; lbl.className = "title-label";
-                settings["start_program"] = 0;
-                spider_list = []; walls = []; gold_orb = null;
-            }
-            saveSettings();
-        }
-        
-        function changeCreatureTypeStep(dir) {
-            settings["animation_folder_idx"] = (settings["animation_folder_idx"] + dir + animation_folders.length) % animation_folders.length;
-            syncActiveFolderSettings(); saveSettings();
-            
-            let current_folder = animation_folders[settings["animation_folder_idx"] % animation_folders.length];
-            document.getElementById('lbl-type').innerHTML = `Tür (Type): <span class="bold-green">${current_folder.toUpperCase()}</span>`;
-            
-            while (spider_list.length > settings["max_creatures"]) spider_list.pop();
-            for (let s of spider_list) { s.size = settings["creature_size"]; s.visual_offset = settings["visual_offset"]; }
-            updateUiState();
-        }
-        
-        function changeSettingFaceStep(dir) {
-            let current_folder = animation_folders[settings["animation_folder_idx"] % animation_folders.length];
-            let face = (settings["folder_settings"][current_folder]["image_facing"] + dir + 4) % 4;
-            settings["folder_settings"][current_folder]["image_facing"] = face;
-            settings["image_facing"] = face;
-            saveSettings();
-            
-            const modes = ["0° (SAĞ)", "90° (YUKARI)", "180° (SOL)", "270° (AŞAĞI)"];
-            document.getElementById('lbl-face').innerHTML = `Img Face: <span style="color:#4080e0; font-weight:bold;">${modes[face]}</span>`;
-        }
-        
-        function changeBgImageStep(dir) {
-            let current_folder = animation_folders[settings["animation_folder_idx"] % animation_folders.length];
-            let bg_count = 3;
-            let bg = (settings["folder_settings"][current_folder]["bg_image_idx"] + dir + bg_count) % bg_count;
-            settings["folder_settings"][current_folder]["bg_image_idx"] = bg;
-            settings["bg_image_idx"] = bg;
-            saveSettings();
-            
-            let txt = bg === 0 ? "Varsayılan (bg)" : `Tema ${bg}`;
-            document.getElementById('lbl-bg').innerHTML = `Arka Plan (BG): <span style="color:#e0a040; font-weight:bold;">${txt}</span>`;
-        }
-        
-        function updateStatLive(key, amount, min_v, max_v) {
-            let current_folder = animation_folders[settings["animation_folder_idx"] % animation_folders.length];
-            let local = settings["folder_settings"][current_folder];
-            
-            local[key] = Math.max(min_v, Math.min(local[key] + amount, max_v));
-            settings[key] = local[key];
-            saveSettings();
-            
-            if (key === "max_creatures") { while(spider_list.length > local[key]) spider_list.pop(); }
-            else if (key === "visual_offset") { for(let s of spider_list) s.visual_offset = local[key]; }
-            else if (key === "creature_size") { for(let s of spider_list) s.size = local[key]; }
-            
-            updateUiState();
-        }
-        
-        function updateMult(amount) {
-            let current_folder = animation_folders[settings["animation_folder_idx"] % animation_folders.length];
-            let local = settings["folder_settings"][current_folder];
-            local["super_speed_mult"] = Math.max(1.5, Math.min(local["super_speed_mult"] + amount, 5.0));
-            settings["super_speed_mult"] = local["super_speed_mult"];
-            saveSettings();
-            updateUiState();
         }
         function updateUiState() {
             let current_folder = animation_folders[settings["animation_folder_idx"] % animation_folders.length];
