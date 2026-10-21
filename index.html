@@ -1,0 +1,596 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Spider Android - Tam Sürüm HTML5</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            user-select: none;
+            -webkit-user-select: none;
+            margin: 0;
+            padding: 0;
+        }
+        body, html {
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            background-color: #1f1f1f;
+            font-family: sans-serif;
+        }
+        #gameCanvas {
+            display: block;
+            width: 100%;
+            height: 100%;
+            background-color: #1f1f1f;
+        }
+        #ui-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+        }
+        .ui-element {
+            pointer-events: auto;
+        }
+        #toggle-ui-btn {
+            position: absolute;
+            top: 4%;
+            right: 5%;
+            width: 55px;
+            height: 55px;
+            background-color: #2c3e50;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 24px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.4);
+            z-index: 100;
+            cursor: pointer;
+        }
+        #menu-panel {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 88%;
+            max-width: 420px;
+            background-color: rgba(15, 15, 15, 0.92);
+            border-radius: 16px;
+            padding: 24px;
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.6);
+            color: white;
+            border: 1px solid rgba(255,255,255,0.05);
+        }
+        .menu-title {
+            text-align: center;
+            font-size: 22px;
+            font-weight: bold;
+            padding: 12px;
+            background: rgba(255,255,255,0.06);
+            border-radius: 10px;
+        }
+        .btn {
+            width: 100%;
+            padding: 15px;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: bold;
+            color: white;
+            text-align: center;
+            cursor: pointer;
+            transition: transform 0.05s ease, background-color 0.2s;
+        }
+        .btn:active {
+            transform: scale(0.96);
+        }
+        .btn-green { background-color: #13db5c; }
+        .btn-red { background-color: #ed4242; }
+        .btn-blue { background-color: #2c3e50; }
+        .btn-cyan { background-color: #2080a0; }
+        .setting-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(5,5,5,0.6);
+            padding: 8px 12px;
+            border-radius: 10px;
+            border: 1px solid rgba(255,255,255,0.02);
+        }
+        .setting-label {
+            font-size: 14px;
+            flex: 1;
+        }
+        .setting-controls {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+        .ctrl-btn {
+            width: 38px;
+            height: 38px;
+            background-color: #2c3e50;
+            border: none;
+            border-radius: 8px;
+            color: white;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        #about-text {
+            font-size: 14px;
+            line-height: 1.6;
+            text-align: left;
+            max-height: 280px;
+            overflow-y: auto;
+            padding-right: 5px;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="gameCanvas"></canvas>
+    <div id="ui-container">
+        <div id="toggle-ui-btn" class="ui-element">👁️</div>
+        <div id="menu-panel" class="ui-element"></div>
+    </div>
+    <script>
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+        const menuPanel = document.getElementById('menu-panel');
+        const toggleUiBtn = document.getElementById('toggle-ui-btn');
+        function resizeCanvas() {
+            canvas.width = window.innerWidth > 100 ? window.innerWidth : 1080;
+            canvas.height = window.innerHeight > 100 ? window.innerHeight : 1920;
+        }
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+        let uiVisible = true;
+        let currentView = "main"; 
+        let spiderActive = false;
+        let animationFolders = ["default", "spider_red", "alien_bug", "cyber_mech"];
+        let folderSettings = {};
+        let settings = {
+            animation_folder_idx: 0,
+            start_program: 0,
+            creature_size: 120,
+            move_speed: 4,
+            anim_speed: 80,
+            max_creatures: 6,
+            image_facing: 0,
+            visual_offset: 15,
+            screen_awake: 0,
+            super_speed_mult: 3.0,
+            bg_image_idx: 0
+        };
+        function syncActiveFolderSettings() {
+            let currentFolder = animationFolders[settings.animation_folder_idx % animationFolders.length];
+            if (!folderSettings[currentFolder]) {
+                folderSettings[currentFolder] = {
+                    move_speed: settings.move_speed,
+                    anim_speed: settings.anim_speed,
+                    max_creatures: settings.max_creatures,
+                    image_facing: settings.image_facing,
+                    visual_offset: settings.visual_offset,
+                    creature_size: settings.creature_size,
+                    bg_image_idx: settings.bg_image_idx,
+                    super_speed_mult: settings.super_speed_mult
+                };
+            }
+            let local = folderSettings[currentFolder];
+            for (let key in local) { settings[key] = local[key]; }
+        }
+        function drawProceduralCreature(ctx, size, frame, isSuper, rollAngle, facingMode) {
+            ctx.save();
+            ctx.translate(size / 2, size / 2);
+            let baseAngle = (facingMode % 4) * 90;
+            ctx.rotate((rollAngle + baseAngle) * Math.PI / 180);
+            if (isSuper) {
+                ctx.fillStyle = "rgba(255, 215, 0, 0.4)";
+                ctx.beginPath(); ctx.arc(0, 0, size * 0.6, 0, Math.PI * 2); ctx.fill();
+                ctx.fillStyle = "rgba(255, 165, 0, 0.2)";
+                ctx.beginPath(); ctx.arc(0, 0, size * 0.75, 0, Math.PI * 2); ctx.fill();
+            }
+            let themeColor = "#45b870";
+            let folder = animationFolders[settings.animation_folder_idx % animationFolders.length];
+            if (folder === "spider_red") themeColor = "#ed4242";
+            if (folder === "alien_bug") themeColor = "#9b5de5";
+            if (folder === "cyber_mech") themeColor = "#00b4d8";
+            let wave = Math.sin(frame * 0.6) * (size * 0.12);
+            ctx.strokeStyle = themeColor;
+            ctx.lineWidth = size * 0.06;
+            ctx.lineCap = "round";
+            for (let i = -3; i <= 3; i++) {
+                if (i === 0) continue;
+                ctx.beginPath();
+                ctx.moveTo(0, i * (size * 0.07));
+                ctx.bezierCurveTo(
+                    i * (size * 0.25), (i * (size * 0.05)) + wave,
+                    i * (size * 0.45), (i * (size * 0.15)) - wave,
+                    i * (size * 0.55), i * (size * 0.3)
+                );
+                ctx.stroke();
+            }
+            ctx.fillStyle = "#161616";
+            ctx.strokeStyle = themeColor;
+            ctx.lineWidth = 4;
+            ctx.beginPath(); ctx.arc(0, 0, size * 0.22, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
+            ctx.fillStyle = isSuper ? "#ffd700" : "#ffffff";
+            ctx.beginPath(); ctx.arc(size * 0.12, -size * 0.06, size * 0.04, 0, Math.PI * 2); ctx.fill();
+            ctx.beginPath(); ctx.arc(size * 0.12, size * 0.06, size * 0.04, 0, Math.PI * 2); ctx.fill();
+            ctx.restore();
+        }
+        class ParticleEmitter {
+            constructor() { this.particles = []; }
+            spawnShatteredWall(rect, color) {
+                let [x, y, w, h] = rect;
+                let effectType = Math.floor(Math.random() * 3);
+                let numParticles = Math.floor(Math.random() * 20) + 30;
+                for (let i = 0; i < numParticles; i++) {
+                    this.particles.push({
+                        type: effectType,
+                        x: x + Math.random() * w, y: y + Math.random() * h,
+                        vx: (Math.random() - 0.5) * 400, vy: (Math.random() - 0.5) * 400,
+                        size: Math.random() * 12 + 8,
+                        color: color, life: 1.5, decay: Math.random() * 1.0 + 1.0,
+                        rot: Math.random() * 360, rotSpeed: (Math.random() - 0.5) * 360
+                    });
+                }
+            }
+            spawnSuperTrail(x, y, size, color) {
+                for (let i = 0; i < 2; i++) {
+                    this.particles.push({
+                        type: 2,
+                        x: x + Math.random() * size, y: y + Math.random() * size,
+                        vx: (Math.random() - 0.5) * 30, vy: (Math.random() - 0.5) * 30,
+                        size: Math.random() * 6 + 6, color: color,
+                        life: 0.6, decay: Math.random() * 0.6 + 1.2, rot: Math.random() * 360, rotSpeed: 0
+                    });
+                }
+            }
+            update(dt) {
+                for (let i = this.particles.length - 1; i >= 0; i--) {
+                    let p = this.particles[i];
+                    p.life -= dt * p.decay;
+                    if (p.life <= 0) { this.particles.splice(i, 1); continue; }
+                    if (p.type === 2) {
+                        p.x += p.vx * dt; p.y += p.vy * dt;
+                        p.vx *= 0.92; p.vy *= 0.92;
+                        p.size += dt * 25.0;
+                    } else {
+                        p.x += p.vx * dt; p.y += p.vy * dt;
+                        p.rot += p.rotSpeed * dt;
+                    }
+                }
+            }
+            draw() {
+                this.particles.forEach(p => {
+                    ctx.save();
+                    ctx.globalAlpha = Math.max(0, p.life);
+                    ctx.fillStyle = p.color;
+                    if (p.type === 1) {
+                        ctx.translate(p.x, p.y); ctx.rotate(p.rot * Math.PI / 180);
+                        ctx.beginPath(); ctx.moveTo(0, -p.size/2); ctx.lineTo(-p.size/2, p.size/2); ctx.lineTo(p.size/2, p.size/2); ctx.closePath(); ctx.fill();
+                    } else {
+                        ctx.translate(p.x, p.y); ctx.rotate(p.rot * Math.PI / 180);
+                        ctx.fillRect(-p.size / 2, -p.size / 2, p.size, p.size);
+                    }
+                    ctx.restore();
+                });
+                ctx.globalAlpha = 1.0;
+            }
+        }
+        const particleEmitter = new ParticleEmitter();
+        class KivySpiderEntity {
+            constructor() {
+                this.id = Math.random();
+                this.size = settings.creature_size;
+                this.visual_offset = settings.visual_offset;
+                this.spawnEdge();
+                this.vx = 0; this.vy = 0;
+                this.isGrabbed = false; this.isOrbiting = false;
+                this.isSuper = false; this.superTimer = 0.0;
+                this.currentFrame = 0; this.animTime = 0.0;
+                this.rollAngle = 0.0; this.rollSpeed = 0.0;
+                this.isFlung = false; this.touchHistory = [];
+            }
+            spawnEdge() {
+                let edge = Math.floor(Math.random() * 4);
+                if (edge === 0) { this.x = -this.size - 20; this.y = Math.random() * (canvas.height - this.size); this.angle = (Math.random() - 0.5) * (Math.PI / 2); }
+                else if (edge === 1) { this.x = canvas.width + 20; this.y = Math.random() * (canvas.height - this.size); this.angle = Math.PI + (Math.random() - 0.5) * (Math.PI / 2); }
+                else if (edge === 2) { this.x = Math.random() * (canvas.width - this.size); this.y = -this.size - 20; this.angle = Math.PI / 2 + (Math.random() - 0.5) * (Math.PI / 2); }
+                else { this.x = Math.random() * (canvas.width - this.size); this.y = canvas.height + 20; this.angle = -Math.PI / 2 + (Math.random() - 0.5) * (Math.PI / 2); }
+            }
+            startOrbiting(wx, wy, ww, wh) {
+                if (this.isGrabbed) return;
+                this.isOrbiting = true; this.orbit_wx = wx; this.orbit_wy = wy; this.orbit_ww = ww; this.orbit_wh = wh;
+                this.orbit_phase = 0; this.x = wx - 15; this.y = wy - this.size - 5 + this.visual_offset;
+            }
+            update(dt, spiders, walls) {
+                if (this.isGrabbed) return;
+                this.animTime += dt;
+                if (this.animTime > settings.anim_speed / 1000) {
+                    this.currentFrame = (this.currentFrame + 1) % 8;
+                    this.animTime = 0;
+                }
+                if (Math.abs(this.rollSpeed) > 0.1) {
+                    this.rollAngle += this.rollSpeed * dt; this.rollSpeed *= 0.15;
+                } else {
+                    this.rollSpeed = 0.0;
+                    if (Math.abs(this.rollAngle) > 0.1) this.rollAngle += (0.0 - this.rollAngle) * (dt * 8.0);
+                    else this.rollAngle = 0.0;
+                }
+                if (this.isSuper) {
+                    this.superTimer -= dt;
+                    if (this.superTimer <= 0) this.isSuper = false;
+                    particleEmitter.spawnSuperTrail(this.x, this.y, this.size, "rgba(255, 215, 0, 1)");
+                }
+                let baseSpd = settings.move_speed * 30 * (this.isSuper ? settings.super_speed_mult : 1.0);
+                if (this.isFlung) {
+                    let spd = Math.sqrt(this.vx * this.vx + this.vy * this.vy);
+                    if (spd > baseSpd) { this.vx *= 0.975; this.vy *= 0.975; this.angle = Math.atan2(this.vy, this.vx); }
+                    else { this.isFlung = false; }
+                } else {
+                    this.vx = Math.cos(this.angle) * baseSpd; this.vy = Math.sin(this.angle) * baseSpd;
+                }
+                if (this.isOrbiting) {
+                    let xm = this.orbit_wx - this.size + 15 + this.visual_offset;
+                    let xmx = this.orbit_wx + this.orbit_ww - 15 - this.visual_offset;
+                    let ym = this.orbit_wy - this.size + 15 + this.visual_offset;
+                    let ymx = this.orbit_wy + this.orbit_wh - 15 - this.visual_offset;
+                    let tang = this.orbit_phase === 0 ? Math.PI : (this.orbit_phase === 1 ? Math.PI*0.5 : (this.orbit_phase === 2 ? 0.0 : Math.PI*1.5));
+                    if (this.orbit_phase === 0) { this.y = ym; this.x -= baseSpd * dt; if (this.x <= xm) { this.x = xm; this.orbit_phase = 1; } }
+                    else if (this.orbit_phase === 1) { this.x = xm; this.y += baseSpd * dt; if (this.y >= ymx) { this.y = ymx; this.orbit_phase = 2; } }
+                    else if (this.orbit_phase === 2) { this.y = ymx; this.x += baseSpd * dt; if (this.x >= xmx) { this.x = xmx; this.orbit_phase = 3; } }
+                    else if (this.orbit_phase === 3) { this.x = xmx; this.y -= baseSpd * dt; if (this.y <= ym) { this.y = ym; this.isOrbiting = false; } }
+                    this.angle = this.angle + ((tang - this.angle + Math.PI) % (Math.PI * 2) - Math.PI) * (dt * 8.0);
+                    return;
+                }
+                this.x += this.vx * dt; this.y += this.vy * dt;
+                let r_sz = this.size - (this.visual_offset * 2);
+                for (let i = walls.length - 1; i >= 0; i--) {
+                    let r = walls[i].rect;
+                    if (this.x + this.visual_offset < r[0] + r[2] && this.x + this.visual_offset + r_sz > r[0] &&
+                        this.y + this.visual_offset < r[1] + r[3] && this.y + this.visual_offset + r_sz > r[1]) {
+                        if (this.isSuper) {
+                            particleEmitter.spawnShatteredWall(r, walls[i].color); walls.splice(i, 1); continue;
+                        }
+                        if (Math.min(this.x + this.visual_offset + r_sz - r[0], r[0] + r[2] - (this.x + this.visual_offset)) < Math.min(this.y + this.visual_offset + r_sz - r[1], r[1] + r[3] - (this.y + this.visual_offset))) {
+                            this.vx = -this.vx; this.x = this.x + this.size/2 < r[0] + r[2]/2 ? r[0] - this.size + this.visual_offset - 4 : r[0] + r[2] - this.visual_offset + 4;
+                        } else {
+                            this.vy = -this.vy; this.y = this.y + this.size/2 < r[1] + r[3]/2 ? r[1] - this.size + this.visual_offset - 4 : r[1] + r[3] - this.visual_offset + 4;
+                        }
+                        this.angle = Math.atan2(this.vy, this.vx) + (Math.random() - 0.5) * 0.2;
+                    }
+                }
+                spiders.forEach(other => {
+                    if (other.id === this.id || other.isOrbiting || other.isGrabbed) return;
+                    let dx = (other.x + other.size/2) - (this.x + this.size/2);
+                    let dy = (other.y + other.size/2) - (this.y + this.size/2);
+                    let dist = Math.sqrt(dx*dx + dy*dy);
+                    let minDist = (this.size / 2 + other.size / 2) - (this.visual_offset + other.visual_offset);
+                    if (dist < minDist && dist > 0) {
+                        if (this.isSuper && !other.isSuper) {
+                            other.toRemove = true; particleEmitter.spawnShatteredWall([other.x, other.y, other.size, other.size], "rgba(237,66,66,1)");
+                            return;
+                        } else if (!this.isSuper && other.isSuper) {
+                            this.toRemove = true; particleEmitter.spawnShatteredWall([this.x, this.y, this.size, this.size], "rgba(237,66,66,1)");
+                            return;
+                        }
+                        let nx = dx / dist; let ny = dy / dist;
+                        let k = this.vx * nx + this.vy * ny; let m = other.vx * nx + other.vy * ny;
+                        if (this.isFlung) other.isFlung = true; else if (other.isFlung) this.isFlung = true;
+                        let tempVx = this.vx - k * nx + m * nx; let tempVy = this.vy - k * ny + m * ny;
+                        other.vx = other.vx - m * nx + k * nx; other.vy = other.vy - m * ny + k * ny;
+                        this.vx = tempVx; this.vy = tempVy;
+                        this.angle = Math.atan2(this.vy, this.vx); other.angle = Math.atan2(other.vy, other.vx);
+                        let rel = k - m; let intensity = Math.max(40.0, Math.abs(rel) * 3.0);
+                        this.rollSpeed = rel > 0 ? -intensity : intensity; other.rollSpeed = rel > 0 ? intensity : -intensity;
+                        let overlap = minDist - dist; this.x -= (overlap / 2) * nx; this.y -= (overlap / 2) * ny; other.x += (overlap / 2) * nx; other.y += (overlap / 2) * ny;
+                    }
+                });
+                if (this.x + this.size < -60 || this.x > canvas.width + 60 || this.y + this.size < -60 || this.y > canvas.height + 60) {
+                    this.spawnEdge();
+                }
+            }
+            draw() {
+                ctx.save(); ctx.translate(this.x, this.y);
+                drawProceduralCreature(ctx, this.size, this.currentFrame, this.isSuper, this.rollAngle, settings.image_facing);
+                ctx.restore();
+            }
+        }
+        let spiders = []; let walls = []; let goldOrb = null;
+        let goldOrbTimer = 0.0; let goldOrbSpawnTime = 20.0;
+        let wallTimer = 0.0; let nextWallTime = 8.0;
+        let bigWallTimer = 0.0; let bigWallInterval = 120.0;
+        function spawnBigCentralWall() {
+            let w = 300, h = 300;
+            let x = (canvas.width - w) / 2 + (Math.random() - 0.5) * 100;
+            let y = (canvas.height - h) / 2 + (Math.random() - 0.5) * 100;
+            let wallData = { rect: [x, y, w, h], color: "rgba(216,46,46,1)", isBig: true, life: 0.0 };
+            walls.push(wallData);
+            let avail = spiders.filter(s => !s.isOrbiting);
+            if (avail.length > 0) { avail[Math.floor(Math.random() * avail.length)].startOrbiting(x, y, w, h); }
+        }
+        function spawnRandomWall() {
+            if (walls.length >= 2) return;
+            let isHz = Math.random() > 0.5;
+            let w = isHz ? Math.random() * 250 + 200 : Math.random() * 50 + 40;
+            let h = isHz ? Math.random() * 50 + 40 : Math.random() * 250 + 200;
+            let x = Math.random() * (canvas.width - w - 100) + 50;
+            let y = Math.random() * (canvas.height - h - 240) + 120;
+            walls.push({ rect: [x, y, w, h], color: `rgba(${Math.random()*150+50},${Math.random()*150+50},${Math.random()*150+50},1)`, life: 0.0 });
+        }
+        let lastTime = performance.now();
+        function update(now) {
+            let dt = (now - lastTime) / 1000; if (dt > 0.1) dt = 0.1; lastTime = now;
+            ctx.fillStyle = "#1e1e1e"; ctx.fillRect(0, 0, canvas.width, canvas.height);
+            ctx.strokeStyle = "rgba(255,255,255,0.015)"; ctx.lineWidth = 1;
+            for(let x=0; x<canvas.width; x+=50) { ctx.beginPath(); ctx.moveTo(x,0); ctx.lineTo(x,canvas.height); ctx.stroke(); }
+            for(let y=0; y<canvas.height; y+=50) { ctx.beginPath(); ctx.moveTo(0,y); ctx.lineTo(canvas.width,y); ctx.stroke(); }
+            if (currentView === "about") {
+                particleEmitter.spawnSuperTrail(Math.random()*canvas.width, Math.random()*canvas.height, 10, "rgba(255,215,0,0.4)");
+            }
+            if (!spiderActive) { particleEmitter.update(dt); particleEmitter.draw(); requestAnimationFrame(update); return; }
+            if (spiders.length >= 6) {
+                if (!goldOrb) {
+                    goldOrbTimer += dt;
+                    if (goldOrbTimer >= goldOrbSpawnTime) {
+                        goldOrb = { x: Math.random()*(canvas.width-100)+50, y: Math.random()*(canvas.height-300)+150, size: 50.0 };
+                        goldOrbTimer = 0.0; goldOrbSpawnTime = Math.random()*20 + 20;
+                    }
+                }
+            } else { goldOrb = null; }
+            bigWallTimer += dt; if (bigWallTimer >= bigWallInterval) { bigWallTimer = 0; spawnBigCentralWall(); }
+            wallTimer += dt; if (wallTimer > nextWallTime) { spawnRandomWall(); wallTimer = 0; nextWallTime = Math.random()*6+6; }
+            for (let i = walls.length - 1; i >= 0; i--) {
+                walls[i].life += dt;
+                if (walls[i].life >= 30.0) {
+                    if (walls[i].isBig) spiders.forEach(s => s.isOrbiting = false);
+                    particleEmitter.spawnShatteredWall(walls[i].rect, walls[i].color); walls.splice(i, 1);
+                }
+            }
+            if (goldOrb) {
+                ctx.fillStyle = "rgba(255,214,0,0.3)"; ctx.beginPath(); ctx.arc(goldOrb.x, goldOrb.y, goldOrb.size*0.7, 0, Math.PI*2); ctx.fill();
+                ctx.fillStyle = "rgba(255,214,0,1)"; ctx.beginPath(); ctx.arc(goldOrb.x, goldOrb.y, goldOrb.size*0.35, 0, Math.PI*2); ctx.fill();
+                spiders.forEach(s => {
+                    let dx = (s.x + s.size/2) - goldOrb.x; let dy = (s.y + s.size/2) - goldOrb.y;
+                    if (Math.sqrt(dx*dx + dy*dy) < s.size/2 + goldOrb.size/2 - s.visual_offset) { s.isSuper = true; s.superTimer = 15.0; goldOrb = null; }
+                });
+            }
+            walls.forEach(w => { ctx.fillStyle = w.color; ctx.fillRect(w.rect[0], w.rect[1], w.rect[2], w.rect[3]); });
+            if (spiders.length < settings.max_creatures) spiders.push(new KivySpiderEntity());
+            for (let i = spiders.length - 1; i >= 0; i--) {
+                spiders[i].update(dt, spiders, walls);
+                if (spiders[i].toRemove) { spiders.splice(i, 1); } else { spiders[i].draw(); }
+            }
+            particleEmitter.update(dt); particleEmitter.draw(); requestAnimationFrame(update);
+        }
+        canvas.addEventListener('touchstart', (e) => {
+            let touch = e.touches[0]; let tx = touch.clientX; let ty = touch.clientY;
+            for (let i = walls.length - 1; i >= 0; i--) {
+                let r = walls[i].rect;
+                if (tx >= r[0] && tx <= r[0]+r[2] && ty >= r[1] && ty <= r[1]+r[3]) {
+                    if (walls[i].isBig) spiders.forEach(s => s.isOrbiting = false);
+                    particleEmitter.spawnShatteredWall(r, walls[i].color); walls.splice(i, 1); return;
+                }
+            }
+            spiders.forEach(s => {
+                if (tx >= s.x && tx <= s.x + s.size && ty >= s.y && ty <= s.y + s.size) {
+                    s.isGrabbed = true; s.isOrbiting = false; s.touchHistory = [[performance.now(), tx, ty]];
+                }
+            });
+        });
+        canvas.addEventListener('touchmove', (e) => {
+            let touch = e.touches[0]; let tx = touch.clientX; let ty = touch.clientY;
+            spiders.forEach(s => {
+                if (s.isGrabbed) {
+                    s.touchHistory.push([performance.now(), tx, ty]); if (s.touchHistory.length > 4) s.touchHistory.shift();
+                    s.x = tx - s.size/2; s.y = ty - s.size/2;
+                }
+            });
+        });
+        canvas.addEventListener('touchend', (e) => {
+            spiders.forEach(s => {
+                if (s.isGrabbed) {
+                    s.isGrabbed = false;
+                    if (s.touchHistory.length >= 2) {
+                        let [t1, x1, y1] = s.touchHistory[0]; let [t2, x2, y2] = s.touchHistory[s.touchHistory.length - 1];
+                        let dt = (t2 - t1) / 1000;
+                        if (dt > 0) {
+                            s.vx = ((x2 - x1) / dt) * 1.5; s.vy = ((y2 - y1) / dt) * 1.5;
+                            let spd = Math.sqrt(s.vx*s.vx + s.vy*s.vy);
+                            if (spd > 4000) { s.vx = (s.vx/spd)*4000; s.vy = (s.vy/spd)*4000; }
+                            if (spd > 100) { s.angle = Math.atan2(s.vy, s.vx); s.isFlung = true; }
+                        }
+                    }
+                }
+            });
+        });
+        function renderUI() {
+            if (!uiVisible) { menuPanel.style.display = "none"; return; }
+            menuPanel.style.display = "flex";
+            if (currentView === "main") {
+                menuPanel.innerHTML = `
+                    <div class="menu-title" style="color: ${spiderActive ? '#13db5c' : 'white'}">${spiderActive ? 'Yaratık Yürüyor' : 'Yaratık Duruyor'}</div>
+                    <button class="btn ${spiderActive ? 'btn-red' : 'btn-green'}" onclick="toggleSpiderActive()">${spiderActive ? 'Hareketi Durdur' : 'Hareketi Başlat'}</button>
+                    <button class="btn btn-blue" onclick="switchView('settings')">Ayarlar</button>
+                    <button class="btn btn-cyan" onclick="switchView('about')">Hakkında</button>
+                `;
+            } else if (currentView === "settings") {
+                let currentFolder = animationFolders[settings.animation_folder_idx % animationFolders.length];
+                menuPanel.innerHTML = `
+                    <div class="menu-title">Ayarlar</div>
+                    <div class="setting-row"><span class="setting-label">Tür: <b>${currentFolder.toUpperCase()}</b></span>
+                        <div class="setting-controls"><button class="ctrl-btn" onclick="changeType(-1)">&lt;</button><button class="ctrl-btn" onclick="changeType(1)">&gt;</button></div>
+                    </div>
+                    <div class="setting-row"><span class="setting-label">Boyut: ${settings.creature_size}px</span>
+                        <div class="setting-controls"><button class="ctrl-btn" onclick="updateConfig('creature_size', -10, 40, 400)">-</button><button class="ctrl-btn" onclick="updateConfig('creature_size', 10, 40, 400)">+</button></div>
+                    </div>
+                    <div class="setting-row"><span class="setting-label">Maks Yaratık: ${settings.max_creatures}</span>
+                        <div class="setting-controls"><button class="ctrl-btn" onclick="updateConfig('max_creatures', -1, 1, 30)">-</button><button class="ctrl-btn" onclick="updateConfig('max_creatures', 1, 1, 30)">+</button></div>
+                    </div>
+                    <button class="btn btn-green" onclick="switchView('main')">Ana Menü</button>
+                `;
+            } else if (currentView === "about") {
+                menuPanel.innerHTML = `
+                    <div class="menu-title" style="color:#13db5c">SPIDER ANDROID</div>
+                    <div id="about-text">Orijinali <b>Desperado</b>'nun <b>Spider v0.9.5</b> adlı symbian uygulamasıdır. Sabri Erkin tarafından geliştirilen saf OpenGL kurgusu temel alınarak Android WebView katmanına kayıpsız taşınmıştır. Ekran üzerinde bağımsız sönümleme fiziğiyle hareket eder.</div>
+                    <button class="btn btn-green" onclick="switchView('main')">Ana Menü</button>
+                `;
+            }
+        }
+        toggleUiBtn.addEventListener('click', () => { 
+            uiVisible = !uiVisible; 
+            toggleUiBtn.innerText = uiVisible ? "👁️" : "❌"; 
+            renderUI(); 
+        });
+
+        window.switchView = function(v) { 
+            currentView = v; 
+            renderUI(); 
+        };
+
+        window.toggleSpiderActive = function() { 
+            spiderActive = !spiderActive; 
+            if(!spiderActive) { 
+                spiders = []; 
+                walls = []; 
+                goldOrb = null; 
+            } 
+            renderUI(); 
+        };
+
+        window.changeType = function(d) { 
+            settings.animation_folder_idx = (settings.animation_folder_idx + d + animationFolders.length) % animationFolders.length; 
+            syncActiveFolderSettings(); 
+            spiders.forEach(s => s.size = settings.creature_size); 
+            renderUI(); 
+        };
+
+        window.updateConfig = function(k, v, mn, mx) { 
+            settings[k] = Math.max(mn, Math.min(mx, settings[k] + v)); 
+            let f = animationFolders[settings.animation_folder_idx % animationFolders.length]; 
+            if(!folderSettings[f]) syncActiveFolderSettings(); 
+            folderSettings[f][k] = settings[k]; 
+            if(k === 'creature_size') {
+                spiders.forEach(s => s.size = settings.creature_size); 
+            }
+            renderUI(); 
+        };
+
+        // Simülasyonu ve İlk Ayarları Başlatma Motoru
+        syncActiveFolderSettings(); 
+        renderUI(); 
+        requestAnimationFrame(update);
+    </script>
+</body>
+</html>
