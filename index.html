@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Spider Android - Kesin Çözüm HTML5 Tam Sürüm</title>
+    <title>Spider Android - HTML Canvas Safe OpenGL Overlay</title>
     <style>
         * {
             box-sizing: border-box;
@@ -17,619 +17,1143 @@
             height: 100%;
             overflow: hidden;
             background-color: #1f1f1f;
-            font-family: sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
         }
-        #gameCanvas {
-            display: block;
+        #game-container {
+            position: relative;
             width: 100%;
             height: 100%;
-            background-color: #1f1f1f;
         }
-        #ui-container {
+        canvas {
             position: absolute;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
+            z-index: 1;
+        }
+        .ui-layer {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 10;
             pointer-events: none;
         }
-        .ui-element {
+        .interactive {
             pointer-events: auto;
         }
-        #toggle-ui-btn {
+        #toggle-btn {
             position: absolute;
-            top: 4%;
             right: 5%;
-            width: 55px;
-            height: 55px;
-            background-color: #2c3e50;
-            border-radius: 10px;
+            top: 2%;
+            width: 15%;
+            height: 8%;
+            max-width: 80px;
+            max-height: 60px;
+            background-color: #334054;
+            border: none;
+            border-radius: 8px;
             display: flex;
             align-items: center;
             justify-content: center;
-            color: white;
-            font-size: 24px;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.4);
-            z-index: 100;
             cursor: pointer;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.3);
         }
-        #menu-panel {
+        .view-panel {
             position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: 88%;
-            max-width: 420px;
-            background-color: rgba(15, 15, 15, 0.92);
-            border-radius: 16px;
-            padding: 24px;
+            left: 7%;
+            width: 86%;
             display: flex;
             flex-direction: column;
-            gap: 14px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.6);
-            color: white;
-            border: 1px solid rgba(255,255,255,0.05);
+            align-items: center;
+            gap: 12px;
         }
-        .menu-title {
-            text-align: center;
-            font-size: 22px;
+        #main-view {
+            top: 30%;
+        }
+        #settings-view {
+            top: 2%;
+            height: 96%;
+            overflow-y: auto;
+            padding-bottom: 20px;
+            gap: 8px;
+        }
+        #about-view {
+            top: 15%;
+            height: 80%;
+        }
+        .title-label {
+            width: 80%;
+            height: 6%;
+            max-height: 50px;
+            background-color: rgba(13, 13, 13, 0.5);
+            color: #ffffff;
+            font-size: 20px;
             font-weight: bold;
-            padding: 12px;
-            background: rgba(255,255,255,0.06);
-            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            border-radius: 4px;
         }
-        .btn {
-            width: 100%;
-            padding: 15px;
-            border: none;
-            border-radius: 12px;
+        .title-active {
+            color: #21c444;
+        }
+        .visual-btn {
+            width: 60%;
+            height: 45px;
             font-size: 16px;
             font-weight: bold;
             color: white;
-            text-align: center;
+            border: none;
+            border-radius: 12px;
             cursor: pointer;
-            transition: transform 0.05s ease, background-color 0.2s;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.2);
+            transition: transform 0.06s ease, height 0.06s ease;
         }
-        .btn:active {
-            transform: scale(0.96);
+        .visual-btn:active {
+            transform: scaleY(0.88);
         }
-        .btn-green { background-color: #13db5c; }
+        .btn-green { background-color: #21c444; }
         .btn-red { background-color: #ed4242; }
-        .btn-blue { background-color: #2c3e50; }
-        .btn-cyan { background-color: #2080a0; }
+        .btn-blue { background-color: #334054; }
+        .btn-teal { background-color: #338099; }
+        .btn-orange { background-color: #b36633; }
         .setting-row {
+            width: 100%;
+            height: 42px;
             display: flex;
-            justify-content: space-between;
             align-items: center;
-            background: rgba(5,5,5,0.6);
-            padding: 8px 12px;
-            border-radius: 10px;
-            border: 1px solid rgba(255,255,255,0.02);
+            justify-content: space-between;
+            gap: 5px;
         }
         .setting-label {
-            font-size: 14px;
             flex: 1;
-        }
-        .setting-controls {
+            height: 100%;
+            background-color: rgba(13, 13, 13, 0.75);
+            color: white;
+            font-size: 13px;
             display: flex;
-            gap: 8px;
             align-items: center;
+            justify-content: center;
+            border-radius: 10px;
+            padding: 0 5px;
+            text-align: center;
         }
-        .ctrl-btn {
-            width: 38px;
-            height: 38px;
-            background-color: #2c3e50;
-            border: none;
-            border-radius: 8px;
+        .control-btn {
+            width: 12%;
+            height: 100%;
+            background-color: #334054;
             color: white;
             font-size: 18px;
             font-weight: bold;
+            border: none;
+            border-radius: 12px;
             cursor: pointer;
         }
-        #about-text {
+        .control-btn.edge-min { background-color: #ed4242; }
+        .control-btn.edge-max { background-color: #21c444; }
+        .about-card {
+            width: 100%;
+            height: 60%;
+            background-color: rgba(13, 13, 13, 0.85);
+            border-radius: 15px;
+            color: white;
+            padding: 20px;
             font-size: 14px;
-            line-height: 1.6;
-            text-align: left;
-            max-height: 280px;
+            line-height: 1.5;
+            text-align: center;
             overflow-y: auto;
-            padding-right: 5px;
+            position: relative;
+        }
+        .bold-green { color: #45b870; font-weight: bold; }
+        .bold-text { font-weight: bold; }
+        .hidden { display: none !important; }
+        
+        svg icon {
+            fill: white;
         }
     </style>
 </head>
 <body>
-    <canvas id="gameCanvas"></canvas>
-    <div id="ui-container">
-        <div id="toggle-ui-btn" class="ui-element">👁️</div>
-        <div id="menu-panel" class="ui-element"></div>
+    <div id="game-container">
+        <canvas id="gameCanvas"></canvas>
+        
+        <div class="ui-layer">
+            <button id="toggle-btn" class="interactive" onclick="toggleUiVisibility()">
+                <svg id="eye-icon" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                <svg id="close-icon" class="hidden" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+            </button>
+            
+            <div id="main-view" class="view-panel interactive">
+                <div id="main-title" class="title-label">Yaratık duruyor</div>
+                <button id="status-btn" class="visual-btn btn-green" onclick="toggleSpider()">Hareketi başlat</button>
+                <button class="visual-btn btn-blue" onclick="switchView('settings')">Ayarlar</button>
+                <button class="visual-btn btn-teal" onclick="switchView('about')">Hakkında</button>
+                <button class="visual-btn btn-red" onclick="window.close()">Çıkış</button>
+            </div>
+            
+            <div id="settings-view" class="view-panel interactive hidden">
+                <div class="setting-row">
+                    <div id="lbl-type" class="setting-label">Tür (Type): <span class="bold-green">VARSAYILAN</span></div>
+                    <button id="btn-t-min" class="control-btn" onclick="changeCreatureTypeStep(-1)">&lt;</button>
+                    <button id="btn-t-plus" class="control-btn" onclick="changeCreatureTypeStep(1)">&gt;</button>
+                </div>
+                <div class="setting-row">
+                    <div id="lbl-face" class="setting-label">Img Face: <span style="color:#4080e0; font-weight:bold;">0° (SAĞ)</span></div>
+                    <button class="control-btn" style="background-color:#4080e0;" onclick="changeSettingFaceStep(-1)">&lt;</button>
+                    <button class="control-btn" style="background-color:#ed4242;" onclick="changeSettingFaceStep(1)">&gt;</button>
+                </div>
+                <div class="setting-row">
+                    <div id="lbl-bg" class="setting-label">Arka Plan (BG): <span style="color:#e0a040; font-weight:bold;">Varsayılan (bg)</span></div>
+                    <button class="control-btn" style="background-color:#b36633;" onclick="changeBgImageStep(-1)">&lt;</button>
+                    <button class="control-btn" style="background-color:#b36633;" onclick="changeBgImageStep(1)">&gt;</button>
+                </div>
+                <div class="setting-row">
+                    <div id="lbl-size" class="setting-label">Boyut (Size): 120 px</div>
+                    <button id="btn-sz-minus" class="control-btn" onclick="updateStatLive('creature_size', -10, 40, 400)">&minus;</button>
+                    <button id="btn-sz-plus" class="control-btn" onclick="updateStatLive('creature_size', 10, 40, 400)">&plus;</button>
+                </div>
+                <div class="setting-row">
+                    <div id="lbl-speed" class="setting-label">Hız (Speed): 4</div>
+                    <button id="btn-s-minus" class="control-btn" onclick="updateStatLive('move_speed', -1, 1, 15)">&minus;</button>
+                    <button id="btn-s-plus" class="control-btn" onclick="updateStatLive('move_speed', 1, 1, 15)">&plus;</button>
+                </div>
+                <div class="setting-row">
+                    <div id="lbl-anim" class="setting-label">Anim Hızı: 80 ms</div>
+                    <button id="btn-a-minus" class="control-btn" onclick="updateStatLive('anim_speed', -10, 20, 300)">&minus;</button>
+                    <button id="btn-a-plus" class="control-btn" onclick="updateStatLive('anim_speed', 10, 20, 300)">&plus;</button>
+                </div>
+                <div class="setting-row">
+                    <div id="lbl-count" class="setting-label">Yaratık Sayısı: 6</div>
+                    <button id="btn-c-minus" class="control-btn" onclick="updateStatLive('max_creatures', -1, 1, 30)">&minus;</button>
+                    <button id="btn-c-plus" class="control-btn" onclick="updateStatLive('max_creatures', 1, 1, 30)">&plus;</button>
+                </div>
+                <div class="setting-row">
+                    <div id="lbl-offset" class="setting-label">Ofset (Margin): 15 px</div>
+                    <button id="btn-o-minus" class="control-btn" onclick="updateStatLive('visual_offset', -5, -10, 50)">&minus;</button>
+                    <button id="btn-o-plus" class="control-btn" onclick="updateStatLive('visual_offset', 5, -10, 50)">&plus;</button>
+                </div>
+                <div class="setting-row">
+                    <div id="lbl-mult" class="setting-label">Süper Hız (Mult): 3.0 x</div>
+                    <button id="btn-m-minus" class="control-btn" style="background-color:#b36633;" onclick="updateMult(-0.5)">&minus;</button>
+                    <button id="btn-m-plus" class="control-btn" style="background-color:#b36633;" onclick="updateMult(0.5)">&plus;</button>
+                </div>
+                <button id="awake-btn" class="visual-btn btn-orange" style="width:60%; display:flex; align-items:center; justify-content:center; gap:10px;" onclick="toggleScreenAwake()">
+                    <span>Ekranı Açık Tut</span>
+                    <svg id="awake-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M6.34 17.66l2.83-2.83M14.83 9.17l2.83-2.83"/></svg>
+                </button>
+                <button class="visual-btn btn-green" onclick="switchView('main')">Ana Menü</button>
+            </div>
+            
+            <div id="about-view" class="view-panel interactive hidden">
+                <div class="about-card">
+                    <span class="bold-green">SPIDER_ANDROID</span><br><br>
+                    <span class="bold-text">Sürüm:</span> v1.4.0<br>
+                    <span class="bold-text">Geliştiren:</span> Sabri Erkin<br>
+                    <span class="bold-text">Altyapı:</span> HTML Canvas 2D Engine<br><br>
+                    Orijinali <span class="bold-text">Desperado</span>'nun <span class="bold-text">Spider v0.9.5</span> adlı symbian uygulamasıdır. Ben biraz geliştirmeye çalıştım ve web/android ortamında çalışacak hale getirdim.<br><br>
+                    Bu uygulama, ekran üzerinde rastgele gezinen yaratıklar, parçalanabilir dinamik duvarlar ve özel güçler içeren interaktif bir simülasyondur.<br><br>
+                    <span class="bold-text">Özellikler:</span><br>
+                    • Altın küreleri toplayarak süper hıza ulaşın.<br>
+                    • Süper modda engelleri ve rakip yaratıkları yok edin.<br>
+                    • Ayarlar menüsünden tüm fiziksel sınırları canlı olarak yönetin.
+                </div>
+                <button class="visual-btn btn-green" onclick="switchView('main')">Ana Menü</button>
+            </div>
+        </div>
     </div>
+
     <script>
         const canvas = document.getElementById('gameCanvas');
         const ctx = canvas.getContext('2d');
-        const menuPanel = document.getElementById('menu-panel');
-        const toggleUiBtn = document.getElementById('toggle-ui-btn');
-        function resizeCanvas() {
-            canvas.width = window.innerWidth > 100 ? window.innerWidth : 1080;
-            canvas.height = window.innerHeight > 100 ? window.innerHeight : 1920;
-        }
-        window.addEventListener('resize', resizeCanvas);
-        resizeCanvas();
-        let uiVisible = true;
-        let currentView = "main"; 
-        let spiderActive = true;
-        let animationFolders = ["default", "spider_red", "alien_bug", "cyber_mech"];
-        let folderSettings = {};
+        
+        let SCREEN_WIDTH = window.innerWidth;
+        let SCREEN_HEIGHT = window.innerHeight;
+        
+        // --- AYARLAR VE YAPILANDIRMA ---
+        const CONFIG_FILE = "settings_android";
         let settings = {
-            animation_folder_idx: 0,
-            start_program: 0,
-            creature_size: 120,
-            move_speed: 4,
-            anim_speed: 80,
-            max_creatures: 6,
-            image_facing: 0,
-            visual_offset: 15,
-            screen_awake: 0,
-            super_speed_mult: 3.0,
-            bg_image_idx: 0
+            "animation_folder_idx": 0, "start_program": 0, 
+            "creature_size": 120, "anim_speed": 80, "move_speed": 4, "max_creatures": 6,
+            "image_facing": 0, "visual_offset": 15, "screen_awake": 0, "folder_settings": {},
+            "super_speed_mult": 3.0, "bg_image_idx": 0
         };
-        const loadedTextures = {};
-        const totalTextureFrames = 8; 
-        function preloadTextures(callback) {
-            let folder = animationFolders[settings.animation_folder_idx % animationFolders.length];
-            let basePath = folder === "default" ? "anims/" : `anims/${folder}/`;
-            let loadedCount = 0;
-            for (let i = 0; i < totalTextureFrames; i++) {
-                let img = new Image();
-                img.onload = function() {
-                    loadedCount++;
-                    if (loadedCount === totalTextureFrames && callback) callback();
-                };
-                img.onerror = function() {
-                    this.failed = true;
-                    loadedCount++;
-                    if (loadedCount === totalTextureFrames && callback) callback();
-                };
-                img.src = basePath + i + ".png";
-                loadedTextures[i] = img;
-            }
+        
+        const animation_folders = ["default", "shadow", "cyber", "plasma"];
+        let spider_list = [];
+        let walls = [];
+        let spider_active = false;
+        let current_view = "main";
+        let ui_visible = true;
+        
+        let gold_orb = null;
+        let gold_orb_timer = 0.0;
+        let gold_orb_spawn_time = 20.0;
+        
+        let next_wall_time = Math.random() * 6.0 + 6.0;
+        let wall_timer = 0;
+        let big_wall_timer = 0;
+        const big_wall_interval = 120.0;
+        
+        let about_sparkles = [];
+        let sparkle_spawn_timer = 0.0;
+        
+        // Prosedürel Yaratık Çizim Önbelleği (Görseller yerine Canvas vektörü kullanılacak)
+        let generated_textures = {};
+
+        function loadSettings() {
+            try {
+                const saved = localStorage.getItem(CONFIG_FILE);
+                if (saved) Object.assign(settings, JSON.parse(saved));
+            } catch(e) {}
+            spider_active = settings["start_program"] === 1;
         }
-                function syncActiveFolderSettings() {
-            let currentFolder = animationFolders[settings.animation_folder_idx % animationFolders.length];
-            if (!folderSettings[currentFolder]) {
-                folderSettings[currentFolder] = {
-                    move_speed: settings.move_speed,
-                    anim_speed: settings.anim_speed,
-                    max_creatures: settings.max_creatures,
-                    image_facing: settings.image_facing,
-                    visual_offset: settings.visual_offset,
-                    creature_size: settings.creature_size,
-                    bg_image_idx: settings.bg_image_idx,
-                    super_speed_mult: settings.super_speed_mult
+        function saveSettings() {
+            try { localStorage.setItem(CONFIG_FILE, JSON.stringify(settings)); } catch(e) {}
+        }
+
+        function syncActiveFolderSettings() {
+            let current_folder = animation_folders[settings["animation_folder_idx"] % animation_folders.length];
+            if (!settings["folder_settings"][current_folder]) {
+                settings["folder_settings"][current_folder] = {
+                    "move_speed": settings["move_speed"] || 4,
+                    "anim_speed": settings["anim_speed"] || 80,
+                    "max_creatures": settings["max_creatures"] || 6,
+                    "image_facing": settings["image_facing"] || 0,
+                    "visual_offset": settings["visual_offset"] || 15,
+                    "creature_size": settings["creature_size"] || 120,
+                    "bg_image_idx": settings["bg_image_idx"] || 0,
+                    "super_speed_mult": settings["super_speed_mult"] || 3.0  
                 };
             }
-            let local = folderSettings[currentFolder];
+            let local = settings["folder_settings"][current_folder];
             for (let key in local) { settings[key] = local[key]; }
         }
-        function drawProceduralCreature(ctx, size, frame, isSuper, rollAngle, facingMode) {
-            ctx.save();
-            ctx.translate(size / 2, size / 2);
-            let baseAngle = (facingMode % 4) * 90;
-            ctx.rotate((rollAngle + baseAngle) * Math.PI / 180);
-            if (isSuper) {
-                ctx.fillStyle = "rgba(255, 215, 0, 0.4)";
-                ctx.beginPath(); ctx.arc(0, 0, size * 0.6, 0, Math.PI * 2); ctx.fill();
-            }
-            let currentImg = loadedTextures[frame];
-            if (currentImg && currentImg.complete && !currentImg.failed && currentImg.naturalWidth !== 0) {
-                ctx.drawImage(currentImg, -size / 2, -size / 2, size, size);
-            } else {
-                let themeColor = "#13db5c";
-                let folder = animationFolders[settings.animation_folder_idx % animationFolders.length];
-                if (folder === "spider_red") themeColor = "#ed4242";
-                if (folder === "alien_bug") themeColor = "#9b5de5";
-                if (folder === "cyber_mech") themeColor = "#00b4d8";
-                ctx.fillStyle = themeColor;
-                ctx.strokeStyle = "#ffffff";
-                ctx.lineWidth = 3;
-                ctx.beginPath(); ctx.arc(0, 0, size * 0.22, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
-                ctx.fillStyle = "#ffffff";
-                ctx.beginPath(); ctx.arc(size * 0.12, -size * 0.06, size * 0.04, 0, Math.PI * 2); ctx.fill();
-                ctx.beginPath(); ctx.arc(size * 0.12, size * 0.06, size * 0.04, 0, Math.PI * 2); ctx.fill();
-            }
-            ctx.restore();
-        }
+
         class ParticleEmitter {
             constructor() { this.particles = []; }
+            
             spawnShatteredWall(rect, color) {
                 let [x, y, w, h] = rect;
-                let effectType = Math.floor(Math.random() * 3);
-                let numParticles = Math.floor(Math.random() * 20) + 30;
-                for (let i = 0; i < numParticles; i++) {
+                let effect_type = Math.floor(Math.random() * 3);
+                let num_particles = Math.floor(Math.random() * 20) + 30;
+                
+                for(let i=0; i<num_particles; i++) {
+                    let p_x = x + Math.random() * w;
+                    let p_y = y + Math.random() * h;
+                    let angle = Math.random() * Math.PI * 2;
+                    let speed = Math.random() * 200 + 50;
+                    
                     this.particles.push({
-                        type: effectType,
-                        x: x + Math.random() * w, y: y + Math.random() * h,
-                        vx: (Math.random() - 0.5) * 400, vy: (Math.random() - 0.5) * 400,
+                        type: effect_type, x: p_x, y: p_y,
+                        vx: Math.cos(angle) * speed, vy: Math.sin(angle) * speed,
                         size: Math.random() * 12 + 8,
-                        color: color, life: 1.5, decay: Math.random() * 1.0 + 1.0,
-                        rot: Math.random() * 360, rotSpeed: (Math.random() - 0.5) * 360
+                        color: [
+                            Math.min(1, Math.max(0, color[0] + (Math.random() * 0.3 - 0.15))),
+                            Math.min(1, Math.max(0, color[1] + (Math.random() * 0.3 - 0.15))),
+                            Math.min(1, Math.max(0, color[2] + (Math.random() * 0.3 - 0.15))),
+                            1.0
+                        ],
+                        life: 1.5, decay: Math.random() * 1.0 + 1.0,
+                        rot: Math.random() * 360, rot_speed: Math.random() * 360 - 180
                     });
                 }
             }
+            
             spawnSuperTrail(x, y, size, color) {
-                for (let i = 0; i < 2; i++) {
-                    this.particles.push({
-                        type: 2,
-                        x: x + Math.random() * size, y: y + Math.random() * size,
-                        vx: (Math.random() - 0.5) * 30, vy: (Math.random() - 0.5) * 30,
-                        size: Math.random() * 6 + 6, color: color,
-                        life: 0.6, decay: Math.random() * 0.6 + 1.2, rot: Math.random() * 360, rotSpeed: 0
-                    });
-                }
+                if(Math.random() > 0.3) return;
+                this.particles.push({
+                    type: 2, x: x + Math.random() * size, y: y + Math.random() * size,
+                    vx: Math.random() * 30 - 15, vy: Math.random() * 30 - 15,
+                    size: Math.random() * 6 + 6,
+                    color: [Math.min(1, Math.max(0.8, color[0] + (Math.random() * 0.2 - 0.1))), Math.min(1, Math.max(0.7, color[1] + (Math.random() * 0.2 - 0.1))), Math.random() * 0.3, 1.0],
+                    life: 0.6, decay: Math.random() * 0.6 + 1.2,
+                    rot: Math.random() * 360, rot_speed: Math.random() * 90 - 45
+                });
             }
+            
             update(dt) {
-                for (let i = this.particles.length - 1; i >= 0; i--) {
-                    let p = this.particles[i];
+                this.particles = this.particles.filter(p => p.life > 0);
+                for(let p of this.particles) {
                     p.life -= dt * p.decay;
-                    if (p.life <= 0) { this.particles.splice(i, 1); continue; }
-                    if (p.type === 2) {
-                        p.x += p.vx * dt; p.y += p.vy * dt;
+                    if(p.life <= 0) continue;
+                    p.color[3] = Math.max(0, p.life);
+                    
+                    p.x += p.vx * dt;
+                    p.y += p.vy * dt;
+                    
+                    if(p.type === 2) {
                         p.vx *= 0.92; p.vy *= 0.92;
                         p.size += dt * 25.0;
+                        ctx.fillStyle = `rgba(${Math.floor(p.color[0]*255)}, ${Math.floor(p.color[1]*255)}, ${Math.floor(p.color[2]*255)}, ${p.color[3]})`;
+                        ctx.fillRect(p.x - p.size/2, p.y - p.size/2, p.size, p.size);
                     } else {
-                        p.x += p.vx * dt; p.y += p.vy * dt;
-                        p.rot += p.rotSpeed * dt;
+                        p.rot += p.rot_speed * dt;
+                        ctx.save();
+                        ctx.translate(p.x, p.y);
+                        ctx.rotate(p.rot * Math.PI / 180);
+                        ctx.fillStyle = `rgba(${Math.floor(p.color[0]*255)}, ${Math.floor(p.color[1]*255)}, ${Math.floor(p.color[2]*255)}, ${p.color[3]})`;
+                        
+                        if(p.type === 0) {
+                            ctx.fillRect(-p.size/2, -p.size/2, p.size, p.size);
+                        } else if(p.type === 1) {
+                            ctx.beginPath();
+                            let s = p.size / 2;
+                            ctx.moveTo(0, -s);
+                            ctx.lineTo(-s, s);
+                            ctx.lineTo(s, s);
+                            ctx.closePath();
+                            ctx.fill();
+                        }
+                        ctx.restore();
                     }
                 }
-            }
-                        draw() {
-                this.particles.forEach(p => {
-                    ctx.save();
-                    ctx.globalAlpha = Math.max(0, p.life);
-                    ctx.fillStyle = p.color;
-                    if (p.type === 1) {
-                        ctx.translate(p.x, p.y); ctx.rotate(p.rot * Math.PI / 180);
-                        ctx.beginPath(); ctx.moveTo(0, -p.size/2); ctx.lineTo(-p.size/2, p.size/2); ctx.lineTo(p.size/2, p.size/2); ctx.closePath(); ctx.fill();
-                    } else {
-                        ctx.translate(p.x, p.y); ctx.rotate(p.rot * Math.PI / 180);
-                        ctx.fillRect(-p.size / 2, -p.size / 2, p.size, p.size);
-                    }
-                    ctx.restore();
-                });
-                ctx.globalAlpha = 1.0;
             }
         }
-        const particleEmitter = new ParticleEmitter();
+        
+        const particle_emitter = new ParticleEmitter();
         class KivySpiderEntity {
-            constructor() {
-                this.id = Math.random();
-                this.size = settings.creature_size;
-                this.visual_offset = settings.visual_offset;
-                this.spawnEdge();
+            static id_counter = 0;
+            constructor(sw, sh) {
+                KivySpiderEntity.id_counter++;
+                this.id = KivySpiderEntity.id_counter;
+                
+                let current_folder = animation_folders[settings["animation_folder_idx"] % animation_folders.length];
+                let local = settings["folder_settings"][current_folder];
+                
+                this.size = local["creature_size"];
+                this.visual_offset = local["visual_offset"];
+                
+                let spawn_edge = Math.floor(Math.random() * 4);
+                if (spawn_edge === 0) {
+                    this.x = -this.size - 20; this.y = Math.random() * (sh - this.size);
+                    this.angle = (Math.random() * Math.PI / 2 - Math.PI / 4) % (Math.PI * 2);
+                } else if (spawn_edge === 1) {
+                    this.x = sw + 20; this.y = Math.random() * (sh - this.size);
+                    this.angle = (Math.random() * Math.PI / 2 + 3 * Math.PI / 4) % (Math.PI * 2);
+                } else if (spawn_edge === 2) {
+                    this.x = Math.random() * (sw - this.size); this.y = -this.size - 20;
+                    this.angle = (Math.random() * Math.PI / 2 + Math.PI / 4) % (Math.PI * 2);
+                } else if (spawn_edge === 3) {
+                    this.x = Math.random() * (sw - this.size); this.y = sh + 20;
+                    this.angle = (Math.random() * Math.PI / 2 + 5 * Math.PI / 4) % (Math.PI * 2);
+                }
+                
                 this.vx = 0; this.vy = 0;
-                this.isGrabbed = false; this.isOrbiting = false;
-                this.isSuper = false; this.superTimer = 0.0;
-                this.currentFrame = 0; this.animTime = 0.0;
-                this.rollAngle = 0.0; this.rollSpeed = 0.0;
-                this.isFlung = false; this.touchHistory = [];
-                this.toRemove = false;
+                this.is_grabbed = false;
+                this.current_frame = 0;
+                this.anim_time = 0;
+                this.is_orbiting = false;
+                this.is_super = false;
+                this.super_timer = 0.0;
+                this.is_flung = false;
+                this.touch_history = [];
+                this.roll_angle = 0.0;
+                this.roll_speed = 0.0;
+                
+                this.legs_phase = Math.random() * Math.PI * 2;
             }
-            spawnEdge() {
-                let edge = Math.floor(Math.random() * 4);
-                if (edge === 0) { this.x = -this.size - 20; this.y = Math.random() * (canvas.height - this.size); this.angle = (Math.random() - 0.5) * (Math.PI / 2); }
-                else if (edge === 1) { this.x = canvas.width + 20; this.y = Math.random() * (canvas.height - this.size); this.angle = Math.PI + (Math.random() - 0.5) * (Math.PI / 2); }
-                else if (edge === 2) { this.x = Math.random() * (canvas.width - this.size); this.y = -this.size - 20; this.angle = Math.PI / 2 + (Math.random() - 0.5) * (Math.PI / 2); }
-                else { this.x = Math.random() * (canvas.width - this.size); this.y = canvas.height + 20; this.angle = -Math.PI / 2 + (Math.random() - 0.5) * (Math.PI / 2); }
+            
+            activateSuperPower(duration = 15.0) {
+                this.is_super = true;
+                this.super_timer = duration;
             }
-            startOrbiting(wx, wy, ww, wh) {
-                if (this.isGrabbed) return;
-                this.isOrbiting = true; this.orbit_wx = wx; this.orbit_wy = wy; this.orbit_ww = ww; this.orbit_wh = wh;
-                this.orbit_phase = 0; this.x = wx - 15; this.y = wy - this.size - 5 + this.visual_offset;
-            }
-            update(dt, spiders, walls) {
-                if (this.isGrabbed || this.toRemove) return;
-                this.animTime += dt;
-                if (this.animTime > settings.anim_speed / 1000) {
-                    this.currentFrame = (this.currentFrame + 1) % totalTextureFrames;
-                    this.animTime = 0;
-                }
-                if (Math.abs(this.rollSpeed) > 0.1) {
-                    this.rollAngle += this.rollSpeed * dt; this.rollSpeed *= 0.15;
+            
+            update(dt, sw, sh) {
+                if (this.is_grabbed) return;
+                this.anim_time += dt;
+                
+                if (Math.abs(this.roll_speed) > 0.1) {
+                    this.roll_angle += this.roll_speed * dt;
+                    this.roll_speed *= 0.15;
                 } else {
-                    this.rollSpeed = 0.0;
-                    if (Math.abs(this.rollAngle) > 0.1) this.rollAngle += (0.0 - this.rollAngle) * (dt * 8.0);
-                    else this.rollAngle = 0.0;
+                    this.roll_speed = 0.0;
+                    if (Math.abs(this.roll_angle) > 0.1) this.roll_angle += (0.0 - this.roll_angle) * (dt * 8.0);
+                    else this.roll_angle = 0.0;
                 }
-                if (this.isSuper) {
-                    this.superTimer -= dt;
-                    if (this.superTimer <= 0) this.isSuper = false;
-                    particleEmitter.spawnSuperTrail(this.x, this.y, this.size, "rgba(255, 215, 0, 1)");
+                
+                if (this.is_super) {
+                    this.super_timer -= dt;
+                    if (this.super_timer <= 0) this.is_super = false;
                 }
-                let baseSpd = settings.move_speed * 30 * (this.isSuper ? settings.super_speed_mult : 1.0);
-                if (this.isFlung) {
-                    let spd = Math.sqrt(this.vx * this.vx + this.vy * this.vy);
-                    if (spd > baseSpd) { this.vx *= 0.975; this.vy *= 0.975; this.angle = Math.atan2(this.vy, this.vx); }
-                    else { this.isFlung = false; }
-                } else {
-                    this.vx = Math.cos(this.angle) * baseSpd; this.vy = Math.sin(this.angle) * baseSpd;
+                
+                let current_folder = animation_folders[settings["animation_folder_idx"] % animation_folders.length];
+                let local = settings["folder_settings"][current_folder];
+                
+                let base_spd = local["move_speed"] * 30;
+                if (this.is_super) base_spd *= local["super_speed_mult"];
+                
+                if (this.is_flung) {
+                    let current_speed = Math.sqrt(this.vx * this.vx + this.vy * this.vy);
+                    if (current_speed > base_spd) {
+                        this.vx *= 0.975; this.vy *= 0.975;
+                        this.angle = Math.atan2(this.vy, this.vx) % (Math.PI * 2);
+                    } else { this.is_flung = false; }
+                } else if (!this.is_orbiting) {
+                    this.vx = Math.cos(this.angle) * base_spd;
+                    this.vy = Math.sin(this.angle) * base_spd;
                 }
-                                if (this.isOrbiting) {
-                    let xm = this.orbit_wx - this.size + 15 + this.visual_offset;
-                    let xmx = this.orbit_wx + this.orbit_ww - 15 - this.visual_offset;
-                    let ym = this.orbit_wy - this.size + 15 + this.visual_offset;
-                    let ymx = this.orbit_wy + this.orbit_wh - 15 - this.visual_offset;
-                    let tang = this.orbit_phase === 0 ? Math.PI : (this.orbit_phase === 1 ? Math.PI*0.5 : (this.orbit_phase === 2 ? 0.0 : Math.PI*1.5));
-                    if (this.orbit_phase === 0) { this.y = ym; this.x -= baseSpd * dt; if (this.x <= xm) { this.x = xm; this.orbit_phase = 1; } }
-                    else if (this.orbit_phase === 1) { this.x = xm; this.y += baseSpd * dt; if (this.y >= ymx) { this.y = ymx; this.orbit_phase = 2; } }
-                    else if (this.orbit_phase === 2) { this.y = ymx; this.x += baseSpd * dt; if (this.x >= xmx) { this.x = xmx; this.orbit_phase = 3; } }
-                    else if (this.orbit_phase === 3) { this.x = xmx; this.y -= baseSpd * dt; if (this.y <= ym) { this.y = ym; this.isOrbiting = false; } }
-                    this.angle = this.angle + ((tang - this.angle + Math.PI) % (Math.PI * 2) - Math.PI) * (dt * 8.0);
-                    return;
-                }
-                this.x += this.vx * dt; this.y += this.vy * dt;
-                let r_sz = this.size - (this.visual_offset * 2);
-                for (let i = walls.length - 1; i >= 0; i--) {
-                    let r = walls[i].rect;
-                    if (this.x + this.visual_offset < r[0] + r[2] && this.x + this.visual_offset + r_sz > r[0] &&
-                        this.y + this.visual_offset < r[1] + r[3] && this.y + this.visual_offset + r_sz > r[1]) {
-                        if (this.isSuper) {
-                            particleEmitter.spawnShatteredWall(r, walls[i].color); walls.splice(i, 1); continue;
-                        }
-                        if (Math.min(this.x + this.visual_offset + r_sz - r[0], r[0] + r[2] - (this.x + this.visual_offset)) < Math.min(this.y + this.visual_offset + r_sz - r[1], r[1] + r[3] - (this.y + this.visual_offset))) {
-                            this.vx = -this.vx; this.x = this.x + this.size/2 < r[0] + r[2]/2 ? r[0] - this.size + this.visual_offset - 4 : r[0] + r[2] - this.visual_offset + 4;
-                        } else {
-                            this.vy = -this.vy; this.y = this.y + this.size/2 < r[1] + r[3]/2 ? r[1] - this.size + this.visual_offset - 4 : r[1] + r[3] - this.visual_offset + 4;
-                        }
-                        this.angle = Math.atan2(this.vy, this.vx) + (Math.random() - 0.5) * 0.2;
-                    }
-                }
-                for (let j = 0; j < spiders.length; j++) {
-                    let other = spiders[j];
-                    if (other.id === this.id || other.isOrbiting || other.isGrabbed || other.toRemove) continue;
-                    let dx = (other.x + other.size/2) - (this.x + this.size/2);
-                    let dy = (other.y + other.size/2) - (this.y + this.size/2);
-                    let dist = Math.sqrt(dx*dx + dy*dy);
-                    let minDist = (this.size / 2 + other.size / 2) - (this.visual_offset + other.visual_offset);
-                    if (dist < minDist && dist > 0) {
-                        if (this.isSuper && !other.isSuper) {
-                            other.toRemove = true; particleEmitter.spawnShatteredWall([other.x, other.y, other.size, other.size], "rgba(237,66,66,1)");
-                            continue;
-                        } else if (!this.isSuper && other.isSuper) {
-                            this.toRemove = true; particleEmitter.spawnShatteredWall([this.x, this.y, this.size, this.size], "rgba(237,66,66,1)");
+                
+                if (this.is_orbiting) {
+                    let x_m = this.orbit_wx - this.size + 15 + this.visual_offset;
+                    let x_mx = this.orbit_wx + this.orbit_ww - 15 - this.visual_offset;
+                    let y_m = this.orbit_wy - this.size + 15 + this.visual_offset;
+                    let y_mx = this.orbit_wy + this.orbit_wh - 15 - this.visual_offset;
+                    
+                    let t_ang = Math.PI;
+                    if (this.orbit_phase === 1) t_ang = Math.PI * 0.5;
+                    else if (this.orbit_phase === 2) t_ang = 0.0;
+                    else if (this.orbit_phase === 3) t_ang = Math.PI * 1.5;
+                    
+                    let c_spd = base_spd * Math.max(0.5, 1.0 - (Math.abs((t_ang - this.angle + Math.PI) % (Math.PI * 2) - Math.PI) / (Math.PI * 0.5)) * 0.5);
+                    if (this.orbit_phase === 0) {
+                        this.y = y_m; this.x -= c_spd * dt;
+                        if (this.x <= x_m) { this.x = x_m; this.orbit_phase = 1; }
+                    } else if (this.orbit_phase === 1) {
+                        this.x = x_m; this.y += c_spd * dt;
+                        if (this.y >= y_mx) { this.y = y_mx; this.orbit_phase = 2; }
+                    } else if (this.orbit_phase === 2) {
+                        this.y = y_mx; this.x += c_spd * dt;
+                        if (this.x >= x_mx) { this.x = x_mx; this.orbit_phase = 3; }
+                    } else if (this.orbit_phase === 3) {
+                        this.x = x_mx; this.y -= c_spd * dt;
+                        if (this.y <= y_m) {
+                            this.y = y_m; this.is_orbiting = false;
+                            this.vx = Math.cos(this.angle) * base_spd; this.vy = Math.sin(this.angle) * base_spd;
                             return;
                         }
-                        let nx = dx / dist; let ny = dy / dist;
-                        let k = this.vx * nx + this.vy * ny; let m = other.vx * nx + other.vy * ny;
-                        if (this.isFlung) other.isFlung = true; else if (other.isFlung) this.isFlung = true;
-                        let tempVx = this.vx - k * nx + m * nx; let tempVy = this.vy - k * ny + m * ny;
-                        other.vx = other.vx - m * nx + k * nx; other.vy = other.vy - m * ny + k * ny;
-                        this.vx = tempVx; this.vy = tempVy;
-                        this.angle = Math.atan2(this.vy, this.vx); other.angle = Math.atan2(other.vy, other.vx);
-                        let rel = k - m; let intensity = Math.max(40.0, Math.abs(rel) * 3.0);
-                        this.rollSpeed = rel > 0 ? -intensity : intensity; other.rollSpeed = rel > 0 ? intensity : -intensity;
-                        let overlap = minDist - dist; this.x -= (overlap / 2) * nx; this.y -= (overlap / 2) * ny; other.x += (overlap / 2) * nx; other.y += (overlap / 2) * ny;
+                    }
+                    this.angle = (this.angle + ((t_ang - this.angle + Math.PI) % (Math.PI * 2) - Math.PI) * (dt * 8.0)) % (Math.PI * 2);
+                    this.vx = Math.cos(this.angle) * c_spd; this.vy = Math.sin(this.angle) * c_spd;
+                    return;
+                }
+                
+                let n_x = this.x + this.vx * dt;
+                let n_y = this.y + this.vy * dt;
+                let r_sz = this.size - (this.visual_offset * 2);
+                
+                for (let i = walls.length - 1; i >= 0; i--) {
+                    let r = walls[i].rect;
+                    if (n_x + this.visual_offset < r[0] + r[2] && n_x + this.visual_offset + r_sz > r[0] &&
+                        n_y + this.visual_offset < r[1] + r[3] && n_y + this.visual_offset + r_sz > r[1]) {
+                        
+                        if (this.is_super) {
+                            particle_emitter.spawnShatteredWall(r, walls[i].color);
+                            walls.splice(i, 1);
+                            continue;
+                        }
+                        
+                        if (Math.min(this.x + this.visual_offset + r_sz - r[0], r[0] + r[2] - (this.x + this.visual_offset)) <
+                            Math.min(this.y + this.visual_offset + r_sz - r[1], r[1] + r[3] - (this.y + this.visual_offset))) {
+                            this.vx = -this.vx;
+                            n_x = this.x + this.size/2 < r[0] + r[2]/2 ? r[0] - this.size + this.visual_offset - 2 : r[0] + r[2] - this.visual_offset + 2;
+                        } else {
+                            this.vy = -this.vy;
+                            n_y = this.y + this.size/2 < r[1] + r[3]/2 ? r[1] - this.size + this.visual_offset - 2 : r[1] + r[3] - this.visual_offset + 2;
+                        }
+                        this.angle = (Math.atan2(this.vy, this.vx) + (Math.random() * 0.2 - 0.1)) % (Math.PI * 2);
+                        let current_speed = Math.sqrt(this.vx * this.vx + this.vy * this.vy);
+                        let bounce_speed = Math.max(base_spd, current_speed * 0.85);
+                        this.vx = Math.cos(this.angle) * bounce_speed;
+                        this.vy = Math.sin(this.angle) * bounce_speed;
+                        this.x = n_x; this.y = n_y;
+                        return;
                     }
                 }
-                if (this.x + this.size < -60 || this.x > canvas.width + 60 || this.y + this.size < -60 || this.y > canvas.height + 60) {
-                    this.spawnEdge();
+                
+                if (this.is_super) particle_emitter.spawnSuperTrail(this.x, this.y, this.size, [1.0, 0.84, 0.0]);
+                
+                for (let other of spider_list) {
+                    if (!other || other.id === this.id || other.is_orbiting || other.is_grabbed) continue;
+                    let self_center_x = n_x + this.size / 2;
+                    let self_center_y = n_y + this.size / 2;
+                    let other_center_x = other.x + other.size / 2;
+                    let other_center_y = other.y + other.size / 2;
+                    
+                    let dx = other_center_x - self_center_x;
+                    let dy = other_center_y - self_center_y;
+                    let distance = Math.sqrt(dx * dx + dy * dy);
+                    let min_distance = (this.size / 2 + other.size / 2) - (this.visual_offset + other.visual_offset);
+                    
+                    if (distance < min_distance && distance > 0) {
+                        if (this.is_super && !other.is_super) {
+                            particle_emitter.spawnShatteredWall([other.x, other.y, other.size, other.size], [Math.random(), Math.random(), Math.random(), 1]);
+                            spider_list = spider_list.filter(s => s.id !== other.id);
+                            continue;
+                        } else if (!this.is_super && other.is_super) {
+                            particle_emitter.spawnShatteredWall([this.x, this.y, this.size, this.size], [Math.random(), Math.random(), Math.random(), 1]);
+                            spider_list = spider_list.filter(s => s.id !== this.id);
+                            return;
+                        }
+                        
+                        let nx_vec = dx / distance;
+                        let ny_vec = dy / distance;
+                        let tx_vec = -ny_vec;
+                        let ty_vec = nx_vec;
+                        
+                        let v1n = this.vx * nx_vec + this.vy * ny_vec;
+                        let v1t = this.vx * tx_vec + this.vy * ty_vec;
+                        let v2n = other.vx * nx_vec + other.vy * ny_vec;
+                        let v2t = other.vx * tx_vec + other.vy * ty_vec;
+                        let v1n_new = v2n;
+                        let v2n_new = v1n;
+                        
+                        if (this.is_flung) other.is_flung = true;
+                        else if (other.is_flung) this.is_flung = true;
+                        
+                        this.vx = v1n_new * nx_vec + v1t * tx_vec;
+                        this.vy = v1n_new * ny_vec + v1t * ty_vec;
+                        other.vx = v2n_new * nx_vec + v2t * tx_vec;
+                        other.vy = v2n_new * ny_vec + v2t * ty_vec;
+                        
+                        this.angle = Math.atan2(this.vy, this.vx) % (Math.PI * 2);
+                        other.angle = Math.atan2(other.vy, other.vx) % (Math.PI * 2);
+                        
+                        let rel_vel_n = v1n - v2n;
+                        let roll_intensity = Math.max(40.0, Math.abs(rel_vel_n) * 3.0);
+                        
+                        this.roll_speed = rel_vel_n > 0 ? -roll_intensity : roll_intensity;
+                        other.roll_speed = rel_vel_n > 0 ? roll_intensity : -roll_intensity;
+                        
+                        let overlap = min_distance - distance;
+                        n_x -= (overlap / 2) * nx_vec;
+                        n_y -= (overlap / 2) * ny_vec;
+                        other.x += (overlap / 2) * nx_vec;
+                        other.y += (overlap / 2) * ny_vec;
+                        
+                        this.x = n_x; this.y = n_y;
+                        return;
+                    }
+                }
+                
+                this.x = n_x; this.y = n_y;
+                
+                if (this.x + this.size < -50 || this.x > sw + 50 || this.y + this.size < -50 || this.y > sh + 50) {
+                    let edge = Math.floor(Math.random() * 4);
+                    if (edge === 0) { this.x = -this.size + 10; this.y = Math.random() * (sh - this.size); }
+                    else if (edge === 1) { this.x = sw - 10; this.y = Math.random() * (sh - this.size); }
+                    else if (edge === 2) { this.x = Math.random() * (sw - this.size); this.y = -this.size + 10; }
+                    else if (edge === 3) { this.x = Math.random() * (sw - this.size); this.y = sh - 10; }
+                    
+                    this.angle = Math.random() * Math.PI * 2;
+                    this.vx = Math.cos(this.angle) * base_spd;
+                    this.vy = Math.sin(this.angle) * base_spd;
+                }
+                
+                if (this.anim_time > (local["anim_speed"] / 1000.0)) {
+                    if (Math.sqrt(this.vx * this.vx + this.vy * this.vy) > 5) {
+                        this.legs_phase += 0.4;
+                    }
+                    this.anim_time = 0;
                 }
             }
-                        draw() {
-                if (this.toRemove) return;
-                ctx.save(); ctx.translate(this.x, this.y);
-                drawProceduralCreature(ctx, this.size, this.currentFrame, this.isSuper, this.rollAngle, settings.image_facing);
+            
+            startOrbiting(wx, wy, ww, wh) {
+                if (this.is_grabbed) return;
+                this.is_orbiting = true; this.orbit_wx = wx; this.orbit_wy = wy; this.orbit_ww = ww; this.orbit_wh = wh;
+                this.orbit_phase = 0; this.x = wx - 15; this.y = wy - this.size - 5 + this.visual_offset;
+            }
+            
+            draw() {
+                ctx.save();
+                ctx.translate(this.x + this.size/2, this.y + this.size/2);
+                
+                let move_deg = (Math.atan2(this.vy, this.vx) * 180 / Math.PI) % 360;
+                if (move_deg < 0) move_deg += 360;
+                
+                let current_folder = animation_folders[settings["animation_folder_idx"] % animation_folders.length];
+                let local = settings["folder_settings"][current_folder];
+                let facing_mode = local["image_facing"] % 4;
+                let base_offset = facing_mode * 90;
+                
+                let t_ang = move_deg - base_offset;
+                let fx = 1, fy = 1;
+                
+                if (this.is_orbiting) {
+                    if (facing_mode === 2) {
+                        if (this.orbit_phase === 0) { t_ang = 180; fx = -1; }
+                        else if (this.orbit_phase === 1) { t_ang = 270; fy = -1; }
+                        else if (this.orbit_phase === 2) { t_ang = 0; fx = -1; }
+                        else if (this.orbit_phase === 3) { t_ang = 90; fy = -1; }
+                    } else {
+                        let deg = 180;
+                        if (this.orbit_phase === 1) deg = 90;
+                        else if (this.orbit_phase === 2) deg = 0;
+                        else if (this.orbit_phase === 3) deg = 270;
+                        t_ang = deg - base_offset;
+                    }
+                } else {
+                    let check_angle = (move_deg - base_offset) % 360;
+                    if (check_angle < 0) check_angle += 360;
+                    if (check_angle > 90 && check_angle <= 270) {
+                        t_ang = t_ang - 180;
+                        fx = -1;
+                    }
+                }
+                ctx.rotate((t_ang + (this.roll_angle * fx)) * Math.PI / 180);
+                ctx.scale(fx, fy);
+                
+                if (this.is_super) {
+                    ctx.beginPath();
+                    ctx.arc(0, 0, this.size / 2, 0, Math.PI * 2);
+                    ctx.fillStyle = "rgba(255, 215, 0, 0.35)";
+                    ctx.fill();
+                }
+                
+                // --- PROSEDÜREL KIVY SPIDER GRAFİK MOTORU ---
+                let theme = current_folder;
+                ctx.strokeStyle = theme === "cyber" ? "#00ffcc" : (theme === "plasma" ? "#ff00ff" : (theme === "shadow" ? "#444" : "#a05a2c"));
+                ctx.lineWidth = this.size / 24;
+                
+                // 8 Adet Bacak Çizimi (Canlı Salınım Efektli)
+                for (let i = 0; i < 8; i++) {
+                    let isLeft = i < 4;
+                    let legIdx = i % 4;
+                    let baseAngle = (isLeft ? Math.PI : 0) + (legIdx * 0.3 - 0.45);
+                    let osc = Math.sin(this.legs_phase + i) * 0.25;
+                    let finalAngle = baseAngle + osc;
+                    
+                    ctx.beginPath();
+                    ctx.moveTo(0, 0);
+                    let extX = Math.cos(finalAngle) * (this.size * 0.45);
+                    let extY = Math.sin(finalAngle) * (this.size * 0.45);
+                    ctx.quadraticCurveTo(extX, extY - (this.size*0.15), extX * 1.2, extY * 1.2);
+                    ctx.stroke();
+                }
+                
+                // Gövde Çizimi
+                ctx.beginPath();
+                ctx.arc(0, 0, this.size / 4, 0, Math.PI * 2);
+                ctx.fillStyle = theme === "cyber" ? "#112233" : (theme === "plasma" ? "#330033" : (theme === "shadow" ? "#1a1a1a" : "#4a2d1b"));
+                ctx.fill();
+                ctx.stroke();
+                
+                // Kafa ve Gözler
+                ctx.beginPath();
+                ctx.arc(this.size / 4, 0, this.size / 8, 0, Math.PI * 2);
+                ctx.fillStyle = theme === "cyber" ? "#00ffcc" : (theme === "plasma" ? "#ff00ff" : (theme === "shadow" ? "#222" : "#2d1a10"));
+                ctx.fill();
+                ctx.stroke();
+                
+                ctx.fillStyle = this.is_super ? "#ffd700" : (theme === "cyber" ? "#ff0055" : "#ff0000");
+                ctx.beginPath(); ctx.arc(this.size * 0.32, -this.size * 0.04, this.size / 40, 0, Math.PI * 2); ctx.fill();
+                ctx.beginPath(); ctx.arc(this.size * 0.32, this.size * 0.04, this.size / 40, 0, Math.PI * 2); ctx.fill();
+                
                 ctx.restore();
             }
         }
-        let spiders = []; let walls = []; let goldOrb = null;
-        let goldOrbTimer = 0.0; let goldOrbSpawnTime = 20.0;
-        let wallTimer = 0.0; let nextWallTime = 8.0;
-        let bigWallTimer = 0.0; let bigWallInterval = 120.0;
-        function spawnBigCentralWall() {
-            let w = 300, h = 300;
-            let x = (canvas.width - w) / 2 + (Math.random() - 0.5) * 100;
-            let y = (canvas.height - h) / 2 + (Math.random() - 0.5) * 100;
-            let wallData = { rect: [x, y, w, h], color: "rgba(216,46,46,1)", isBig: true, life: 0.0 };
-            walls.push(wallData);
-            let avail = spiders.filter(s => !s.isOrbiting && !s.toRemove);
-            if (avail.length > 0) { avail[Math.floor(Math.random() * avail.length)].startOrbiting(x, y, w, h); }
-        }
+        
         function spawnRandomWall() {
             if (walls.length >= 2) return;
-            let isHz = Math.random() > 0.5;
-            let w = isHz ? Math.random() * 250 + 200 : Math.random() * 50 + 40;
-            let h = isHz ? Math.random() * 50 + 40 : Math.random() * 250 + 200;
-            let x = Math.random() * (canvas.width - w - 100) + 50;
-            let y = Math.random() * (canvas.height - h - 240) + 120;
-            walls.push({ rect: [x, y, w, h], color: `rgba(${Math.random()*150+50},${Math.random()*150+50},${Math.random()*150+50},1)`, life: 0.0 });
-        }
-        let lastTime = performance.now();
-        function update(now) {
-            let dt = (now - lastTime) / 1000; if (dt > 0.1) dt = 0.1; lastTime = now;
-            ctx.fillStyle = "#1e1e1e"; ctx.fillRect(0, 0, canvas.width, canvas.height);
-            ctx.strokeStyle = "rgba(255,255,255,0.015)"; ctx.lineWidth = 1;
-            for(let x=0; x<canvas.width; x+=50) { ctx.beginPath(); ctx.moveTo(x,0); ctx.lineTo(x,canvas.height); ctx.stroke(); }
-            for(let y=0; y<canvas.height; y+=50) { ctx.beginPath(); ctx.moveTo(0,y); ctx.lineTo(canvas.width,y); ctx.stroke(); }
-            if (currentView === "about") {
-                particleEmitter.spawnSuperTrail(Math.random()*canvas.width, Math.random()*canvas.height, 10, "rgba(255,215,0,0.4)");
+            let is_hz = Math.random() > 0.5;
+            let w = is_hz ? Math.floor(Math.random() * 250) + 200 : Math.floor(Math.random() * 50) + 40;
+            let h = is_hz ? Math.floor(Math.random() * 50) + 40 : Math.floor(Math.random() * 250) + 200;
+            let x = Math.floor(Math.random() * (SCREEN_WIDTH - w - 100)) + 50;
+            let y = Math.floor(Math.random() * (SCREEN_HEIGHT - h - 240)) + 120;
+            
+            for (let wall of walls) {
+                let r = wall.rect;
+                if (x - 120 < r[0] + r[2] && x + w + 120 > r[0] && y - 120 < r[1] + r[3] && y + h + 120 > r[1]) return;
             }
-            if (!spiderActive) { particleEmitter.update(dt); particleEmitter.draw(); requestAnimationFrame(update); return; }
-            if (spiders.length >= 6) {
-                if (!goldOrb) {
-                    goldOrbTimer += dt;
-                    if (goldOrbTimer >= goldOrbSpawnTime) {
-                        goldOrb = { x: Math.random()*(canvas.width-100)+50, y: Math.random()*(canvas.height-300)+150, size: 50.0 };
-                        goldOrbTimer = 0.0; goldOrbSpawnTime = Math.random()*20 + 20;
+            walls.push({
+                rect: [x, y, w, h],
+                color: [Math.random(), Math.random(), Math.random(), 1.0],
+                life: 0.0, is_big: false
+            });
+        }
+        
+        function spawnBigCentralWall() {
+            let w = 300, h = 300;
+            let x = (SCREEN_WIDTH - w) / 2 + (Math.random() * 100 - 50);
+            let y = (SCREEN_HEIGHT - h) / 2 + (Math.random() * 100 - 50);
+            walls.push({
+                rect: [x, y, w, h],
+                color: [0.85, 0.18, 0.18, 1.0],
+                life: 0.0, is_big: true
+            });
+            let avail = spider_list.filter(s => !s.is_orbiting);
+            if (avail.length > 0) {
+                avail[Math.floor(Math.random() * avail.length)].startOrbiting(x, y, w, h);
+            }
+        }
+        function spawnGoldOrb() {
+            let size = 50.0;
+            let x = Math.random() * (SCREEN_WIDTH - size - 100) + 50;
+            let y = Math.random() * (SCREEN_HEIGHT - size - 300) + 150;
+            gold_orb = { x: x, y: y, size: size };
+        }
+        
+        function updateGame(timestamp) {
+            let dt = 1 / 60; // Sabit Delta Zamanı (KivyOpenGL Uyumlu)
+            
+            ctx.clearRect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
+            drawBackground();
+            
+            particle_emitter.update(dt);
+            
+            // --- HAKKINDA EKRANI IŞILTI MOTORU ---
+            if (current_view === "about" && ui_visible) {
+                sparkle_spawn_timer += dt;
+                if (sparkle_spawn_timer >= 0.25 && about_sparkles.length < 15) {
+                    sparkle_spawn_timer = 0.0;
+                    about_sparkles.push({
+                        x: Math.random() * (SCREEN_WIDTH * 0.86) + (SCREEN_WIDTH * 0.07),
+                        y: Math.random() * (SCREEN_HEIGHT * 0.48) + (SCREEN_HEIGHT * 0.32),
+                        size: Math.random() * 10 + 12,
+                        base_color: Math.random() > 0.5 ? [255, 215, 0] :,
+                        form: Math.random() > 0.5 ? "plus" : "star",
+                        state: "fade_in", alpha: 0.0, speed: Math.random() * 1.5 + 1.5
+                    });
+                }
+                
+                for (let i = about_sparkles.length - 1; i >= 0; i--) {
+                    let sp = about_sparkles[i];
+                    if (sp.state === "fade_in") {
+                        sp.alpha += dt * sp.speed;
+                        if (sp.alpha >= 1.0) { sp.alpha = 1.0; sp.state = "fade_out"; }
+                    } else {
+                        sp.alpha -= dt * sp.speed;
+                        if (sp.alpha <= 0.0) { about_sparkles.splice(i, 1); continue; }
+                    }
+                    
+                    ctx.save();
+                    ctx.translate(sp.x, sp.y);
+                    ctx.strokeStyle = `rgba(${sp.base_color[0]}, ${sp.base_color[1]}, ${sp.base_color[2]}, ${sp.alpha})`;
+                    ctx.lineWidth = sp.size / 10;
+                    
+                    if (sp.form === "plus") {
+                        ctx.rotate(45 * Math.PI / 180);
+                        ctx.beginPath(); ctx.moveTo(-sp.size/2, 0); ctx.lineTo(sp.size/2, 0); ctx.stroke();
+                        ctx.beginPath(); ctx.moveTo(0, -sp.size/2); ctx.lineTo(0, sp.size/2); ctx.stroke();
+                    } else {
+                        ctx.beginPath(); ctx.moveTo(-sp.size/2, 0); ctx.lineTo(sp.size/2, 0); ctx.stroke();
+                        ctx.beginPath(); ctx.moveTo(0, -sp.size/2); ctx.lineTo(0, sp.size/2); ctx.stroke();
+                        ctx.rotate(45 * Math.PI / 180);
+                        ctx.beginPath(); ctx.moveTo(-sp.size/2, 0); ctx.lineTo(sp.size/2, 0); ctx.stroke();
+                        ctx.beginPath(); ctx.moveTo(0, -sp.size/2); ctx.lineTo(0, sp.size/2); ctx.stroke();
+                    }
+                    ctx.restore();
+                }
+            }
+            
+            if (spider_active) {
+                let current_folder = animation_folders[settings["animation_folder_idx"] % animation_folders.length];
+                let local = settings["folder_settings"][current_folder];
+                
+                if (spider_list.length >= 6) {
+                    if (!gold_orb) {
+                        gold_orb_timer += dt;
+                        if (gold_orb_timer >= gold_orb_spawn_time) {
+                            spawnGoldOrb();
+                            gold_orb_timer = 0.0;
+                            gold_orb_spawn_time = Math.random() * 20.0 + 20.0;
+                        }
+                    }
+                } else {
+                    gold_orb_timer = 0.0;
+                    gold_orb = null;
+                }
+                
+                big_wall_timer += dt;
+                if (big_wall_timer >= big_wall_interval) { big_wall_timer = 0; spawnBigCentralWall(); }
+                
+                wall_timer += dt;
+                if (wall_timer > next_wall_time) { spawnRandomWall(); wall_timer = 0; next_wall_time = Math.random() * 6.0 + 6.0; }
+                
+                let w_ch = false;
+                for (let i = walls.length - 1; i >= 0; i--) {
+                    walls[i].life += dt;
+                    if (walls[i].life >= 30.0) {
+                        if (walls[i].is_big) {
+                            for (let s of spider_list) { if (s.is_orbiting) s.is_orbiting = false; }
+                        }
+                        particle_emitter.spawnShatteredWall(walls[i].rect, walls[i].color);
+                        walls.splice(i, 1);
                     }
                 }
-            } else { goldOrb = null; }
-            bigWallTimer += dt; if (bigWallTimer >= bigWallInterval) { bigWallTimer = 0; spawnBigCentralWall(); }
-            wallTimer += dt; if (wallTimer > nextWallTime) { spawnRandomWall(); wallTimer = 0; nextWallTime = Math.random()*6+6; }
-            for (let i = walls.length - 1; i >= 0; i--) {
-                walls[i].life += dt;
-                if (walls[i].life >= 30.0) {
-                    if (walls[i].isBig) spiders.forEach(s => s.isOrbiting = false);
-                    particleEmitter.spawnShatteredWall(walls[i].rect, walls[i].color); walls.splice(i, 1);
+                if (spider_list.length < local["max_creatures"]) {
+                    spider_list.push(new KivySpiderEntity(SCREEN_WIDTH, SCREEN_HEIGHT));
                 }
-            }
-            if (goldOrb) {
-                ctx.fillStyle = "rgba(255,214,0,0.3)"; ctx.beginPath(); ctx.arc(goldOrb.x, goldOrb.y, goldOrb.size*0.7, 0, Math.PI*2); ctx.fill();
-                ctx.fillStyle = "rgba(255,214,0,1)"; ctx.beginPath(); ctx.arc(goldOrb.x, goldOrb.y, goldOrb.size*0.35, 0, Math.PI*2); ctx.fill();
-                spiders.forEach(s => {
-                    if (s.toRemove) return;
-                    let dx = (s.x + s.size/2) - goldOrb.x; let dy = (s.y + s.size/2) - goldOrb.y;
-                    if (Math.sqrt(dx*dx + dy*dy) < s.size/2 + goldOrb.size/2 - s.visual_offset) { s.isSuper = true; s.superTimer = 15.0; goldOrb = null; }
-                });
-            }
-            walls.forEach(w => { ctx.fillStyle = w.color; ctx.fillRect(w.rect[0], w.rect[1], w.rect[2], w.rect[3]); });
-            spiders = spiders.filter(s => !s.toRemove);
-            if (spiders.length < settings.max_creatures) spiders.push(new KivySpiderEntity());
-            for (let i = spiders.length - 1; i >= 0; i--) {
-                spiders[i].update(dt, spiders, walls);
-                if (!spiders[i].toRemove) spiders[i].draw();
-            }
-            particleEmitter.update(dt); particleEmitter.draw(); requestAnimationFrame(update);
-        }
-        canvas.addEventListener('touchstart', (e) => {
-            let touch = e.touches[0]; let tx = touch.clientX; let ty = touch.clientY;
-            for (let i = walls.length - 1; i >= 0; i--) {
-                let r = walls[i].rect;
-                if (tx >= r[0] && tx <= r[0]+r[2] && ty >= r[1] && ty <= r[1]+r[3]) {
-                    if (walls[i].isBig) spiders.forEach(s => s.isOrbiting = false);
-                    particleEmitter.spawnShatteredWall(r, walls[i].color); walls.splice(i, 1); return;
+                
+                // Altın Küre Çizimi ve Çarpışma Testi
+                if (gold_orb) {
+                    ctx.beginPath();
+                    ctx.arc(gold_orb.x + gold_orb.size/2, gold_orb.y + gold_orb.size/2, gold_orb.size * 0.7, 0, Math.PI * 2);
+                    ctx.fillStyle = "rgba(255, 215, 0, 0.4)";
+                    ctx.fill();
+                    
+                    ctx.beginPath();
+                    ctx.arc(gold_orb.x + gold_orb.size/2, gold_orb.y + gold_orb.size/2, gold_orb.size/2, 0, Math.PI * 2);
+                    ctx.fillStyle = "rgba(255, 215, 0, 1.0)";
+                    ctx.fill();
                 }
-            }
-            spiders.forEach(s => {
-                if (tx >= s.x && tx <= s.x + s.size && ty >= s.y && ty <= s.y + s.size) {
-                    s.isGrabbed = true; s.isOrbiting = false; s.touchHistory = [[performance.now(), tx, ty]];
+                
+                // Duvarların Çizilmesi
+                for (let wall of walls) {
+                    let r = wall.rect;
+                    ctx.fillStyle = `rgba(${Math.floor(wall.color[0]*255)}, ${Math.floor(wall.color[1]*255)}, ${Math.floor(wall.color[2]*255)}, 1.0)`;
+                    ctx.fillRect(r[0], r[1], r[2], r[3]);
                 }
-            });
-        });
-        canvas.addEventListener('touchmove', (e) => {
-            let touch = e.touches[0]; let tx = touch.clientX; let ty = touch.clientY;
-            spiders.forEach(s => {
-                if (s.isGrabbed) {
-                    s.touchHistory.push([performance.now(), tx, ty]); if (s.touchHistory.length > 4) s.touchHistory.shift();
-                    s.x = tx - s.size/2; s.y = ty - s.size/2;
-                }
-            });
-        });
-        canvas.addEventListener('touchend', (e) => {
-            spiders.forEach(s => {
-                if (s.isGrabbed) {
-                    s.isGrabbed = false;
-                    if (s.touchHistory.length >= 2) {
-                        let [t1, x1, y1] = s.touchHistory[0]; let [t2, x2, y2] = s.touchHistory[s.touchHistory.length - 1];
-                        let dt = (t2 - t1) / 1000;
-                        if (dt > 0) {
-                            s.vx = ((x2 - x1) / dt) * 1.5; s.vy = ((y2 - y1) / dt) * 1.5;
-                            let spd = Math.sqrt(s.vx*s.vx + s.vy*s.vy);
-                            if (spd > 4000) { s.vx = (s.vx/spd)*4000; s.vy = (s.vy/spd)*4000; }
-                            if (spd > 100) { s.angle = Math.atan2(s.vy, s.vx); s.isFlung = true; }
+                
+                // Yaratık Güncelleme ve Çizimi
+                for (let spider of spider_list) {
+                    spider.update(dt, SCREEN_WIDTH, SCREEN_HEIGHT);
+                    spider.draw();
+                    
+                    if (gold_orb) {
+                        let dist = Math.sqrt(Math.pow((spider.x + spider.size/2) - (gold_orb.x + gold_orb.size/2), 2) + Math.pow((spider.y + spider.size/2) - (gold_orb.y + gold_orb.size/2), 2));
+                        if (dist < (spider.size / 2 + gold_orb.size / 2 - spider.visual_offset)) {
+                            spider.activateSuperPower(15.0);
+                            gold_orb = null;
                         }
                     }
                 }
-            });
-        });
-        function renderUI() {
-            if (!uiVisible) { menuPanel.style.display = "none"; return; }
-            menuPanel.style.display = "flex";
-            if (currentView === "main") {
-                menuPanel.innerHTML = `
-                    <div class="menu-title" style="color: ${spiderActive ? '#13db5c' : 'white'}">${spiderActive ? 'Yaratık Yürüyor' : 'Yaratık Duruyor'}</div>
-                    <button class="btn ${spiderActive ? 'btn-red' : 'btn-green'}" onclick="toggleSpiderActive()">${spiderActive ? 'Hareketi Durdur' : 'Hareketi Başlat'}</button>
-                    <button class="btn btn-blue" onclick="switchView('settings')">Ayarlar</button>
-                    <button class="btn btn-cyan" onclick="switchView('about')">Hakkında</button>
-                `;
-            } else if (currentView === "settings") {
-                let currentFolder = animationFolders[settings.animation_folder_idx % animationFolders.length];
-                menuPanel.innerHTML = `
-                    <div class="menu-title">Ayarlar</div>
-                    <div class="setting-row"><span class="setting-label">Tür: <b>${currentFolder.toUpperCase()}</b></span>
-                        <div class="setting-controls"><button class="ctrl-btn" onclick="changeType(-1)">&lt;</button><button class="ctrl-btn" onclick="changeType(1)">&gt;</button></div>
-                    </div>
-                    <div class="setting-row"><span class="setting-label">Boyut: ${settings.creature_size}px</span>
-                        <div class="setting-controls"><button class="ctrl-btn" onclick="updateConfig('creature_size', -10, 40, 400)">-</button><button class="ctrl-btn" onclick="updateConfig('creature_size', 10, 40, 400)">+</button></div>
-                    </div>
-                    <div class="setting-row"><span class="setting-label">Maks Yaratık: ${settings.max_creatures}</span>
-                        <div class="setting-controls"><button class="ctrl-btn" onclick="updateConfig('max_creatures', -1, 1, 30)">-</button><button class="ctrl-btn" onclick="updateConfig('max_creatures', 1, 1, 30)">+</button></div>
-                    </div>
-                    <button class="btn btn-green" onclick="switchView('main')">Ana Menü</button>
-                `;
+            }
+            
+            requestAnimationFrame(updateGame);
+        }
+        
+        function drawBackground() {
+            let current_folder = animation_folders[settings["animation_folder_idx"] % animation_folders.length];
+            ctx.fillStyle = "#121212";
+            ctx.fillRect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
+            
+            ctx.strokeStyle = "rgba(255, 255, 255, 0.03)";
+            ctx.lineWidth = 1;
+            let step = 40;
+            for (let x = 0; x < SCREEN_WIDTH; x += step) { ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, SCREEN_HEIGHT); ctx.stroke(); }
+            for (let y = 0; y < SCREEN_HEIGHT; y += step) { ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(SCREEN_WIDTH, y); ctx.stroke(); }
+        }
+        
+        // --- ETKİLEŞİM VE DOKUNMA MOTORU ---
+        let drag_spider = null;
+        
+        window.addEventListener('mousedown', handleTouchStart);
+        window.addEventListener('mousemove', handleTouchMove);
+        window.addEventListener('mouseup', handleTouchEnd);
+        
+        window.addEventListener('touchstart', (e) => handleTouchStart(e.touches[0]), { passive: false });
+        window.addEventListener('touchmove', (e) => handleTouchMove(e.touches[0]), { passive: false });
+        window.addEventListener('touchend', (e) => handleTouchEnd(e.changedTouches[0]), { passive: false });
+        
+        function handleTouchStart(e) {
+            let clientX = e.clientX;
+            let clientY = e.clientY;
+            
+            if (ui_visible) {
+                if (clientY < SCREEN_HEIGHT * 0.90) {
+                    if (clientX > SCREEN_WIDTH * 0.1 && clientX < SCREEN_WIDTH * 0.9) {
+                        if (current_view === "main" && clientY > SCREEN_HEIGHT * 0.30) return;
+                        if (current_view === "settings" && clientY > SCREEN_HEIGHT * 0.02) return;
+                        if (current_view === "about" && clientY > SCREEN_HEIGHT * 0.15) return;
+                    }
+                }
+            }
+            
+            for (let i = walls.length - 1; i >= 0; i--) {
+                let r = walls[i].rect;
+                if (clientX >= r[0] && clientX <= r[0] + r[2] && clientY >= r[1] && clientY <= r[1] + r[3]) {
+                    if (walls[i].is_big) { for (let s of spider_list) { if (s.is_orbiting) s.is_orbiting = false; } }
+                    particle_emitter.spawnShatteredWall(r, walls[i].color);
+                    walls.splice(i, 1);
+                    return;
+                }
+            }
+            for (let spider of spider_list) {
+                if (clientX >= spider.x && clientX <= spider.x + spider.size && clientY >= spider.y && clientY <= spider.y + spider.size) {
+                    drag_spider = spider;
+                    spider.is_grabbed = true;
+                    spider.is_orbiting = false;
+                    spider.vx = 0; spider.vy = 0;
+                    spider.touch_history = [[Date.now(), clientX, clientY]];
+                    break;
+                }
             }
         }
-
-        // --- REFERANS ÇAKIŞMASINI ÖNLEYEN TAM GÜVENLİ ASENKRON BAŞLATMA MOTORU ---
-        window.onload = function() {
-            // Arayüze kilitlenmeyi önleyici ilk yükleme ekranını bas
-            menuPanel.style.display = "flex";
-            menuPanel.innerHTML = `<div class="menu-title" style="color: #ffd700;">Görseller Yükleniyor...</div>`;
+        
+        function handleTouchMove(e) {
+            if (!drag_spider) return;
+            let clientX = e.clientX;
+            let clientY = e.clientY;
             
-            // Ayarlar panelini ilk değerlerle eşitle
-            syncActiveFolderSettings();
+            drag_spider.touch_history.push([Date.now(), clientX, clientY]);
+            if (drag_spider.touch_history.length > 4) drag_spider.touch_history.shift();
             
-            // Dokuları arka planda kayıpsız indir ve senkron döngüyü tetikle
-            preloadTextures(function() {
+            drag_spider.x = clientX - drag_spider.size / 2;
+            drag_spider.y = clientY - drag_spider.size / 2;
+        }
+        
+        function handleTouchEnd(e) {
+            if (!drag_spider) return;
+            drag_spider.is_grabbed = false;
+            let history = drag_spider.touch_history;
+            
+            if (history.length >= 2) {
+                let [t1, x1, y1] = history[0];
+                let [t2, x2, y2] = history[history.length - 1];
+                let dt = (t2 - t1) / 1000;
                 
-                // Göz butonunun tıklama (gizleme) olayını bağla
-                toggleUiBtn.addEventListener('click', () => { 
-                    uiVisible = !uiVisible; 
-                    toggleUiBtn.innerText = uiVisible ? "👁️" : "❌"; 
-                    renderUI(); 
-                });
-
-                // Görünümler (Paneller) arası geçiş fonksiyonu
-                window.switchView = function(v) { 
-                    currentView = v; 
-                    renderUI(); 
-                };
-
-                // Hareketi başlat / durdur mekanizması
-                window.toggleSpiderActive = function() { 
-                    spiderActive = !spiderActive; 
-                    if(!spiderActive) { 
-                        spiders = []; 
-                        walls = []; 
-                        goldOrb = null; 
-                    } 
-                    renderUI(); 
-                };
-
-                // Tür (Klasör) değiştirildiğinde hafıza sızıntısı yapmadan resimleri yenileyen motor
-                window.changeType = function(d) { 
-                    settings.animation_folder_idx = (settings.animation_folder_idx + d + animationFolders.length) % animationFolders.length; 
-                    syncActiveFolderSettings(); 
-                    menuPanel.innerHTML = `<div class="menu-title" style="color: #ffd700;">Görseller Yükleniyor...</div>`;
-                    
-                    // Dokuların indirilmesi bitince arayüzü ve canlı nesneleri güncelle
-                    preloadTextures(function() { 
-                        spiders.forEach(s => {
-                            s.size = settings.creature_size;
-                            s.isSuper = false; // Geçiş anında hafızayı korumak için süper modu sıfırla
-                            s.superTimer = 0.0;
-                        }); 
-                        renderUI(); 
-                    });
-                };
-
-                // Ayarlar menüsünden gelen canlı parametre (Boyut/Maksimum adet) güncelleyici
-                window.updateConfig = function(k, v, mn, mx) { 
-                    settings[k] = Math.max(mn, Math.min(mx, settings[k] + v)); 
-                    let f = animationFolders[settings.animation_folder_idx % animationFolders.length]; 
-                    if(!folderSettings[f]) syncActiveFolderSettings(); 
-                    folderSettings[f][k] = settings[k]; 
-                    
-                    // Canlı simülasyondaki yaratıklara yeni boyutları güvenli bir şekilde aktar
-                    if(k === 'creature_size') {
-                        spiders.forEach(s => s.size = settings.creature_size); 
-                    }
-                    renderUI(); 
-                };
-
-                // Her şey %100 hazır olduğunda asıl UI panelini ekrana getir ve render döngüsünü başlat
-                renderUI(); 
-                lastTime = performance.now();
-                requestAnimationFrame(update);
-            });
-        };
+                if (dt > 0) {
+                    drag_spider.vx = (x2 - x1) / dt * 1.5;
+                    drag_spider.vy = (y2 - y1) / dt * 1.5;
+                    let spd = Math.sqrt(drag_spider.vx * drag_spider.vx + drag_spider.vy * drag_spider.vy);
+                    if (spd > 4000.0) { drag_spider.vx = (drag_spider.vx / spd) * 4000.0; drag_spider.vy = (drag_spider.vy / spd) * 4000.0; }
+                    if (spd > 100) { drag_spider.angle = Math.atan2(drag_spider.vy, drag_spider.vx) % (Math.PI * 2); drag_spider.is_flung = true; }
+                }
+            }
+            drag_spider = null;
+        }
+        
+        // --- ARAYÜZ KONTROL FONKSİYONLARI ---
+        function toggleUiVisibility() {
+            ui_visible = !ui_visible;
+            document.getElementById('eye-icon').classList.toggle('hidden', !ui_visible);
+            document.getElementById('close-icon').classList.toggle('hidden', ui_visible);
+            
+            if (!ui_visible) {
+                document.getElementById('main-view').classList.add('hidden');
+                document.getElementById('settings-view').classList.add('hidden');
+                document.getElementById('about-view').classList.add('hidden');
+            } else { switchView(current_view); }
+        }
+        
+        function switchView(view_name) {
+            current_view = view_name;
+            about_sparkles = [];
+            sparkle_spawn_timer = 0.0;
+            
+            document.getElementById('main-view').classList.add('hidden');
+            document.getElementById('settings-view').classList.add('hidden');
+            document.getElementById('about-view').classList.add('hidden');
+            
+            if (ui_visible) document.getElementById(`${view_name}-view`).classList.remove('hidden');
+        }
+        function toggleSpider() {
+            spider_active = !spider_active;
+            const btn = document.getElementById('status-btn');
+            const lbl = document.getElementById('main-title');
+            
+            if (spider_active) {
+                btn.textContent = "Hareketi durdur"; btn.className = "visual-btn btn-red";
+                lbl.textContent = "Yaratık yürüyor"; lbl.className = "title-label title-active";
+                settings["start_program"] = 1;
+            } else {
+                btn.textContent = "Hareketi başlat"; btn.className = "visual-btn btn-green";
+                lbl.textContent = "Yaratık duruyor"; lbl.className = "title-label";
+                settings["start_program"] = 0;
+                spider_list = []; walls = []; gold_orb = null;
+            }
+            saveSettings();
+        }
+        
+        function changeCreatureTypeStep(dir) {
+            settings["animation_folder_idx"] = (settings["animation_folder_idx"] + dir + animation_folders.length) % animation_folders.length;
+            syncActiveFolderSettings(); saveSettings();
+            
+            let current_folder = animation_folders[settings["animation_folder_idx"] % animation_folders.length];
+            document.getElementById('lbl-type').innerHTML = `Tür (Type): <span class="bold-green">${current_folder.toUpperCase()}</span>`;
+            
+            while (spider_list.length > settings["max_creatures"]) spider_list.pop();
+            for (let s of spider_list) { s.size = settings["creature_size"]; s.visual_offset = settings["visual_offset"]; }
+            updateUiState();
+        }
+        
+        function changeSettingFaceStep(dir) {
+            let current_folder = animation_folders[settings["animation_folder_idx"] % animation_folders.length];
+            let face = (settings["folder_settings"][current_folder]["image_facing"] + dir + 4) % 4;
+            settings["folder_settings"][current_folder]["image_facing"] = face;
+            settings["image_facing"] = face;
+            saveSettings();
+            
+            const modes = ["0° (SAĞ)", "90° (YUKARI)", "180° (SOL)", "270° (AŞAĞI)"];
+            document.getElementById('lbl-face').innerHTML = `Img Face: <span style="color:#4080e0; font-weight:bold;">${modes[face]}</span>`;
+        }
+        
+        function changeBgImageStep(dir) {
+            let current_folder = animation_folders[settings["animation_folder_idx"] % animation_folders.length];
+            let bg_count = 3;
+            let bg = (settings["folder_settings"][current_folder]["bg_image_idx"] + dir + bg_count) % bg_count;
+            settings["folder_settings"][current_folder]["bg_image_idx"] = bg;
+            settings["bg_image_idx"] = bg;
+            saveSettings();
+            
+            let txt = bg === 0 ? "Varsayılan (bg)" : `Tema ${bg}`;
+            document.getElementById('lbl-bg').innerHTML = `Arka Plan (BG): <span style="color:#e0a040; font-weight:bold;">${txt}</span>`;
+        }
+        
+        function updateStatLive(key, amount, min_v, max_v) {
+            let current_folder = animation_folders[settings["animation_folder_idx"] % animation_folders.length];
+            let local = settings["folder_settings"][current_folder];
+            
+            local[key] = Math.max(min_v, Math.min(local[key] + amount, max_v));
+            settings[key] = local[key];
+            saveSettings();
+            
+            if (key === "max_creatures") { while(spider_list.length > local[key]) spider_list.pop(); }
+            else if (key === "visual_offset") { for(let s of spider_list) s.visual_offset = local[key]; }
+            else if (key === "creature_size") { for(let s of spider_list) s.size = local[key]; }
+            
+            updateUiState();
+        }
+        
+        function updateMult(amount) {
+            let current_folder = animation_folders[settings["animation_folder_idx"] % animation_folders.length];
+            let local = settings["folder_settings"][current_folder];
+            local["super_speed_mult"] = Math.max(1.5, Math.min(local["super_speed_mult"] + amount, 5.0));
+            settings["super_speed_mult"] = local["super_speed_mult"];
+            saveSettings();
+            updateUiState();
+        }
+        function updateUiState() {
+            let current_folder = animation_folders[settings["animation_folder_idx"] % animation_folders.length];
+            let local = settings["folder_settings"][current_folder];
+            
+            document.getElementById('lbl-size').textContent = `Boyut (Size): ${local["creature_size"]} px`;
+            document.getElementById('lbl-speed').textContent = `Hız (Speed): ${local["move_speed"]}`;
+            document.getElementById('lbl-anim').textContent = `Anim Hızı: ${local["anim_speed"]} ms`;
+            document.getElementById('lbl-count').textContent = `Yaratık Sayısı: ${local["max_creatures"]}`;
+            document.getElementById('lbl-offset').textContent = `Ofset (Margin): ${local["visual_offset"]} px`;
+            document.getElementById('lbl-mult').textContent = `Süper Hız (Mult): ${local["super_speed_mult"].toFixed(1)} x`;
+            
+            // Limitlerde buton renk değişimi kontrolü (Kivy OpenGL Arayüz taklidi)
+            document.getElementById('btn-sz-minus').className = `control-btn ${local["creature_size"] <= 40 ? 'edge-min' : ''}`;
+            document.getElementById('btn-sz-plus').className = `control-btn ${local["creature_size"] >= 400 ? 'edge-max' : ''}`;
+            document.getElementById('btn-s-minus').className = `control-btn ${local["move_speed"] <= 1 ? 'edge-min' : ''}`;
+            document.getElementById('btn-s-plus').className = `control-btn ${local["move_speed"] >= 15 ? 'edge-max' : ''}`;
+            document.getElementById('btn-a-minus').className = `control-btn ${local["anim_speed"] <= 20 ? 'edge-min' : ''}`;
+            document.getElementById('btn-a-plus').className = `control-btn ${local["anim_speed"] >= 300 ? 'edge-max' : ''}`;
+            document.getElementById('btn-c-minus').className = `control-btn ${local["max_creatures"] <= 1 ? 'edge-min' : ''}`;
+            document.getElementById('btn-c-plus').className = `control-btn ${local["max_creatures"] >= 30 ? 'edge-max' : ''}`;
+            document.getElementById('btn-o-minus').className = `control-btn ${local["visual_offset"] <= -10 ? 'edge-min' : ''}`;
+            document.getElementById('btn-o-plus').className = `control-btn ${local["visual_offset"] >= 50 ? 'edge-max' : ''}`;
+        }
+        
+        function toggleScreenAwake() {
+            settings["screen_awake"] = settings["screen_awake"] === 0 ? 1 : 0;
+            saveSettings();
+            const btn = document.getElementById('awake-btn');
+            btn.className = settings["screen_awake"] === 1 ? "visual-btn btn-green" : "visual-btn btn-orange";
+        }
+        
+        window.addEventListener('resize', () => {
+            SCREEN_WIDTH = window.innerWidth;
+            SCREEN_HEIGHT = window.innerHeight;
+            canvas.width = SCREEN_WIDTH;
+            canvas.height = SCREEN_HEIGHT;
+        });
+        
+        // --- MOTOR ILK KURULUMU ---
+        loadSettings();
+        canvas.width = SCREEN_WIDTH;
+        canvas.height = SCREEN_HEIGHT;
+        syncActiveFolderSettings();
+        updateUiState();
+        if(spider_active) { spider_active = false; toggleSpider(); } // Arayüzü tetikle
+        
+        requestAnimationFrame(updateGame);
     </script>
 </body>
 </html>
