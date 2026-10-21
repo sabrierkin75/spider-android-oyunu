@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Spider Android - HTML Canvas Safe OpenGL Overlay</title>
+    <title>Spider Android - Stable Web GL Engine</title>
     <style>
         * {
             box-sizing: border-box;
@@ -16,7 +16,7 @@
             width: 100%;
             height: 100%;
             overflow: hidden;
-            background-color: #1f1f1f;
+            background-color: #121212;
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
         }
         #game-container {
@@ -39,10 +39,6 @@
             width: 100%;
             height: 100%;
             z-index: 10;
-            pointer-events: none; /* Alt katmandaki canvas tıklamalarını bozmaması için pro düzey koruma */
-        }
-        .interactive {
-            pointer-events: auto !important; /* Butonların kesinlikle tıklanabilmesi için zorlama */
         }
         #toggle-btn {
             position: absolute;
@@ -83,8 +79,8 @@
             gap: 8px;
         }
         #about-view {
-            top: 10%;
-            height: 85%;
+            top: 12%;
+            height: 86%;
         }
         .title-label {
             width: 80%;
@@ -158,15 +154,16 @@
         .control-btn.edge-max { background-color: #21c444; }
         .about-card {
             width: 100%;
-            height: 75%; /* Küçülen panel boyutu tüm metinlerin sığması için esnetildi */
+            height: 72%;
             background-color: rgba(13, 13, 13, 0.85);
             border-radius: 15px;
             color: white;
-            padding: 20px;
+            padding: 22px;
             font-size: 14px;
             line-height: 1.6;
             text-align: center;
             overflow-y: auto;
+            box-shadow: 0 6px 12px rgba(0,0,0,0.4);
         }
         .bold-green { color: #45b870; font-weight: bold; }
         .bold-text { font-weight: bold; }
@@ -178,12 +175,12 @@
         <canvas id="gameCanvas"></canvas>
         
         <div class="ui-layer">
-            <button id="toggle-btn" class="interactive" onclick="toggleUiVisibility()">
+            <button id="toggle-btn" onclick="toggleUiVisibility()">
                 <svg id="eye-icon" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
                 <svg id="close-icon" class="hidden" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
             </button>
             
-            <div id="main-view" class="view-panel interactive">
+            <div id="main-view" class="view-panel">
                 <div id="main-title" class="title-label">Yaratık duruyor</div>
                 <button id="status-btn" class="visual-btn btn-green" onclick="toggleSpider()">Hareketi başlat</button>
                 <button class="visual-btn btn-blue" onclick="switchView('settings')">Ayarlar</button>
@@ -191,7 +188,7 @@
                 <button class="visual-btn btn-red" onclick="window.close()">Çıkış</button>
             </div>
             
-            <div id="settings-view" class="view-panel interactive hidden">
+            <div id="settings-view" class="view-panel hidden">
                 <div class="setting-row">
                     <div id="lbl-type" class="setting-label">Tür (Type): <span class="bold-green">VARSAYILAN</span></div>
                     <button id="btn-t-min" class="control-btn" onclick="changeCreatureTypeStep(-1)">&lt;</button>
@@ -207,7 +204,6 @@
                     <button class="control-btn" style="background-color:#b36633;" onclick="changeBgImageStep(-1)">&lt;</button>
                     <button class="control-btn" style="background-color:#b36633;" onclick="changeBgImageStep(1)">&gt;</button>
                 </div>
-
                 <div class="setting-row">
                     <div id="lbl-size" class="setting-label">Boyut (Size): 120 px</div>
                     <button id="btn-sz-minus" class="control-btn" onclick="updateStatLive('creature_size', -10, 40, 400)">&minus;</button>
@@ -245,7 +241,7 @@
                 <button class="visual-btn btn-green" onclick="switchView('main')">Ana Menü</button>
             </div>
             
-            <div id="about-view" class="view-panel interactive hidden">
+            <div id="about-view" class="view-panel hidden">
                 <div class="about-card">
                     <span class="bold-green">SPIDER_ANDROID</span><br><br>
                     <span class="bold-text">Sürüm:</span> v1.4.0<br>
@@ -304,6 +300,9 @@
                 if (saved) Object.assign(settings, JSON.parse(saved));
             } catch(e) {}
             spider_active = settings["start_program"] === 1;
+        }
+        function saveSettings() {
+            try { localStorage.setItem(CONFIG_FILE, JSON.stringify(settings)); } catch(e) {}
         }
 
         function syncActiveFolderSettings() {
@@ -446,7 +445,6 @@
                 this.roll_speed = 0.0;
                 
                 this.legs_phase = Math.random() * Math.PI * 2;
-                
                 this.total_frames = 4; 
                 this.loaded_images = [];
                 this.loadFrames();
@@ -460,6 +458,11 @@
                     img.src = `${path_root}/${i}.png`;
                     this.loaded_images.push(img);
                 }
+            }
+            
+            activateSuperPower(duration = 15.0) {
+                this.is_super = true;
+                this.super_timer = duration;
             }
             update(dt, sw, sh) {
                 if (this.is_grabbed) return;
@@ -533,7 +536,6 @@
                 let n_x = this.x + this.vx * dt;
                 let n_y = this.y + this.vy * dt;
                 let r_sz = this.size - (this.visual_offset * 2);
-                
                 for (let i = walls.length - 1; i >= 0; i--) {
                     let r = walls[i].rect;
                     if (n_x + this.visual_offset < r[0] + r[2] && n_x + this.visual_offset + r_sz > r[0] &&
@@ -551,7 +553,7 @@
                             n_x = this.x + this.size/2 < r[0] + r[2]/2 ? r[0] - this.size + this.visual_offset - 2 : r[0] + r[2] - this.visual_offset + 2;
                         } else {
                             this.vy = -this.vy;
-                            n_y = this.y + this.size/2 < r[0] + r[2]/2 ? r[1] - this.size + this.visual_offset - 2 : r[1] + r[3] - this.visual_offset + 2;
+                            n_y = this.y + this.size/2 < r[1] + r[3]/2 ? r[1] - this.size + this.visual_offset - 2 : r[1] + r[3] - this.visual_offset + 2;
                         }
                         this.angle = (Math.atan2(this.vy, this.vx) + (Math.random() * 0.2 - 0.1)) % (Math.PI * 2);
                         let current_speed = Math.sqrt(this.vx * this.vx + this.vy * this.vy);
@@ -562,6 +564,7 @@
                         return;
                     }
                 }
+                
                 if (this.is_super) particle_emitter.spawnSuperTrail(this.x, this.y, this.size, [1.0, 0.84, 0.0]);
                 
                 for (let other of spider_list) {
@@ -578,11 +581,11 @@
                     
                     if (distance < min_distance && distance > 0) {
                         if (this.is_super && !other.is_super) {
-                            particle_emitter.spawnShatteredWall([other.x, other.y, other.size, other.size], [Math.random(), Math.random(), Math.random(), 1]);
+                            particle_emitter.spawnShatteredWall([other.x, other.y, other.size, other.size], [Math.random(), Math.random(), Math.random()]);
                             spider_list = spider_list.filter(s => s.id !== other.id);
                             continue;
                         } else if (!this.is_super && other.is_super) {
-                            particle_emitter.spawnShatteredWall([this.x, this.y, this.size, this.size], [Math.random(), Math.random(), Math.random(), 1]);
+                            particle_emitter.spawnShatteredWall([this.x, this.y, this.size, this.size], [Math.random(), Math.random(), Math.random()]);
                             spider_list = spider_list.filter(s => s.id !== this.id);
                             return;
                         }
@@ -596,7 +599,6 @@
                         let v1t = this.vx * tx_vec + this.vy * ty_vec;
                         let v2n = other.vx * nx_vec + other.vy * ny_vec;
                         let v2t = other.vx * tx_vec + other.vy * ty_vec;
-                        
                         let v1n_new = v2n;
                         let v2n_new = v1n;
                         
@@ -702,16 +704,20 @@
                         let baseAngle = isTopSide ? (-Math.PI/2 - (legIdx * 0.25 - 0.375)) : (Math.PI/2 + (legIdx * 0.25 - 0.375));
                         let osc = Math.sin(this.legs_phase + i) * 0.22;
                         let finalAngle = baseAngle + osc;
+                        
                         ctx.beginPath(); ctx.moveTo(0, 0);
                         let extX = Math.cos(finalAngle) * (this.size * 0.45); let extY = Math.sin(finalAngle) * (this.size * 0.45);
                         ctx.quadraticCurveTo(extX * 0.7, extY * 1.2, extX * 1.2, extY * 1.2); ctx.stroke();
                     }
+                    
                     ctx.beginPath(); ctx.arc(0, 0, this.size / 4, 0, Math.PI * 2);
                     ctx.fillStyle = theme === "cyber" ? "#112233" : (theme === "plasma" ? "#330033" : (theme === "shadow" ? "#1a1a1a" : "#4a2d1b"));
                     ctx.fill(); ctx.stroke();
+                    
                     ctx.beginPath(); ctx.arc(this.size / 4, 0, this.size / 7, 0, Math.PI * 2);
                     ctx.fillStyle = theme === "cyber" ? "#00ffcc" : (theme === "plasma" ? "#ff00ff" : (theme === "shadow" ? "#222" : "#2d1a10"));
                     ctx.fill(); ctx.stroke();
+                    
                     ctx.fillStyle = this.is_super ? "#ffd700" : (theme === "cyber" ? "#ff0055" : "#ff0000");
                     ctx.beginPath(); ctx.arc(this.size * 0.34, -this.size * 0.05, this.size / 35, 0, Math.PI * 2); ctx.fill();
                     ctx.beginPath(); ctx.arc(this.size * 0.34, this.size * 0.05, this.size / 35, 0, Math.PI * 2); ctx.fill();
@@ -733,18 +739,18 @@
             }
             walls.push({
                 rect: [x, y, w, h],
-                color: [Math.random(), Math.random(), Math.random(), 1.0],
+                color: [Math.random(), Math.random(), Math.random()],
                 life: 0.0, is_big: false
             });
         }
         
         function spawnBigCentralWall() {
-            let w = 150, h = 150;
+            let w = 150, h = 150; 
             let x = (SCREEN_WIDTH - w) / 2 + (Math.random() * 100 - 50);
             let y = (SCREEN_HEIGHT - h) / 2 + (Math.random() * 100 - 50);
             walls.push({
                 rect: [x, y, w, h],
-                color: [0.85, 0.18, 0.18, 1.0],
+                color: [0.85, 0.18, 0.18],
                 life: 0.0, is_big: true
             });
             let avail = spider_list.filter(s => !s.is_orbiting);
@@ -764,7 +770,6 @@
             
             ctx.clearRect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
             drawBackground();
-            
             particle_emitter.update(dt);
             
             if (spider_active) {
@@ -781,8 +786,7 @@
                         }
                     }
                 } else {
-                    gold_orb_timer = 0.0;
-                    gold_orb = null;
+                    gold_orb_timer = 0.0; gold_orb = null;
                 }
                 
                 big_wall_timer += dt;
@@ -794,9 +798,7 @@
                 for (let i = walls.length - 1; i >= 0; i--) {
                     walls[i].life += dt;
                     if (walls[i].life >= 30.0) {
-                        if (walls[i].is_big) {
-                            for (let s of spider_list) { if (s.is_orbiting) s.is_orbiting = false; }
-                        }
+                        if (walls[i].is_big) { for (let s of spider_list) { if (s.is_orbiting) s.is_orbiting = false; } }
                         particle_emitter.spawnShatteredWall(walls[i].rect, walls[i].color);
                         walls.splice(i, 1);
                     }
@@ -807,15 +809,10 @@
                 }
                 
                 if (gold_orb) {
-                    ctx.beginPath();
-                    ctx.arc(gold_orb.x + gold_orb.size/2, gold_orb.y + gold_orb.size/2, gold_orb.size * 0.7, 0, Math.PI * 2);
-                    ctx.fillStyle = "rgba(255, 215, 0, 0.4)";
-                    ctx.fill();
-                    
-                    ctx.beginPath();
-                    ctx.arc(gold_orb.x + gold_orb.size/2, gold_orb.y + gold_orb.size/2, gold_orb.size/2, 0, Math.PI * 2);
-                    ctx.fillStyle = "rgba(255, 215, 0, 1.0)";
-                    ctx.fill();
+                    ctx.beginPath(); ctx.arc(gold_orb.x + gold_orb.size/2, gold_orb.y + gold_orb.size/2, gold_orb.size * 0.7, 0, Math.PI * 2);
+                    ctx.fillStyle = "rgba(255, 215, 0, 0.4)"; ctx.fill();
+                    ctx.beginPath(); ctx.arc(gold_orb.x + gold_orb.size/2, gold_orb.y + gold_orb.size/2, gold_orb.size/2, 0, Math.PI * 2);
+                    ctx.fillStyle = "rgba(255, 215, 0, 1.0)"; ctx.fill();
                 }
                 
                 for (let wall of walls) {
@@ -827,14 +824,6 @@
                     spider.update(dt, SCREEN_WIDTH, SCREEN_HEIGHT);
                     spider.draw();
                     
-                    if (gold_orb) {
-                        let dist = Math.sqrt(Math.pow((spider.x + spider.size/2) - (gold_orb.x + gold_orb.size/2), 2) + Math.pow((spider.y + spider.size/2) - (gold_orb.y + gold_orb.size/2), 2));
-                        if (dist < (spider.size / 2 + gold_orb.size / 2 - spider.visual_offset)) {
-                            spider.activateSuperPower(15.0);
-                            gold_orb = null;
-                        }
-                    }
-                    
                     spider.anim_time += dt;
                     if (spider.anim_time > (local["anim_speed"] / 1000.0)) {
                         if (Math.sqrt(spider.vx * spider.vx + spider.vy * spider.vy) > 5) {
@@ -842,16 +831,24 @@
                         }
                         spider.anim_time = 0;
                     }
+                    
+                    if (gold_orb) {
+                        let dist = Math.sqrt(Math.pow((spider.x + spider.size/2) - (gold_orb.x + gold_orb.size/2), 2) + Math.pow((spider.y + spider.size/2) - (gold_orb.y + gold_orb.size/2), 2));
+                        if (dist < (spider.size / 2 + gold_orb.size / 2 - spider.visual_offset)) {
+                            spider.activateSuperPower(15.0); gold_orb = null;
+                        }
+                    }
                 }
             }
             
+            // --- HAKKINDA EKRANI IŞILTI MOTORU (EN ÜST KATMAN) ---
             if (current_view === "about" && ui_visible) {
                 sparkle_spawn_timer += dt;
                 if (sparkle_spawn_timer >= 0.25 && about_sparkles.length < 15) {
                     sparkle_spawn_timer = 0.0;
                     about_sparkles.push({
                         x: Math.random() * (SCREEN_WIDTH * 0.86) + (SCREEN_WIDTH * 0.07),
-                        y: Math.random() * (SCREEN_HEIGHT * 0.48) + (SCREEN_HEIGHT * 0.15),
+                        y: Math.random() * (SCREEN_HEIGHT * 0.55) + (SCREEN_HEIGHT * 0.16),
                         size: Math.random() * 10 + 12,
                         base_color: Math.random() > 0.5 ? "255, 215, 0" : "255, 255, 255",
                         form: Math.random() > 0.5 ? "plus" : "star",
@@ -862,18 +859,13 @@
                 for (let i = about_sparkles.length - 1; i >= 0; i--) {
                     let sp = about_sparkles[i];
                     if (sp.state === "fade_in") {
-                        sp.alpha += dt * sp.speed;
-                        if (sp.alpha >= 1.0) { sp.alpha = 1.0; sp.state = "fade_out"; }
+                        sp.alpha += dt * sp.speed; if (sp.alpha >= 1.0) { sp.alpha = 1.0; sp.state = "fade_out"; }
                     } else {
-                        sp.alpha -= dt * sp.speed;
-                        if (sp.alpha <= 0.0) { about_sparkles.splice(i, 1); continue; }
+                        sp.alpha -= dt * sp.speed; if (sp.alpha <= 0.0) { about_sparkles.splice(i, 1); continue; }
                     }
                     
-                    ctx.save();
-                    ctx.translate(sp.x, sp.y);
-                    ctx.strokeStyle = `rgba(${sp.base_color}, ${sp.alpha})`;
-                    ctx.lineWidth = sp.size / 10;
-                    
+                    ctx.save(); ctx.translate(sp.x, sp.y);
+                    ctx.strokeStyle = `rgba(${sp.base_color}, ${sp.alpha})`; ctx.lineWidth = sp.size / 10;
                     if (sp.form === "plus") {
                         ctx.rotate(45 * Math.PI / 180);
                         ctx.beginPath(); ctx.moveTo(-sp.size/2, 0); ctx.lineTo(sp.size/2, 0); ctx.stroke();
@@ -896,37 +888,40 @@
             let bg_idx = local["bg_image_idx"] || 0;
             let is_portrait = SCREEN_HEIGHT >= SCREEN_WIDTH;
             
-            if (bg_idx === 0) { ctx.fillStyle = "#1e1e1e"; } 
-            else if (bg_idx === 1) { ctx.fillStyle = is_portrait ? "#141d26" : "#1c2833"; } 
-            else { ctx.fillStyle = is_portrait ? "#251820" : "#1f1424"; }
+            if (bg_idx === 0) ctx.fillStyle = "#1e1e1e";
+            else if (bg_idx === 1) ctx.fillStyle = is_portrait ? "#141d26" : "#1c2833";
+            else ctx.fillStyle = is_portrait ? "#251820" : "#1f1424";
             ctx.fillRect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
             
-            ctx.strokeStyle = "rgba(255, 255, 255, 0.03)";
-            ctx.lineWidth = 1;
+            ctx.strokeStyle = "rgba(255, 255, 255, 0.03)"; ctx.lineWidth = 1;
             let step = is_portrait ? 45 : 60;
             for (let x = 0; x < SCREEN_WIDTH; x += step) { ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, SCREEN_HEIGHT); ctx.stroke(); }
             for (let y = 0; y < SCREEN_HEIGHT; y += step) { ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(SCREEN_WIDTH, y); ctx.stroke(); }
         }
         
+        // --- WEB GL DOKUNMATİK VE TIKLAMA SINIRLAYICI STANDARTLAR ---
+        let drag_spider = null;
+        
         window.addEventListener('mousedown', (e) => triggerInputStart(e.clientX, e.clientY));
         window.addEventListener('mousemove', (e) => triggerInputMove(e.clientX, e.clientY));
-        window.addEventListener('mouseup', (e) => triggerInputEnd());
+        window.addEventListener('mouseup', () => triggerInputEnd());
         
         window.addEventListener('touchstart', (e) => {
-            if(e.touches && e.touches.length > 0) triggerInputStart(e.touches[0].clientX, e.touches[0].clientY);
+            if(e.touches.length > 0) triggerInputStart(e.touches[0].clientX, e.touches[0].clientY);
         }, { passive: true });
         window.addEventListener('touchmove', (e) => {
-            if(e.touches && e.touches.length > 0) triggerInputMove(e.touches[0].clientX, e.touches[0].clientY);
+            if(e.touches.length > 0) triggerInputMove(e.touches[0].clientX, e.touches[0].clientY);
         }, { passive: true });
         window.addEventListener('touchend', () => triggerInputEnd(), { passive: true });
         
         function triggerInputStart(clientX, clientY) {
+            // Butonların ve UI Alanının tıklanmasını kesen engeller kaldırıldı
             if (ui_visible) {
                 if (clientY < SCREEN_HEIGHT * 0.90) {
                     if (clientX > SCREEN_WIDTH * 0.1 && clientX < SCREEN_WIDTH * 0.9) {
                         if (current_view === "main" && clientY > SCREEN_HEIGHT * 0.30) return;
                         if (current_view === "settings" && clientY > SCREEN_HEIGHT * 0.12) return;
-                        if (current_view === "about" && clientY > SCREEN_HEIGHT * 0.15) return;
+                        if (current_view === "about" && clientY > SCREEN_HEIGHT * 0.12) return;
                     }
                 }
             }
@@ -935,78 +930,20 @@
                 let r = walls[i].rect;
                 if (clientX >= r[0] && clientX <= r[0] + r[2] && clientY >= r[1] && clientY <= r[1] + r[3]) {
                     if (walls[i].is_big) { for (let s of spider_list) { if (s.is_orbiting) s.is_orbiting = false; } }
-                    particle_emitter.spawnShatteredWall(r, walls[i].color);
-                    walls.splice(i, 1);
-                    return;
+                    particle_emitter.spawnShatteredWall(r, walls[i].color); walls.splice(i, 1); return;
                 }
             }
             
             for (let spider of spider_list) {
                 if (clientX >= spider.x && clientX <= spider.x + spider.size && clientY >= spider.y && clientY <= spider.y + spider.size) {
-                    drag_spider = spider;
-                    spider.is_grabbed = true;
-                    spider.is_orbiting = false;
-                    spider.vx = 0; spider.vy = 0;
-                    spider.touch_history = [[Date.now(), clientX, clientY]];
-                    break;
+                    drag_spider = spider; spider.is_grabbed = true; spider.is_orbiting = false;
+                    spider.vx = 0; spider.vy = 0; spider.touch_history = [[Date.now(), clientX, clientY]]; break;
                 }
             }
-        }
-        function triggerInputMove(clientX, clientY) {
-            if (!drag_spider) return;
-            drag_spider.touch_history.push([Date.now(), clientX, clientY]);
-            if (drag_spider.touch_history.length > 4) drag_spider.touch_history.shift();
-            drag_spider.x = clientX - drag_spider.size / 2;
-            drag_spider.y = clientY - drag_spider.size / 2;
-        }
-        
-        function triggerInputEnd() {
-            if (!drag_spider) return;
-            drag_spider.is_grabbed = false;
-            let history = drag_spider.touch_history;
-            
-            if (history.length >= 2) {
-                let [t1, x1, y1] = history[0];
-                let [t2, x2, y2] = history[history.length - 1];
-                let dt = (t2 - t1) / 1000;
-                
-                if (dt > 0) {
-                    drag_spider.vx = (x2 - x1) / dt * 1.5;
-                    drag_spider.vy = (y2 - y1) / dt * 1.5;
-                    let spd = Math.sqrt(drag_spider.vx * drag_spider.vx + drag_spider.vy * drag_spider.vy);
-                    if (spd > 4000.0) { drag_spider.vx = (drag_spider.vx / spd) * 4000.0; drag_spider.vy = (drag_spider.vy / spd) * 4000.0; }
-                    if (spd > 100) { drag_spider.angle = Math.atan2(drag_spider.vy, drag_spider.vx) % (Math.PI * 2); drag_spider.is_flung = true; }
-                }
-            }
-            drag_spider = null;
-        }
-        
-        function toggleUiVisibility() {
-            ui_visible = !ui_visible;
-            document.getElementById('eye-icon').classList.toggle('hidden', !ui_visible);
-            document.getElementById('close-icon').classList.toggle('hidden', ui_visible);
-            
-            if (!ui_visible) {
-                document.getElementById('main-view').classList.add('hidden');
-                document.getElementById('settings-view').classList.add('hidden');
-                document.getElementById('about-view').classList.add('hidden');
-            } else { switchView(current_view); }
-        }
-        
-        function switchView(view_name) {
-            current_view = view_name;
-            about_sparkles = [];
-            sparkle_spawn_timer = 0.0;
-            
-            document.getElementById('main-view').classList.add('hidden');
-            document.getElementById('settings-view').classList.add('hidden');
-            document.getElementById('about-view').classList.add('hidden');
-            
-            if (ui_visible) document.getElementById(`${view_name}-view`).classList.remove('hidden');
         }
         function updateUiState() {
             let current_folder = animation_folders[settings["animation_folder_idx"] % animation_folders.length];
-            let local = settings["folder_settings"][current_folder];
+            let local = settings["folder_settings"][current_folder] || settings;
             
             document.getElementById('lbl-size').textContent = `Boyut (Size): ${local["creature_size"]} px`;
             document.getElementById('lbl-speed').textContent = `Hız (Speed): ${local["move_speed"]}`;
@@ -1034,6 +971,36 @@
             btn.className = settings["screen_awake"] === 1 ? "visual-btn btn-green" : "visual-btn btn-orange";
         }
         
+        // Mobil ve masaüstü tarayıcılarda koordinat sistemini eşitleyen mutlak tetikleyiciler
+        function getEventCoords(e) {
+            if (e.touches && e.touches.length > 0) {
+                return { x: e.touches[0].clientX, y: e.touches[0].clientY };
+            } else if (e.changedTouches && e.changedTouches.length > 0) {
+                return { x: e.changedTouches[0].clientX, y: e.changedTouches[0].clientY };
+            }
+            return { x: e.clientX, y: e.clientY };
+        }
+
+        window.addEventListener('mousedown', (e) => {
+            let coords = getEventCoords(e);
+            triggerInputStart(coords.x, coords.y);
+        });
+        window.addEventListener('mousemove', (e) => {
+            let coords = getEventCoords(e);
+            triggerInputMove(coords.x, coords.y);
+        });
+        window.addEventListener('mouseup', () => triggerInputEnd());
+        
+        window.addEventListener('touchstart', (e) => {
+            let coords = getEventCoords(e);
+            triggerInputStart(coords.x, coords.y);
+        }, { passive: true });
+        window.addEventListener('touchmove', (e) => {
+            let coords = getEventCoords(e);
+            triggerInputMove(coords.x, coords.y);
+        }, { passive: true });
+        window.addEventListener('touchend', () => triggerInputEnd(), { passive: true });
+
         window.addEventListener('resize', () => {
             SCREEN_WIDTH = window.innerWidth; SCREEN_HEIGHT = window.innerHeight;
             canvas.width = SCREEN_WIDTH; canvas.height = SCREEN_HEIGHT;
@@ -1045,7 +1012,12 @@
         canvas.height = SCREEN_HEIGHT;
         syncActiveFolderSettings();
         updateUiState();
-        if(spider_active) { spider_active = false; toggleSpider(); }
+        
+        // Kivy durum kontrolü senkronizasyonu
+        if(spider_active) { 
+            spider_active = false; 
+            toggleSpider(); 
+        }
         
         requestAnimationFrame(updateGame);
     </script>
