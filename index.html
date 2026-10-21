@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Spider Android - Kesin Çözüm HTML5 Sürümü</title>
+    <title>Spider Android - Kesin Çözüm HTML5 Tam Sürüm</title>
     <style>
         * {
             box-sizing: border-box;
@@ -173,17 +173,26 @@
         };
         const loadedTextures = {};
         const totalTextureFrames = 8; 
-        function preloadTextures() {
+        function preloadTextures(callback) {
             let folder = animationFolders[settings.animation_folder_idx % animationFolders.length];
             let basePath = folder === "default" ? "anims/" : `anims/${folder}/`;
+            let loadedCount = 0;
             for (let i = 0; i < totalTextureFrames; i++) {
                 let img = new Image();
-                img.onerror = function() { this.failed = true; };
+                img.onload = function() {
+                    loadedCount++;
+                    if (loadedCount === totalTextureFrames && callback) callback();
+                };
+                img.onerror = function() {
+                    this.failed = true;
+                    loadedCount++;
+                    if (loadedCount === totalTextureFrames && callback) callback();
+                };
                 img.src = basePath + i + ".png";
                 loadedTextures[i] = img;
             }
         }
-        function syncActiveFolderSettings() {
+                function syncActiveFolderSettings() {
             let currentFolder = animationFolders[settings.animation_folder_idx % animationFolders.length];
             if (!folderSettings[currentFolder]) {
                 folderSettings[currentFolder] = {
@@ -271,7 +280,7 @@
                     }
                 }
             }
-            draw() {
+                        draw() {
                 this.particles.forEach(p => {
                     ctx.save();
                     ctx.globalAlpha = Math.max(0, p.life);
@@ -301,6 +310,7 @@
                 this.currentFrame = 0; this.animTime = 0.0;
                 this.rollAngle = 0.0; this.rollSpeed = 0.0;
                 this.isFlung = false; this.touchHistory = [];
+                this.toRemove = false;
             }
             spawnEdge() {
                 let edge = Math.floor(Math.random() * 4);
@@ -315,7 +325,7 @@
                 this.orbit_phase = 0; this.x = wx - 15; this.y = wy - this.size - 5 + this.visual_offset;
             }
             update(dt, spiders, walls) {
-                if (this.isGrabbed) return;
+                if (this.isGrabbed || this.toRemove) return;
                 this.animTime += dt;
                 if (this.animTime > settings.anim_speed / 1000) {
                     this.currentFrame = (this.currentFrame + 1) % totalTextureFrames;
@@ -341,7 +351,7 @@
                 } else {
                     this.vx = Math.cos(this.angle) * baseSpd; this.vy = Math.sin(this.angle) * baseSpd;
                 }
-                if (this.isOrbiting) {
+                                if (this.isOrbiting) {
                     let xm = this.orbit_wx - this.size + 15 + this.visual_offset;
                     let xmx = this.orbit_wx + this.orbit_ww - 15 - this.visual_offset;
                     let ym = this.orbit_wy - this.size + 15 + this.visual_offset;
@@ -371,8 +381,9 @@
                         this.angle = Math.atan2(this.vy, this.vx) + (Math.random() - 0.5) * 0.2;
                     }
                 }
-                spiders.forEach(other => {
-                    if (other.id === this.id || other.isOrbiting || other.isGrabbed) return;
+                for (let j = 0; j < spiders.length; j++) {
+                    let other = spiders[j];
+                    if (other.id === this.id || other.isOrbiting || other.isGrabbed || other.toRemove) continue;
                     let dx = (other.x + other.size/2) - (this.x + this.size/2);
                     let dy = (other.y + other.size/2) - (this.y + this.size/2);
                     let dist = Math.sqrt(dx*dx + dy*dy);
@@ -380,7 +391,7 @@
                     if (dist < minDist && dist > 0) {
                         if (this.isSuper && !other.isSuper) {
                             other.toRemove = true; particleEmitter.spawnShatteredWall([other.x, other.y, other.size, other.size], "rgba(237,66,66,1)");
-                            return;
+                            continue;
                         } else if (!this.isSuper && other.isSuper) {
                             this.toRemove = true; particleEmitter.spawnShatteredWall([this.x, this.y, this.size, this.size], "rgba(237,66,66,1)");
                             return;
@@ -396,12 +407,13 @@
                         this.rollSpeed = rel > 0 ? -intensity : intensity; other.rollSpeed = rel > 0 ? intensity : -intensity;
                         let overlap = minDist - dist; this.x -= (overlap / 2) * nx; this.y -= (overlap / 2) * ny; other.x += (overlap / 2) * nx; other.y += (overlap / 2) * ny;
                     }
-                });
+                }
                 if (this.x + this.size < -60 || this.x > canvas.width + 60 || this.y + this.size < -60 || this.y > canvas.height + 60) {
                     this.spawnEdge();
                 }
             }
-            draw() {
+                        draw() {
+                if (this.toRemove) return;
                 ctx.save(); ctx.translate(this.x, this.y);
                 drawProceduralCreature(ctx, this.size, this.currentFrame, this.isSuper, this.rollAngle, settings.image_facing);
                 ctx.restore();
@@ -417,7 +429,7 @@
             let y = (canvas.height - h) / 2 + (Math.random() - 0.5) * 100;
             let wallData = { rect: [x, y, w, h], color: "rgba(216,46,46,1)", isBig: true, life: 0.0 };
             walls.push(wallData);
-            let avail = spiders.filter(s => !s.isOrbiting);
+            let avail = spiders.filter(s => !s.isOrbiting && !s.toRemove);
             if (avail.length > 0) { avail[Math.floor(Math.random() * avail.length)].startOrbiting(x, y, w, h); }
         }
         function spawnRandomWall() {
@@ -462,15 +474,17 @@
                 ctx.fillStyle = "rgba(255,214,0,0.3)"; ctx.beginPath(); ctx.arc(goldOrb.x, goldOrb.y, goldOrb.size*0.7, 0, Math.PI*2); ctx.fill();
                 ctx.fillStyle = "rgba(255,214,0,1)"; ctx.beginPath(); ctx.arc(goldOrb.x, goldOrb.y, goldOrb.size*0.35, 0, Math.PI*2); ctx.fill();
                 spiders.forEach(s => {
+                    if (s.toRemove) return;
                     let dx = (s.x + s.size/2) - goldOrb.x; let dy = (s.y + s.size/2) - goldOrb.y;
                     if (Math.sqrt(dx*dx + dy*dy) < s.size/2 + goldOrb.size/2 - s.visual_offset) { s.isSuper = true; s.superTimer = 15.0; goldOrb = null; }
                 });
             }
             walls.forEach(w => { ctx.fillStyle = w.color; ctx.fillRect(w.rect[0], w.rect[1], w.rect[2], w.rect[3]); });
+            spiders = spiders.filter(s => !s.toRemove);
             if (spiders.length < settings.max_creatures) spiders.push(new KivySpiderEntity());
             for (let i = spiders.length - 1; i >= 0; i--) {
                 spiders[i].update(dt, spiders, walls);
-                if (spiders[i].toRemove) { spiders.splice(i, 1); } else { spiders[i].draw(); }
+                if (!spiders[i].toRemove) spiders[i].draw();
             }
             particleEmitter.update(dt); particleEmitter.draw(); requestAnimationFrame(update);
         }
@@ -544,98 +558,37 @@
                 menuPanel.innerHTML = `
                     <div class="menu-title" style="color:#13db5c">SPIDER ANDROID</div>
                     <div id="about-text">Orijinali <b>Desperado</b>'nun <b>Spider v0.9.5</b> adlı symbian uygulamasıdır. Sabri Erkin tarafından geliştirilen saf OpenGL kurgusu temel alınarak Android WebView katmanına kayıpsız taşınmıştır. Ekran üzerinde bağımsız sönümleme fiziğiyle hareket eder.</div>
-            <button class="btn btn-green" onclick="switchView('main')">Ana Menü</button>
+                    <button class="btn btn-green" onclick="switchView('main')">Ana Menü</button>
                 `;
             }
         }
-
-        // --- KARIŞIKLIĞI ÖNLEYEN GÜVENLİ YÜKLEME VE SENKRONİZASYON MOTORU ---
+        
         window.onload = function() {
-            // Arayüze geçici olarak "Yükleniyor..." uyarısı yazalım
             menuPanel.style.display = "flex";
             menuPanel.innerHTML = `<div class="menu-title" style="color: #ffd700;">Görseller Yükleniyor...</div>`;
-
-            // Dokuların tam olarak inip inmediğini denetleyen sayaç
-            let loadedCount = 0;
-            let currentFolder = animationFolders[settings.animation_folder_idx % animationFolders.length];
-            let basePath = currentFolder === "default" ? "anims/" : `anims/${currentFolder}/`;
-
-            // Ayarları senkronize et
             syncActiveFolderSettings();
-
-            // Resimleri sırayla ve güvenli bir şekilde belleğe zorla yükle
-            for (let i = 0; i < totalTextureFrames; i++) {
-                let img = new Image();
-                
-                img.onload = function() {
-                    loadedCount++;
-                    // Tüm kareler (8 adet resim) sorunsuz indiğinde oyunu başlat
-                    if (loadedCount === totalTextureFrames) {
-                        startGameSimulation();
-                    }
-                };
-
-                img.onerror = function() {
-                    // Resim klasörde yoksa veya adı yanlışsa hataya düşüp oyunu kilitlemesin
-                    this.failed = true;
-                    loadedCount++;
-                    if (loadedCount === totalTextureFrames) {
-                        startGameSimulation();
-                    }
-                };
-
-                img.src = basePath + i + ".png";
-                loadedTextures[i] = img;
-            }
-
-            // Simülasyonu her şey hazır olduğunda ateşleyen fonksiyon
-            function startGameSimulation() {
-                // Olay dinleyicilerini elementlere bağla
-                toggleUiBtn.addEventListener('click', () => { 
-                    uiVisible = !uiVisible; 
-                    toggleUiBtn.innerText = uiVisible ? "👁️" : "❌"; 
-                    renderUI(); 
-                });
-
-                window.switchView = function(v) { 
-                    currentView = v; 
-                    renderUI(); 
-                };
-
-                window.toggleSpiderActive = function() { 
-                    spiderActive = !spiderActive; 
-                    if(!spiderActive) { 
-                        spiders = []; 
-                        walls = []; 
-                        goldOrb = null; 
-                    } 
-                    renderUI(); 
-                };
-
+            preloadTextures(function() {
+                toggleUiBtn.addEventListener('click', () => { uiVisible = !uiVisible; toggleUiBtn.innerText = uiVisible ? "👁️" : "❌"; renderUI(); });
+                window.switchView = function(v) { currentView = v; renderUI(); };
+                window.toggleSpiderActive = function() { spiderActive = !spiderActive; if(!spiderActive) { spiders = []; walls = []; goldOrb = null; } renderUI(); };
                 window.changeType = function(d) { 
                     settings.animation_folder_idx = (settings.animation_folder_idx + d + animationFolders.length) % animationFolders.length; 
                     syncActiveFolderSettings(); 
-                    preloadTextures(); 
-                    spiders.forEach(s => s.size = settings.creature_size); 
-                    renderUI(); 
+                    menuPanel.innerHTML = `<div class="menu-title" style="color: #ffd700;">Görseller Yükleniyor...</div>`;
+                    preloadTextures(function() { spiders.forEach(s => s.size = settings.creature_size); renderUI(); });
                 };
-
                 window.updateConfig = function(k, v, mn, mx) { 
                     settings[k] = Math.max(mn, Math.min(mx, settings[k] + v)); 
                     let f = animationFolders[settings.animation_folder_idx % animationFolders.length]; 
                     if(!folderSettings[f]) syncActiveFolderSettings(); 
                     folderSettings[f][k] = settings[k]; 
-                    if(k === 'creature_size') {
-                        spiders.forEach(s => s.size = settings.creature_size); 
-                    }
+                    if(k === 'creature_size') spiders.forEach(s => s.size = settings.creature_size); 
                     renderUI(); 
                 };
-
-                // Asıl UI arayüzünü ekrana bas ve döngüyü başlat
                 renderUI(); 
                 lastTime = performance.now();
                 requestAnimationFrame(update);
-            }
+            });
         };
     </script>
 </body>
