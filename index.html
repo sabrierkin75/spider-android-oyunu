@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Spider Android - HTML Canvas Safe OpenGL Overlay</title>
+    <title>Spider Android - Safe HTML Canvas Engine</title>
     <style>
         * {
             box-sizing: border-box;
@@ -60,6 +60,7 @@
             justify-content: center;
             cursor: pointer;
             box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+            z-index: 100;
         }
         .view-panel {
             position: absolute;
@@ -69,6 +70,7 @@
             flex-direction: column;
             align-items: center;
             gap: 12px;
+            z-index: 50;
         }
         #main-view {
             top: 30%;
@@ -86,9 +88,8 @@
         }
         .title-label {
             width: 80%;
-            height: 6%;
-            max-height: 50px;
-            background-color: rgba(13, 13, 13, 0.5);
+            height: 45px;
+            background-color: rgba(13, 13, 13, 0.65);
             color: #ffffff;
             font-size: 20px;
             font-weight: bold;
@@ -111,10 +112,10 @@
             border-radius: 12px;
             cursor: pointer;
             box-shadow: 0 4px 6px rgba(0,0,0,0.2);
-            transition: transform 0.06s ease, height 0.06s ease;
+            transition: transform 0.06s ease;
         }
         .visual-btn:active {
-            transform: scaleY(0.88);
+            transform: scale(0.95);
         }
         .btn-green { background-color: #21c444; }
         .btn-red { background-color: #ed4242; }
@@ -143,7 +144,7 @@
             text-align: center;
         }
         .control-btn {
-            width: 12%;
+            width: 15%;
             height: 100%;
             background-color: #334054;
             color: white;
@@ -166,8 +167,6 @@
             line-height: 1.5;
             text-align: center;
             overflow-y: auto;
-            position: relative;
-            z-index: 11;
         }
         .bold-green { color: #45b870; font-weight: bold; }
         .bold-text { font-weight: bold; }
@@ -254,11 +253,11 @@
                     Orijinali <span class="bold-text">Desperado</span>'nun <span class="bold-text">Spider v0.9.5</span> adlı symbian uygulamasıdır. Ben biraz geliştirmeye çalıştım ve web/android ortamında çalışacak hale getirdim.<br><br>
                     Bu uygulama, ekran üzerinde rastgele gezinen yaratıklar, parçalanabilir dinamik duvarlar ve özel güçler içeren interaktif bir simülasyondur.<br><br>
                     <span class="bold-text">Özellikler:</span><br>
-                    • Altın küreleri toplayarak süper hıza ulaşın.<br>
-                    • Süper modda engelleri ve rakip yaratıkları yok edin.<br>
+                    • Altın küreleri toplayarak süper hıza ulaşın.\n"
+                    • Süper modda engelleri ve rakip yaratıkları yok edin.\n"
                     • Ayarlar menüsünden tüm fiziksel sınırları canlı olarak yönetin.
                 </div>
-                <button class="visual-btn btn-green" style="z-index: 12;" onclick="switchView('main')">Ana Menü</button>
+                <button class="visual-btn btn-green" onclick="switchView('main')">Ana Menü</button>
             </div>
         </div>
     </div>
@@ -374,7 +373,7 @@
                 for(let p of this.particles) {
                     p.life -= dt * p.decay;
                     if(p.life <= 0) continue;
-                    p.color[3] = Math.max(0, p.life);
+                    let alpha = Math.max(0, p.life);
                     
                     p.x += p.vx * dt;
                     p.y += p.vy * dt;
@@ -382,14 +381,14 @@
                     if(p.type === 2) {
                         p.vx *= 0.92; p.vy *= 0.92;
                         p.size += dt * 25.0;
-                        ctx.fillStyle = `rgba(${Math.floor(p.color[0]*255)}, ${Math.floor(p.color[1]*255)}, ${Math.floor(p.color[2]*255)}, ${p.color[3]})`;
+                        ctx.fillStyle = `rgba(${Math.floor(p.color[0]*255)}, ${Math.floor(p.color[1]*255)}, ${Math.floor(p.color[2]*255)}, ${alpha})`;
                         ctx.fillRect(p.x - p.size/2, p.y - p.size/2, p.size, p.size);
                     } else {
                         p.rot += p.rot_speed * dt;
                         ctx.save();
                         ctx.translate(p.x, p.y);
                         ctx.rotate(p.rot * Math.PI / 180);
-                        ctx.fillStyle = `rgba(${Math.floor(p.color[0]*255)}, ${Math.floor(p.color[1]*255)}, ${Math.floor(p.color[2]*255)}, ${p.color[3]})`;
+                        ctx.fillStyle = `rgba(${Math.floor(p.color[0]*255)}, ${Math.floor(p.color[1]*255)}, ${Math.floor(p.color[2]*255)}, ${alpha})`;
                         
                         if(p.type === 0) {
                             ctx.fillRect(-p.size/2, -p.size/2, p.size, p.size);
@@ -423,16 +422,16 @@
                 
                 let spawn_edge = Math.floor(Math.random() * 4);
                 if (spawn_edge === 0) {
-                    this.x = -this.size - 20; this.y = Math.random() * (sh - this.size);
+                    this.x = -this.size + 10; this.y = Math.random() * (sh - this.size);
                     this.angle = (Math.random() * Math.PI / 2 - Math.PI / 4) % (Math.PI * 2);
                 } else if (spawn_edge === 1) {
-                    this.x = sw + 20; this.y = Math.random() * (sh - this.size);
+                    this.x = sw - 10; this.y = Math.random() * (sh - this.size);
                     this.angle = (Math.random() * Math.PI / 2 + 3 * Math.PI / 4) % (Math.PI * 2);
                 } else if (spawn_edge === 2) {
-                    this.x = Math.random() * (sw - this.size); this.y = -this.size - 20;
+                    this.x = Math.random() * (sw - this.size); this.y = -this.size + 10;
                     this.angle = (Math.random() * Math.PI / 2 + Math.PI / 4) % (Math.PI * 2);
                 } else if (spawn_edge === 3) {
-                    this.x = Math.random() * (sw - this.size); this.y = sh + 20;
+                    this.x = Math.random() * (sw - this.size); this.y = sh - 10;
                     this.angle = (Math.random() * Math.PI / 2 + 5 * Math.PI / 4) % (Math.PI * 2);
                 }
                 
@@ -625,7 +624,7 @@
                 
                 this.x = n_x; this.y = n_y;
                 
-                if (this.x + this.size < -50 || this.x > sw + 50 || this.y + this.size < -50 || this.y > sh + 50) {
+                if (this.x + this.size < -100 || this.x > sw + 100 || this.y + this.size < -100 || this.y > sh + 100) {
                     let edge = Math.floor(Math.random() * 4);
                     if (edge === 0) { this.x = -this.size + 10; this.y = Math.random() * (sh - this.size); }
                     else if (edge === 1) { this.x = sw - 10; this.y = Math.random() * (sh - this.size); }
@@ -702,7 +701,6 @@
                 ctx.strokeStyle = theme === "cyber" ? "#00ffcc" : (theme === "plasma" ? "#ff00ff" : (theme === "shadow" ? "#444" : "#a05a2c"));
                 ctx.lineWidth = this.size / 24;
                 
-                // 8 Adet Bacak Çizimi (Canlı Salınım Efektli)
                 for (let i = 0; i < 8; i++) {
                     let isLeft = i < 4;
                     let legIdx = i % 4;
@@ -718,14 +716,12 @@
                     ctx.stroke();
                 }
                 
-                // Gövde Çizimi
                 ctx.beginPath();
                 ctx.arc(0, 0, this.size / 4, 0, Math.PI * 2);
                 ctx.fillStyle = theme === "cyber" ? "#112233" : (theme === "plasma" ? "#330033" : (theme === "shadow" ? "#1a1a1a" : "#4a2d1b"));
                 ctx.fill();
                 ctx.stroke();
                 
-                // Kafa ve Gözler
                 ctx.beginPath();
                 ctx.arc(this.size / 4, 0, this.size / 8, 0, Math.PI * 2);
                 ctx.fillStyle = theme === "cyber" ? "#00ffcc" : (theme === "plasma" ? "#ff00ff" : (theme === "shadow" ? "#222" : "#2d1a10"));
@@ -781,14 +777,13 @@
         }
         
         function updateGame(timestamp) {
-            let dt = 1 / 60; // Sabit Delta Zamanı (KivyOpenGL Uyumlu)
+            let dt = 1 / 60;
             
             ctx.clearRect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
             drawBackground();
             
             particle_emitter.update(dt);
             
-            // --- HAKKINDA EKRANI IŞILTI MOTORU ---
             if (current_view === "about" && ui_visible) {
                 sparkle_spawn_timer += dt;
                 if (sparkle_spawn_timer >= 0.25 && about_sparkles.length < 15) {
@@ -871,7 +866,6 @@
                     spider_list.push(new KivySpiderEntity(SCREEN_WIDTH, SCREEN_HEIGHT));
                 }
                 
-                // Altın Küre Çizimi ve Çarpışma Testi
                 if (gold_orb) {
                     ctx.beginPath();
                     ctx.arc(gold_orb.x + gold_orb.size/2, gold_orb.y + gold_orb.size/2, gold_orb.size * 0.7, 0, Math.PI * 2);
@@ -884,14 +878,12 @@
                     ctx.fill();
                 }
                 
-                // Duvarların Çizilmesi
                 for (let wall of walls) {
                     let r = wall.rect;
                     ctx.fillStyle = `rgba(${Math.floor(wall.color[0]*255)}, ${Math.floor(wall.color[1]*255)}, ${Math.floor(wall.color[2]*255)}, 1.0)`;
                     ctx.fillRect(r[0], r[1], r[2], r[3]);
                 }
                 
-                // Yaratık Güncelleme ve Çizimi
                 for (let spider of spider_list) {
                     spider.update(dt, SCREEN_WIDTH, SCREEN_HEIGHT);
                     spider.draw();
@@ -915,39 +907,38 @@
             let bg_idx = local["bg_image_idx"] || 0;
             let is_portrait = SCREEN_HEIGHT >= SCREEN_WIDTH;
             
-            // Canlı Tematik Arka Plan Motoru (Kivy Window.clearcolor & Prosedürel PNG Taklidi)
             if (bg_idx === 0) {
-                ctx.fillStyle = "#1e1e1e"; // Window.clearcolor (0.12, 0.12, 0.12, 1)
+                ctx.fillStyle = "#1e1e1e";
             } else if (bg_idx === 1) {
-                ctx.fillStyle = is_portrait ? "#141d26" : "#1c2833"; // Tema 1 Dikey/Yatay Farklı Renk Sinyali
+                ctx.fillStyle = is_portrait ? "#141d26" : "#1c2833";
             } else {
-                ctx.fillStyle = is_portrait ? "#251820" : "#1f1424"; // Tema 2 Dikey/Yatay Farklı Renk Sinyali
+                ctx.fillStyle = is_portrait ? "#251820" : "#1f1424";
             }
             ctx.fillRect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
             
-            // Kivy OpenGL Izgara Motoru (Görseller yokken boş kalmaması için zenginleştirildi)
             ctx.strokeStyle = "rgba(255, 255, 255, 0.03)";
             ctx.lineWidth = 1;
-            let step = is_portrait ? 45 : 60; // Akıllı ızgara ölçeklemesi
+            let step = is_portrait ? 45 : 60;
             for (let x = 0; x < SCREEN_WIDTH; x += step) { ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, SCREEN_HEIGHT); ctx.stroke(); }
             for (let y = 0; y < SCREEN_HEIGHT; y += step) { ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(SCREEN_WIDTH, y); ctx.stroke(); }
         }
         
-        // --- ETKİLEŞİM VE DOKUNMA MOTORU ---
+        // --- PRO GÜVENLİ ETKİLEŞİM MOTORU ---
         let drag_spider = null;
         
-        window.addEventListener('mousedown', (e) => handleTouchStart(e));
-        window.addEventListener('mousemove', (e) => handleTouchMove(e));
-        window.addEventListener('mouseup', (e) => handleTouchEnd(e));
+        window.addEventListener('mousedown', (e) => triggerInputStart(e.clientX, e.clientY));
+        window.addEventListener('mousemove', (e) => triggerInputMove(e.clientX, e.clientY));
+        window.addEventListener('mouseup', (e) => triggerInputEnd());
         
-        window.addEventListener('touchstart', (e) => { handleTouchStart(e.touches[0]); e.preventDefault(); }, { passive: false });
-        window.addEventListener('touchmove', (e) => { handleTouchMove(e.touches[0]); e.preventDefault(); }, { passive: false });
-        window.addEventListener('touchend', (e) => { handleTouchEnd(e.changedTouches[0]); e.preventDefault(); }, { passive: false });
+        window.addEventListener('touchstart', (e) => {
+            if(e.touches.length > 0) triggerInputStart(e.touches[0].clientX, e.touches[0].clientY);
+        }, { passive: true });
+        window.addEventListener('touchmove', (e) => {
+            if(e.touches.length > 0) triggerInputMove(e.touches[0].clientX, e.touches[0].clientY);
+        }, { passive: true });
+        window.addEventListener('touchend', () => triggerInputEnd(), { passive: true });
         
-        function handleTouchStart(e) {
-            let clientX = e.clientX;
-            let clientY = e.clientY;
-            
+        function triggerInputStart(clientX, clientY) {
             if (ui_visible) {
                 if (clientY < SCREEN_HEIGHT * 0.90) {
                     if (clientX > SCREEN_WIDTH * 0.1 && clientX < SCREEN_WIDTH * 0.9) {
@@ -979,19 +970,15 @@
             }
         }
         
-        function handleTouchMove(e) {
+        function triggerInputMove(clientX, clientY) {
             if (!drag_spider) return;
-            let clientX = e.clientX;
-            let clientY = e.clientY;
-            
             drag_spider.touch_history.push([Date.now(), clientX, clientY]);
             if (drag_spider.touch_history.length > 4) drag_spider.touch_history.shift();
-            
             drag_spider.x = clientX - drag_spider.size / 2;
             drag_spider.y = clientY - drag_spider.size / 2;
         }
         
-        function handleTouchEnd(e) {
+        function triggerInputEnd() {
             if (!drag_spider) return;
             drag_spider.is_grabbed = false;
             let history = drag_spider.touch_history;
@@ -1143,13 +1130,11 @@
         }
         
         window.addEventListener('resize', () => {
-            SCREEN_WIDTH = window.innerWidth;
-            SCREEN_HEIGHT = window.innerHeight;
-            canvas.width = SCREEN_WIDTH;
-            canvas.height = SCREEN_HEIGHT;
+            SCREEN_WIDTH = window.innerWidth; SCREEN_HEIGHT = window.innerHeight;
+            canvas.width = SCREEN_WIDTH; canvas.height = SCREEN_HEIGHT;
         });
         
-        // --- MOTOR ILK KURULUMU ---
+        // --- MOTOR İLK KURULUMU ---
         loadSettings();
         canvas.width = SCREEN_WIDTH;
         canvas.height = SCREEN_HEIGHT;
