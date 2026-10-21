@@ -554,37 +554,73 @@
                     </div>
                     <button class="btn btn-green" onclick="switchView('main')">Ana Menü</button>
                 `;
-            } else if (currentView === "about") {
-                menuPanel.innerHTML = `
-                    <div class="menu-title" style="color:#13db5c">SPIDER ANDROID</div>
-                    <div id="about-text">Orijinali <b>Desperado</b>'nun <b>Spider v0.9.5</b> adlı symbian uygulamasıdır. Sabri Erkin tarafından geliştirilen saf OpenGL kurgusu temel alınarak Android WebView katmanına kayıpsız taşınmıştır. Ekran üzerinde bağımsız sönümleme fiziğiyle hareket eder.</div>
-                    <button class="btn btn-green" onclick="switchView('main')">Ana Menü</button>
-                `;
             }
         }
-        
+
+        // --- EN GÜVENLİ ASENKRON BAŞLATMA VE TETİKLEME MOTORU ---
         window.onload = function() {
+            // Arayüze "Yükleniyor..." uyarısı yazarak kilitlenmeleri önleyelim
             menuPanel.style.display = "flex";
             menuPanel.innerHTML = `<div class="menu-title" style="color: #ffd700;">Görseller Yükleniyor...</div>`;
+            
+            // İlk ayar senkronizasyonunu yap
             syncActiveFolderSettings();
+            
+            // Resimleri sırayla belleğe al ve tamamlandığında güvenli başlatıcıyı çağır
             preloadTextures(function() {
-                toggleUiBtn.addEventListener('click', () => { uiVisible = !uiVisible; toggleUiBtn.innerText = uiVisible ? "👁️" : "❌"; renderUI(); });
-                window.switchView = function(v) { currentView = v; renderUI(); };
-                window.toggleSpiderActive = function() { spiderActive = !spiderActive; if(!spiderActive) { spiders = []; walls = []; goldOrb = null; } renderUI(); };
+                
+                // Göz butonunun gizleme olayını bağla
+                toggleUiBtn.addEventListener('click', () => { 
+                    uiVisible = !uiVisible; 
+                    toggleUiBtn.innerText = uiVisible ? "👁️" : "❌"; 
+                    renderUI(); 
+                });
+
+                // Görünüm pencereleri arasında geçiş fonksiyonu
+                window.switchView = function(v) { 
+                    currentView = v; 
+                    renderUI(); 
+                };
+
+                // Hareketi başlat/durdur buton fonksiyonu
+                window.toggleSpiderActive = function() { 
+                    spiderActive = !spiderActive; 
+                    if(!spiderActive) { 
+                        spiders = []; 
+                        walls = []; 
+                        goldOrb = null; 
+                    } 
+                    renderUI(); 
+                };
+
+                // Tür değiştirildiğinde asenkron olarak resimleri yeniden indiren fonksiyon
                 window.changeType = function(d) { 
                     settings.animation_folder_idx = (settings.animation_folder_idx + d + animationFolders.length) % animationFolders.length; 
                     syncActiveFolderSettings(); 
                     menuPanel.innerHTML = `<div class="menu-title" style="color: #ffd700;">Görseller Yükleniyor...</div>`;
-                    preloadTextures(function() { spiders.forEach(s => s.size = settings.creature_size); renderUI(); });
+                    
+                    // Yeni resimler indikten sonra arayüzü ve örümcek boyutlarını tazele
+                    preloadTextures(function() { 
+                        spiders.forEach(s => s.size = settings.creature_size); 
+                        renderUI(); 
+                    });
                 };
+
+                // Ayarlar menüsünden canlı boyut/hız güncelleyici
                 window.updateConfig = function(k, v, mn, mx) { 
                     settings[k] = Math.max(mn, Math.min(mx, settings[k] + v)); 
                     let f = animationFolders[settings.animation_folder_idx % animationFolders.length]; 
                     if(!folderSettings[f]) syncActiveFolderSettings(); 
                     folderSettings[f][k] = settings[k]; 
-                    if(k === 'creature_size') spiders.forEach(s => s.size = settings.creature_size); 
+                    
+                    // Boyut değiştiyse tüm canlı nesnelere anında yansıt
+                    if(k === 'creature_size') {
+                        spiders.forEach(s => s.size = settings.creature_size); 
+                    }
                     renderUI(); 
                 };
+
+                // Tam senkronize asenkron başlatma adımları
                 renderUI(); 
                 lastTime = performance.now();
                 requestAnimationFrame(update);
