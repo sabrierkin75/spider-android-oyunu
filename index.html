@@ -76,8 +76,8 @@
             top: 30%;
         }
         #settings-view {
-            top: 2%;
-            height: 96%;
+            top: 12%;
+            height: 86%;
             overflow-y: auto;
             padding-bottom: 20px;
             gap: 8px;
@@ -251,7 +251,7 @@
                     <span class="bold-text">Geliştiren:</span> Sabri Erkin<br>
                     <span class="bold-text">Altyapı:</span> HTML Canvas 2D Engine<br><br>
                     Orijinali <span class="bold-text">Desperado</span>'nun <span class="bold-text">Spider v0.9.5</span> adlı symbian uygulamasıdır. Ben biraz geliştirmeye çalıştım ve web/android ortamında çalışacak hale getirdim.<br><br>
-                    Bu uygulama, ekran üzerinde rastgele gezinen yaratıklar, parçalanabilir dinamik duvarlar ve özel güçler içeren interaktif bir simülasyondur.<br><br>
+                    Bu uygulama, ekran üzerinde rastgele gezinen yaratıklar, parçalanabilir dinamik duvarlar og özel güçler içeren interaktif bir simülasyondur.<br><br>
                     <span class="bold-text">Özellikler:</span><br>
                     • Altın küreleri toplayarak süper hıza ulaşın.<br>
                     • Süper modda engelleri ve rakip yaratıkları yok edin.<br>
@@ -545,7 +545,7 @@
                             n_x = this.x + this.size/2 < r[0] + r[2]/2 ? r[0] - this.size + this.visual_offset - 2 : r[0] + r[2] - this.visual_offset + 2;
                         } else {
                             this.vy = -this.vy;
-                            n_y = this.y + this.size/2 < r[1] + r[3]/2 ? r[1] - this.size + this.visual_offset - 2 : r[1] + r[3] - this.visual_offset + 2;
+                            n_y = this.y + this.size/2 < r[0] + r[2]/2 ? r[1] - this.size + this.visual_offset - 2 : r[1] + r[3] - this.visual_offset + 2;
                         }
                         this.angle = (Math.atan2(this.vy, this.vx) + (Math.random() * 0.2 - 0.1)) % (Math.PI * 2);
                         let current_speed = Math.sqrt(this.vx * this.vx + this.vy * this.vy);
@@ -756,7 +756,7 @@
         }
         
         function spawnBigCentralWall() {
-            let w = 300, h = 300;
+            let w = 150, h = 150; // Boyut tam yarı yarıya düşürüldü (300 -> 150)
             let x = (SCREEN_WIDTH - w) / 2 + (Math.random() * 100 - 50);
             let y = (SCREEN_HEIGHT - h) / 2 + (Math.random() * 100 - 50);
             walls.push({
@@ -942,7 +942,7 @@
                 if (clientY < SCREEN_HEIGHT * 0.90) {
                     if (clientX > SCREEN_WIDTH * 0.1 && clientX < SCREEN_WIDTH * 0.9) {
                         if (current_view === "main" && clientY > SCREEN_HEIGHT * 0.30) return;
-                        if (current_view === "settings" && clientY > SCREEN_HEIGHT * 0.02) return;
+                        if (current_view === "settings" && clientY > SCREEN_HEIGHT * 0.12) return; // Görsel engelleme limiti güncellendi
                         if (current_view === "about" && clientY > SCREEN_HEIGHT * 0.15) return;
                     }
                 }
@@ -983,7 +983,7 @@
             let history = drag_spider.touch_history;
             
             if (history.length >= 2) {
-                let [t1, x1, y1] = history;
+                let [t1, x1, y1] = history[0];
                 let [t2, x2, y2] = history[history.length - 1];
                 let dt = (t2 - t1) / 1000;
                 
