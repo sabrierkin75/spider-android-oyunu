@@ -557,32 +557,32 @@
             }
         }
 
-        // --- EN GÜVENLİ ASENKRON BAŞLATMA VE TETİKLEME MOTORU ---
+        // --- REFERANS ÇAKIŞMASINI ÖNLEYEN TAM GÜVENLİ ASENKRON BAŞLATMA MOTORU ---
         window.onload = function() {
-            // Arayüze "Yükleniyor..." uyarısı yazarak kilitlenmeleri önleyelim
+            // Arayüze kilitlenmeyi önleyici ilk yükleme ekranını bas
             menuPanel.style.display = "flex";
             menuPanel.innerHTML = `<div class="menu-title" style="color: #ffd700;">Görseller Yükleniyor...</div>`;
             
-            // İlk ayar senkronizasyonunu yap
+            // Ayarlar panelini ilk değerlerle eşitle
             syncActiveFolderSettings();
             
-            // Resimleri sırayla belleğe al ve tamamlandığında güvenli başlatıcıyı çağır
+            // Dokuları arka planda kayıpsız indir ve senkron döngüyü tetikle
             preloadTextures(function() {
                 
-                // Göz butonunun gizleme olayını bağla
+                // Göz butonunun tıklama (gizleme) olayını bağla
                 toggleUiBtn.addEventListener('click', () => { 
                     uiVisible = !uiVisible; 
                     toggleUiBtn.innerText = uiVisible ? "👁️" : "❌"; 
                     renderUI(); 
                 });
 
-                // Görünüm pencereleri arasında geçiş fonksiyonu
+                // Görünümler (Paneller) arası geçiş fonksiyonu
                 window.switchView = function(v) { 
                     currentView = v; 
                     renderUI(); 
                 };
 
-                // Hareketi başlat/durdur buton fonksiyonu
+                // Hareketi başlat / durdur mekanizması
                 window.toggleSpiderActive = function() { 
                     spiderActive = !spiderActive; 
                     if(!spiderActive) { 
@@ -593,34 +593,38 @@
                     renderUI(); 
                 };
 
-                // Tür değiştirildiğinde asenkron olarak resimleri yeniden indiren fonksiyon
+                // Tür (Klasör) değiştirildiğinde hafıza sızıntısı yapmadan resimleri yenileyen motor
                 window.changeType = function(d) { 
                     settings.animation_folder_idx = (settings.animation_folder_idx + d + animationFolders.length) % animationFolders.length; 
                     syncActiveFolderSettings(); 
                     menuPanel.innerHTML = `<div class="menu-title" style="color: #ffd700;">Görseller Yükleniyor...</div>`;
                     
-                    // Yeni resimler indikten sonra arayüzü ve örümcek boyutlarını tazele
+                    // Dokuların indirilmesi bitince arayüzü ve canlı nesneleri güncelle
                     preloadTextures(function() { 
-                        spiders.forEach(s => s.size = settings.creature_size); 
+                        spiders.forEach(s => {
+                            s.size = settings.creature_size;
+                            s.isSuper = false; // Geçiş anında hafızayı korumak için süper modu sıfırla
+                            s.superTimer = 0.0;
+                        }); 
                         renderUI(); 
                     });
                 };
 
-                // Ayarlar menüsünden canlı boyut/hız güncelleyici
+                // Ayarlar menüsünden gelen canlı parametre (Boyut/Maksimum adet) güncelleyici
                 window.updateConfig = function(k, v, mn, mx) { 
                     settings[k] = Math.max(mn, Math.min(mx, settings[k] + v)); 
                     let f = animationFolders[settings.animation_folder_idx % animationFolders.length]; 
                     if(!folderSettings[f]) syncActiveFolderSettings(); 
                     folderSettings[f][k] = settings[k]; 
                     
-                    // Boyut değiştiyse tüm canlı nesnelere anında yansıt
+                    // Canlı simülasyondaki yaratıklara yeni boyutları güvenli bir şekilde aktar
                     if(k === 'creature_size') {
                         spiders.forEach(s => s.size = settings.creature_size); 
                     }
                     renderUI(); 
                 };
 
-                // Tam senkronize asenkron başlatma adımları
+                // Her şey %100 hazır olduğunda asıl UI panelini ekrana getir ve render döngüsünü başlat
                 renderUI(); 
                 lastTime = performance.now();
                 requestAnimationFrame(update);
