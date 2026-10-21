@@ -544,71 +544,98 @@
                 menuPanel.innerHTML = `
                     <div class="menu-title" style="color:#13db5c">SPIDER ANDROID</div>
                     <div id="about-text">Orijinali <b>Desperado</b>'nun <b>Spider v0.9.5</b> adlı symbian uygulamasıdır. Sabri Erkin tarafından geliştirilen saf OpenGL kurgusu temel alınarak Android WebView katmanına kayıpsız taşınmıştır. Ekran üzerinde bağımsız sönümleme fiziğiyle hareket eder.</div>
-                    <button class="btn btn-green" onclick="switchView('main')">Ana Menü</button>
+            <button class="btn btn-green" onclick="switchView('main')">Ana Menü</button>
                 `;
             }
         }
 
-        // --- GÜVENLİK KİLİDİ VE TETİKLEME MOTORU ---
-        // Tarayıcı ve DOM elementleri (Canvas) tamamen yüklenmeden kodun çalışmasını engeller.
-        // GitHub Pages alt klasör kilitlenmesini çözen kesin kısımdır.
+        // --- KARIŞIKLIĞI ÖNLEYEN GÜVENLİ YÜKLEME VE SENKRONİZASYON MOTORU ---
         window.onload = function() {
-            // Elementleri yeniden doğrula
-            const checkCanvas = document.getElementById('gameCanvas');
-            if (!checkCanvas) {
-                console.error("Canvas elementi bulunamadı, sistem yeniden başlatılıyor...");
-                return;
+            // Arayüze geçici olarak "Yükleniyor..." uyarısı yazalım
+            menuPanel.style.display = "flex";
+            menuPanel.innerHTML = `<div class="menu-title" style="color: #ffd700;">Görseller Yükleniyor...</div>`;
+
+            // Dokuların tam olarak inip inmediğini denetleyen sayaç
+            let loadedCount = 0;
+            let currentFolder = animationFolders[settings.animation_folder_idx % animationFolders.length];
+            let basePath = currentFolder === "default" ? "anims/" : `anims/${currentFolder}/`;
+
+            // Ayarları senkronize et
+            syncActiveFolderSettings();
+
+            // Resimleri sırayla ve güvenli bir şekilde belleğe zorla yükle
+            for (let i = 0; i < totalTextureFrames; i++) {
+                let img = new Image();
+                
+                img.onload = function() {
+                    loadedCount++;
+                    // Tüm kareler (8 adet resim) sorunsuz indiğinde oyunu başlat
+                    if (loadedCount === totalTextureFrames) {
+                        startGameSimulation();
+                    }
+                };
+
+                img.onerror = function() {
+                    // Resim klasörde yoksa veya adı yanlışsa hataya düşüp oyunu kilitlemesin
+                    this.failed = true;
+                    loadedCount++;
+                    if (loadedCount === totalTextureFrames) {
+                        startGameSimulation();
+                    }
+                };
+
+                img.src = basePath + i + ".png";
+                loadedTextures[i] = img;
             }
-            
-            // Olay dinleyicilerini güvenli şekilde bağla
-            toggleUiBtn.addEventListener('click', () => { 
-                uiVisible = !uiVisible; 
-                toggleUiBtn.innerText = uiVisible ? "👁️" : "❌"; 
-                renderUI(); 
-            });
 
-            window.switchView = function(v) { 
-                currentView = v; 
-                renderUI(); 
-            };
+            // Simülasyonu her şey hazır olduğunda ateşleyen fonksiyon
+            function startGameSimulation() {
+                // Olay dinleyicilerini elementlere bağla
+                toggleUiBtn.addEventListener('click', () => { 
+                    uiVisible = !uiVisible; 
+                    toggleUiBtn.innerText = uiVisible ? "👁️" : "❌"; 
+                    renderUI(); 
+                });
 
-            window.toggleSpiderActive = function() { 
-                spiderActive = !spiderActive; 
-                if(!spiderActive) { 
-                    spiders = []; 
-                    walls = []; 
-                    goldOrb = null; 
-                } 
-                renderUI(); 
-            };
+                window.switchView = function(v) { 
+                    currentView = v; 
+                    renderUI(); 
+                };
 
-            window.changeType = function(d) { 
-                settings.animation_folder_idx = (settings.animation_folder_idx + d + animationFolders.length) % animationFolders.length; 
-                syncActiveFolderSettings(); 
-                preloadTextures(); 
-                spiders.forEach(s => s.size = settings.creature_size); 
-                renderUI(); 
-            };
+                window.toggleSpiderActive = function() { 
+                    spiderActive = !spiderActive; 
+                    if(!spiderActive) { 
+                        spiders = []; 
+                        walls = []; 
+                        goldOrb = null; 
+                    } 
+                    renderUI(); 
+                };
 
-            window.updateConfig = function(k, v, mn, mx) { 
-                settings[k] = Math.max(mn, Math.min(mx, settings[k] + v)); 
-                let f = animationFolders[settings.animation_folder_idx % animationFolders.length]; 
-                if(!folderSettings[f]) syncActiveFolderSettings(); 
-                folderSettings[f][k] = settings[k]; 
-                if(k === 'creature_size') {
+                window.changeType = function(d) { 
+                    settings.animation_folder_idx = (settings.animation_folder_idx + d + animationFolders.length) % animationFolders.length; 
+                    syncActiveFolderSettings(); 
+                    preloadTextures(); 
                     spiders.forEach(s => s.size = settings.creature_size); 
-                }
-                renderUI(); 
-            };
+                    renderUI(); 
+                };
 
-            // Fizik ve Grafik Düzenini Sırayla Ateşle
-            syncActiveFolderSettings(); 
-            preloadTextures(); 
-            renderUI(); 
-            
-            // Canvas Çizim Döngüsünü Başlat
-            lastTime = performance.now();
-            requestAnimationFrame(update);
+                window.updateConfig = function(k, v, mn, mx) { 
+                    settings[k] = Math.max(mn, Math.min(mx, settings[k] + v)); 
+                    let f = animationFolders[settings.animation_folder_idx % animationFolders.length]; 
+                    if(!folderSettings[f]) syncActiveFolderSettings(); 
+                    folderSettings[f][k] = settings[k]; 
+                    if(k === 'creature_size') {
+                        spiders.forEach(s => s.size = settings.creature_size); 
+                    }
+                    renderUI(); 
+                };
+
+                // Asıl UI arayüzünü ekrana bas ve döngüyü başlat
+                renderUI(); 
+                lastTime = performance.now();
+                requestAnimationFrame(update);
+            }
         };
     </script>
 </body>
