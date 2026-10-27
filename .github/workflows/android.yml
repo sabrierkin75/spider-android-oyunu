@@ -9,7 +9,7 @@ jobs:
 
     steps:
     - name: Depoyu Klonla
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
 
     - name: Python Kurulumu
       uses: actions/setup-python@v4
