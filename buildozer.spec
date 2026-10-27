@@ -18,6 +18,9 @@ source.include_exts = py,png,json,txt
 # (list) Dahil edilecek özel klasörler (Görsellerinizin olduğu anims klasörü)
 source.include_patterns = anims/*
 
+# uygulama simgesi
+icon.filename = spider.png
+
 # (string) Uygulamanın versiyonu
 version = 1.4.0
 
