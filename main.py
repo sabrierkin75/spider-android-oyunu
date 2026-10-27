@@ -98,7 +98,6 @@ class ParticleEmitter:
             self.particles.append(p_data)
 
     def update_particles(self, dt):
-        """Parçacıkların konumlarını günceller ve canvas üzerine dinamik olarak çizer."""
         self.particles = [p for p in self.particles if p["life"] > 0]
         
         with self.canvas:
@@ -564,7 +563,6 @@ class CreatureOverlayApp(App):
         self.rebuild_ui()
 
     def _check_button_edge_colors(self, key, min_v, max_v, btn_m, btn_p):
-        """Butonların uç değerlerde renk değiştirmesini sağlayan yardımcı metot."""
         current_folder = self.animation_folders[self.settings["animation_folder_idx"] % len(self.animation_folders)]
         local = self.settings["folder_settings"][current_folder]
         current_value = local.get(key, min_v)
@@ -580,7 +578,6 @@ class CreatureOverlayApp(App):
             btn_p.canvas.before.children[0].rgba = (0.2, 0.25, 0.33, 1)
 
     def update_stat_live(self, key, amount, min_v, max_v, label_obj, prefix, suffix="", btn_m=None, btn_p=None):
-        """Değerleri günceller ve sınır kontrolüne göre buton renklerini tetikler."""
         current_folder = self.animation_folders[self.settings["animation_folder_idx"] % len(self.animation_folders)]
         local = self.settings["folder_settings"][current_folder]
         
@@ -645,7 +642,6 @@ class CreatureOverlayApp(App):
             except: pass
 
     def change_setting_face_step(self, direction):
-        """Img Face butonuna basılınca 4 yön arasında (0,1,2,3) güvenli döngü sağlar."""
         current_folder = self.animation_folders[self.settings["animation_folder_idx"] % len(self.animation_folders)]
         if current_folder not in self.settings["folder_settings"]:
             self.sync_active_folder_settings()
@@ -774,7 +770,6 @@ class CreatureOverlayApp(App):
             if self.gold_orb:
                 self.gold_orb = None
                 self.gold_orb_layer.canvas.clear()
-        # ---------------------------------------------------------------------------
 
         self.big_wall_timer += dt
         if self.big_wall_timer >= self.big_wall_interval: 
@@ -949,7 +944,7 @@ class KivySpiderEntity:
                 if os.path.exists(p): 
                     core_img = CoreImage(p)
                     tex = core_img.texture
-                    tex.keep_data = True # Koruma kilidi
+                    tex.keep_data = True
                     self.textures[self.total_frames] = tex
                     self.total_frames += 1
         self.current_frame = 0
@@ -1132,7 +1127,6 @@ class KivySpiderEntity:
         self.finalize_transforms(settings)
 
     def finalize_transforms(self, settings=None):
-        """Çizim yönünden tamamen bağımsız, tepe taklak olmayı önleyen matris transformu."""
         app = App.get_running_app()
         st = settings if (settings and isinstance(settings, dict)) else (app.settings if app else {})
         local = st.get("folder_settings", {}).get(app.animation_folders[st.get("animation_folder_idx", 0) % len(app.animation_folders)], st) if (app and hasattr(app, 'animation_folders')) else st
