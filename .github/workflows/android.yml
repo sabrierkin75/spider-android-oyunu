@@ -1,0 +1,49 @@
+name: Kivy Android APK Paketleyici
+
+on:
+  workflow_dispatch: # Manuel olarak "Run Workflow" butonuna basarak başlatmanızı sağlar.
+
+jobs:
+  build:
+    runs-on: ubuntu-22.04
+
+    steps:
+    - name: Depoyu Klonla
+      uses: actions/checkout@v3
+
+    - name: Python Kurulumu
+      uses: actions/setup-python@v4
+      with:
+        python-size: '3.10'
+
+    - name: Sistem Bağımlılıklarını Kur (HTML ve Derleme Kilitleri)
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y build-essential libffi-dev install-info
+        sudo apt-get install -y git zip unzip colordiff ccache
+        sudo apt-get install -y python3-pip python3-setuptools python3-dev
+        sudo apt-get install -y libsdl2-dev libsdl2-image-dev libsdl2-mixer-dev libsdl2-ttf-dev
+        sudo apt-get install -y libgpgme11-dev libgpgme-dev libassuan-dev libb64-dev
+        # HTML bağımlılık çökmesini önleyen Jinja2 ve temel araçlar
+        pip3 install --upgrade pip
+        pip3 install cython virtualenv jinja2 kivy
+
+    - name: Java JDK 17 Kurulumu (Gradle Kararlılığı İçin)
+      uses: actions/setup-java@v3
+      with:
+        distribution: 'temurin'
+        java-version: '17'
+
+    - name: Buildozer Kurulumu ve APK Derleme
+      run: |
+        pip3 install --user --upgrade buildozer
+        # GitHub Actions ortamında Buildozer'ın düzgün çalışması için PATH ayarı
+        export PATH=$PATH:~/.local/bin
+        # Derlemeyi debug modunda başlatıyoruz
+        buildozer -v android debug
+
+    - name: Hazır APK Dosyasını Yükle
+      uses: actions/upload-artifact@v3
+      with:
+        name: Spider_Android_Uygulamasi
+        path: bin/*.apk
