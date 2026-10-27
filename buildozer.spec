@@ -39,13 +39,13 @@ fullscreen = 1
 # =============================================================================
 
 # (int) Hedef Android API Seviyesi (Modern Android standartları için API 35 / Android 15)
-android.api = 35
+android.api = 34
 
 # (int) Minimum Android API Seviyesi (Uygulamanın çalışabileceği en eski sürüm: Android 7.0)
 android.minapi = 24
 
 # (int) Android SDK Versiyonu
-android.sdk = 35
+android.sdk = 34
 
 # (str) Android NDK Versiyonu (Kivy için en kararlı sürüm)
 android.ndk = 26b
@@ -68,7 +68,7 @@ android.archs = arm64-v8a
 android.allow_backup = True
 
 # (string) Android için kullanılacak olan Gradle versiyonu
-android.gradle_dependencies = 'com.android.tools.build:gradle:8.3.2'
+#android.gradle_dependencies = 'com.android.tools.build:gradle:8.3.2'
 
 # =============================================================================
 # Buildozer Gelişmiş Ayarlar
