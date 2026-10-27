@@ -14,9 +14,9 @@ jobs:
     - name: Python Kurulumu
       uses: actions/setup-python@v5
       with:
-        python-size: '3.11'
+        python-version: '3.11'
 
-    - name: Sistem Bağımlılıklarını Kur (HTML ve Derleme Kilitleri)
+    - name: Sistem Bağımlılıklarını Kur
       run: |
         sudo apt-get update
         sudo apt-get install -y build-essential libffi-dev install-info
@@ -24,7 +24,7 @@ jobs:
         sudo apt-get install -y python3-pip python3-setuptools python3-dev
         sudo apt-get install -y libsdl2-dev libsdl2-image-dev libsdl2-mixer-dev libsdl2-ttf-dev
         sudo apt-get install -y libgpgme11-dev libgpgme-dev libassuan-dev libb64-dev
-        # HTML bağımlılık çökmesini önleyen Jinja2 ve temel araçlar
+        # Otomasyon için gerekli temel Python araçları
         pip3 install --upgrade pip
         pip3 install cython virtualenv jinja2 kivy
 
