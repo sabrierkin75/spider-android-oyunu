@@ -29,7 +29,7 @@ jobs:
         pip3 install cython virtualenv jinja2 kivy
 
     - name: Java JDK 17 Kurulumu (Gradle Kararlılığı İçin)
-      uses: actions/setup-java@v3
+      uses: actions/setup-java@v4
       with:
         distribution: 'temurin'
         java-version: '17'
@@ -43,7 +43,7 @@ jobs:
         buildozer -v android debug
 
     - name: Hazır APK Dosyasını Yükle
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: Spider_Android_Uygulamasi
         path: bin/*.apk
