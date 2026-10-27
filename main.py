@@ -19,28 +19,12 @@ from kivy.animation import Animation
 # Android telefonda OpenGL motorunun kilitlenmemesi için opak yapıyoruz.
 Window.clearcolor = (0.12, 0.12, 0.12, 1)
 
-# --- ANDROID ARKA IŞIK VE TAM EKRAN (SYSTEMUI) KONTROL ALTYAPISI ---
+# --- ANDROID ARKA IŞIK KONTROL ALTYAPISI ---
 try:
     from jnius import autoclass
     from android.runnable import run_on_ui_thread
     activity = autoclass('org.kivy.android.PythonActivity').mActivity
     WindowManager = autoclass('android.view.WindowManager$LayoutParams')
-    
-    # --- UYGULAMAYI TAM EKRANA ZORLAYAN SYSTEMUI AYARI ---
-    View = autoclass('android.view.View')
-    @run_on_ui_thread
-    def force_fullscreen():
-        window = activity.getWindow()
-        # Navigasyon barını, durum çubuğunu gizler ve tam ekran (Immersive Mod) yapar
-        window.getDecorView().setSystemUiVisibility(
-            View.SYSTEM_UI_FLAG_LAYOUT_STABLE |
-            View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION |
-            View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN |
-            View.SYSTEM_UI_FLAG_HIDE_NAVIGATION |
-            View.SYSTEM_UI_FLAG_FULLSCREEN |
-            View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
-        )
-    # -----------------------------------------------------
     ANDROID_AVAILABLE = True
 except ImportError:
     ANDROID_AVAILABLE = False
@@ -86,27 +70,31 @@ class ParticleEmitter:
                 "rot_speed": random.uniform(-180, 180)
             }
             self.particles.append(p_data)
-
     def spawn_super_trail(self, x, y, size, color):
         """Süper hızlı yaratığın arkasında parıltılı kuyruk izi oluşturur."""
+        # Her çağrıldığında yaratığın merkezine yakın 1-2 parıltı parçacığı bırakır
         num_particles = random.randint(1, 2)
         for _ in range(num_particles):
+            # Parçacığı yaratığın gövde alanında rastgele konumlandır
             p_x = x + random.uniform(0, size)
             p_y = y + random.uniform(0, size)
+            
+            # Kuyruk efekti olduğu için yavaşça yukarı/aşağı hafifçe dağılsın
             vx = random.uniform(-15, 15)
             vy = random.uniform(-15, 15)
             
-            life = 0.6  
+            life = 0.6  # Kuyruk izi kısa sürede yok olmalı (0.6 saniye)
             decay = random.uniform(1.2, 1.8)
             p_size = random.uniform(6, 12)
             
+            # Altın sarısı/parlak tonlar
             r = min(1.0, max(0.8, color[0] + random.uniform(-0.1, 0.1)))
             g = min(1.0, max(0.7, color[1] + random.uniform(-0.1, 0.1)))
             b = random.uniform(0.0, 0.3)
             p_color = [r, g, b, 1.0]
             
             p_data = {
-                "type": 2,  
+                "type": 2,  # Büyüyüp opaklığı azalan kare/dairemsi efekt türü
                 "x": p_x, "y": p_y,
                 "vx": vx, "vy": vy,
                 "size": p_size,
@@ -206,8 +194,10 @@ class CreatureOverlayApp(App):
             "screen_awake": 0,  
             "folder_settings": {}  
         }
+        # --- EKLEMELER: Süper mod hız çarpanı varsayılan ayarı ---
         if "super_speed_mult" not in self.settings:
-            self.settings["super_speed_mult"] = 3.0  
+            self.settings["super_speed_mult"] = 3.0  # Varsayılan olarak 3 katı yaptık
+        # ---------------------------------------------------------
         self.load_settings()
 
         self.spider_list = []
@@ -216,6 +206,7 @@ class CreatureOverlayApp(App):
         self.current_view = "main"
         self.ui_visible = True
         
+        # --- ALTIN KÜRE SİSTEMİ DEĞİŞKENLERİ ---
         self.gold_orb = None 
         self.gold_orb_timer = 0.0
         self.gold_orb_spawn_time = 20.0 
@@ -237,15 +228,7 @@ class CreatureOverlayApp(App):
         
         Window.bind(on_resize=self.on_window_resize)
         
-        # build metodunun en sonuna (return self.layout'tan hemen önce) ekleyin:
-        if ANDROID_AVAILABLE:
-            try:
-                force_fullscreen()
-            except Exception as e:
-                print(f"Tam Ekran Zorlama Hatası: {e}")
-                
         return self.layout
-
     def sync_active_folder_settings(self):
         current_folder = self.animation_folders[self.settings["animation_folder_idx"] % len(self.animation_folders)]
         if current_folder not in self.settings["folder_settings"]:
@@ -257,10 +240,11 @@ class CreatureOverlayApp(App):
                 "visual_offset": self.settings.get("visual_offset", 15),
                 "creature_size": self.settings.get("creature_size", 120),
                 "bg_image_idx": self.settings.get("bg_image_idx", 0),
-                "super_speed_mult": self.settings.get("super_speed_mult", 3.0)  
+                "super_speed_mult": self.settings.get("super_speed_mult", 3.0)  # <-- EKLENDİ
             }
         
         local = self.settings["folder_settings"][current_folder]
+        # Aşağıdaki listeye "super_speed_mult" eklendi:
         for key in ["move_speed", "anim_speed", "max_creatures", "image_facing", "visual_offset", "creature_size", "bg_image_idx", "super_speed_mult"]:
             if key in local:
                 self.settings[key] = local[key]
@@ -373,7 +357,6 @@ class CreatureOverlayApp(App):
                 instance.icon_rect.pos = (instance.x + (instance.width - icon_size) / 2, instance.y + (instance.height - icon_size) / 2)
         self.toggle_btn.bind(pos=_update_toggle_icon, size=_update_toggle_icon)
         self.toggle_layer.add_widget(self.toggle_btn)
-
     def rebuild_ui(self):
         self.ui_layer.clear_widgets()
         if not self.ui_visible: return
@@ -417,12 +400,17 @@ class CreatureOverlayApp(App):
             self.ui_layer.add_widget(self.status_btn)
             
             self.ui_layer.add_widget(create_visual_button("Ayarlar", (0.2, 0.25, 0.33, 1), 0.50, lambda x: self.switch_view("settings")))
+            
+            # --- YENİ EKLEME: Hakkında Butonu (y: 0.40 koordinatında) ---
             self.ui_layer.add_widget(create_visual_button("Hakkında", (0.2, 0.5, 0.6, 1), 0.40, lambda x: self.switch_view("about")))
+            
+            # Çıkış butonunun koordinatını butonlar üst üste binmesin diye y: 0.30'a çekiyoruz
             self.ui_layer.add_widget(create_visual_button("Çıkış", (0.93, 0.26, 0.26, 1), 0.30, lambda x: sys.exit()))
             
         elif self.current_view == "settings":
             current_folder = self.animation_folders[self.settings["animation_folder_idx"] % len(self.animation_folders)]
             local = self.settings["folder_settings"][current_folder]
+            btn_h = 0.052  # Satır yüksekliği
 
             def _setup_setting_row(label, btn_m, btn_p, y_pos, bg_m_color=(0.2, 0.25, 0.33, 1), bg_p_color=(0.2, 0.25, 0.33, 1)):
                 btn_m.size_hint = (0.12, btn_h); btn_m.pos_hint = {'x': 0.65, 'y': y_pos}; btn_m.font_size = '18sp'; btn_m.background_color = (0, 0, 0, 0)
@@ -441,6 +429,7 @@ class CreatureOverlayApp(App):
                 def _update_bg(inst, val): inst.bg_rect.pos = inst.pos; inst.bg_rect.size = inst.size
                 label.bind(pos=_update_bg, size=_update_bg); btn_m.bind(pos=_update_bg, size=_update_bg); btn_p.bind(pos=_update_bg, size=_update_bg)
 
+            # 1. Satır: Tür (0.82 - Sabit)
             display_folder_name = "[color=45b870][b]VARSAYILAN[/b][/color]" if current_folder == "default" else f"[b]{current_folder.upper()}[/b]"
             self.type_label = Label(text=f"Tür (Type): {display_folder_name}", markup=True)
             self.t_minus, self.t_plus = Button(text="<"), Button(text=">")
@@ -448,6 +437,7 @@ class CreatureOverlayApp(App):
             self.t_minus.bind(on_press=lambda x: self.change_creature_type_step(-1)); self.t_plus.bind(on_press=lambda x: self.change_creature_type_step(1))
             self.ui_layer.add_widget(self.type_label); self.ui_layer.add_widget(self.t_minus); self.ui_layer.add_widget(self.t_plus)
 
+            # 2. Satır: Img Face (0.738)
             facing_modes = ["0° (SAĞ)", "90° (YUKARI)", "180° (SOL)", "270° (AŞAĞI)"]
             current_mode_idx = local.get("image_facing", 0) % 4
             current_mode_text = facing_modes[current_mode_idx]
@@ -458,6 +448,7 @@ class CreatureOverlayApp(App):
             self.f_plus.bind(on_press=lambda x: self.change_setting_face_step(1))
             self.ui_layer.add_widget(self.face_label); self.ui_layer.add_widget(self.f_minus); self.ui_layer.add_widget(self.f_plus)
 
+            # 3. Satır: Arka Plan (0.656)
             bg_display_text = "Varsayılan (bg)" if self.settings.get("bg_image_idx", 0) == 0 else f"Tema {self.settings.get('bg_image_idx', 0)}"
             self.bg_img_label = Label(text=f"Arka Plan (BG): [color=e0a040][b]{bg_display_text}[/b][/color]", markup=True)
             self.bg_minus, self.bg_plus = Button(text="<"), Button(text=">")
@@ -465,6 +456,7 @@ class CreatureOverlayApp(App):
             self.bg_minus.bind(on_press=lambda x: self.change_bg_image_step(-1)); self.bg_plus.bind(on_press=lambda x: self.change_bg_image_step(1))
             self.ui_layer.add_widget(self.bg_img_label); self.ui_layer.add_widget(self.bg_minus); self.ui_layer.add_widget(self.bg_plus)
 
+            # 4. Satır: Boyut (0.574)
             self.size_label = Label(text=f"Boyut (Size): {local.get('creature_size', 120)} px")
             self.sz_minus, self.sz_plus = Button(text="-"), Button(text="+")
             _setup_setting_row(self.size_label, self.sz_minus, self.sz_plus, 0.574)
@@ -473,6 +465,7 @@ class CreatureOverlayApp(App):
             self.sz_plus.bind(on_press=lambda x: self.update_stat_live("creature_size", 10, 40, 400, self.size_label, "Boyut (Size): ", " px", self.sz_minus, self.sz_plus))
             self.ui_layer.add_widget(self.size_label); self.ui_layer.add_widget(self.sz_minus); self.ui_layer.add_widget(self.sz_plus)
             
+            # 5. Satır: Hız (0.492)
             self.speed_label = Label(text=f"Hız (Speed): {local.get('move_speed', 4)}")
             self.s_minus, self.s_plus = Button(text="-"), Button(text="+")
             _setup_setting_row(self.speed_label, self.s_minus, self.s_plus, 0.492)
@@ -481,6 +474,7 @@ class CreatureOverlayApp(App):
             self.s_plus.bind(on_press=lambda x: self.update_stat_live("move_speed", 1, 1, 15, self.speed_label, "Hız (Speed): ", "", self.s_minus, self.s_plus))
             self.ui_layer.add_widget(self.speed_label); self.ui_layer.add_widget(self.s_minus); self.ui_layer.add_widget(self.s_plus)
 
+            # 6. Satır: Anim Hızı (0.41)
             self.anim_label = Label(text=f"Anim Hızı: {local.get('anim_speed', 80)} ms")
             self.a_minus, self.a_plus = Button(text="-"), Button(text="+")
             _setup_setting_row(self.anim_label, self.a_minus, self.a_plus, 0.41)
@@ -489,6 +483,7 @@ class CreatureOverlayApp(App):
             self.a_plus.bind(on_press=lambda x: self.update_stat_live("anim_speed", 10, 20, 300, self.anim_label, "Anim Hızı: ", " ms", self.a_minus, self.a_plus))
             self.ui_layer.add_widget(self.anim_label); self.ui_layer.add_widget(self.a_minus); self.ui_layer.add_widget(self.a_plus)
 
+            # 7. Satır: Yaratık Sayısı (0.328)
             self.count_label = Label(text=f"Yaratık Sayısı: {local.get('max_creatures', 6)}")
             self.c_minus, self.c_plus = Button(text="-"), Button(text="+")
             _setup_setting_row(self.count_label, self.c_minus, self.c_plus, 0.328)
@@ -497,6 +492,7 @@ class CreatureOverlayApp(App):
             self.c_plus.bind(on_press=lambda x: self.update_stat_live("max_creatures", 1, 1, 30, self.count_label, "Yaratık Sayısı: ", "", self.c_minus, self.c_plus))
             self.ui_layer.add_widget(self.count_label); self.ui_layer.add_widget(self.c_minus); self.ui_layer.add_widget(self.c_plus)
 
+            # 8. Satır: Ofset (0.246)
             self.offset_label = Label(text=f"Ofset (Margin): {local.get('visual_offset', 15)} px")
             self.o_minus, self.o_plus = Button(text="-"), Button(text="+")
             _setup_setting_row(self.offset_label, self.o_minus, self.o_plus, 0.246)
@@ -505,7 +501,8 @@ class CreatureOverlayApp(App):
             self.o_plus.bind(on_press=lambda x: self.update_stat_live("visual_offset", 5, -10, 50, self.offset_label, "Ofset (Margin): ", " px", self.o_minus, self.o_plus))
             self.ui_layer.add_widget(self.offset_label); self.ui_layer.add_widget(self.o_minus); self.ui_layer.add_widget(self.o_plus)
 
-            current_mult = local.get("super_speed_mult", 3.0)  
+            # 9. Satır --- YENİLENEN KISIM: Türe özel Süper Hız Çarpanı Ayarı (konum:0.164)---
+            current_mult = local.get("super_speed_mult", 3.0)  # <-- 'self.settings' yerine 'local' yapıldı
             self.mult_label = Label(text=f"Süper Hız (Mult): {current_mult:.1f} x")
             self.m_minus, self.m_plus = Button(text="-"), Button(text="+")
             _setup_setting_row(self.mult_label, self.m_minus, self.m_plus, 0.164, (0.7, 0.5, 0.2, 1), (0.7, 0.5, 0.2, 1))
@@ -514,8 +511,8 @@ class CreatureOverlayApp(App):
             if current_mult >= 5.0: self.m_plus.canvas.before.children[0].rgba = (0.13, 0.77, 0.36, 1)
             
             def _update_mult(amount, min_v, max_v):
-                val = max(min_v, min(local.get("super_speed_mult", 3.0) + amount, max_v))  
-                local["super_speed_mult"] = round(val, 1)  
+                val = max(min_v, min(local.get("super_speed_mult", 3.0) + amount, max_v))  # <-- local yapıldı
+                local["super_speed_mult"] = round(val, 1)  # <-- Seçili klasörün içine yazar
                 self.settings["super_speed_mult"] = local["super_speed_mult"]
                 self.save_settings()
                 self.rebuild_ui()
@@ -526,7 +523,8 @@ class CreatureOverlayApp(App):
             self.ui_layer.add_widget(self.mult_label)
             self.ui_layer.add_widget(self.m_minus)
             self.ui_layer.add_widget(self.m_plus)
-
+            # -------------------------------------------------------------
+            # 10. Satır: Ekranı Açık Tut (0.092 - Kapat butonunun güvenli bir şekilde yukarısında)
             is_awake = self.settings.get("screen_awake", 0) == 1
             self.awake_btn = create_visual_button("", (0.18, 0.68, 0.38, 1) if is_awake else (0.7, 0.4, 0.2, 1), 0.092, self.toggle_screen_awake)
             self.awake_text_label = Label(text="Ekranı Açık Tut", font_size='16sp', bold=True, color=(1, 1, 1, 1), halign='center', valign='middle', size_hint=(None, None))
@@ -545,10 +543,15 @@ class CreatureOverlayApp(App):
                     self.awake_btn.icon_rect = Rectangle(texture=CoreImage(icon_path).texture, size=(120, 120), pos=(0, 0))
             
             self.awake_btn.bind(pos=_align_custom_elements, size=_align_custom_elements)
+
             self.ui_layer.add_widget(self.awake_btn); self.ui_layer.add_widget(self.awake_text_label)
+    
+            # --- Kapat Butonu Konum Güncellemesi ---
+            # Yeni satıra yer açmak için kapat butonunu y: 0.02 koordinatına çekiyoruz
             self.ui_layer.add_widget(create_visual_button("Ana Menü", (0.13, 0.77, 0.36, 1), 0.02, lambda x: self.switch_view("main")))
 
         elif self.current_view == "about":
+            # Hakkında paneli için dikeyde daha yüksek, sağa ve sola şık boşluklar bırakan kart tasarımı
             about_label = Label(
                 text="[color=45b870][b]SPIDER ANDROID[/b][/color]\n\n"
                      "[b]Sürüm:[/b] v1.4.0\n"
@@ -560,13 +563,18 @@ class CreatureOverlayApp(App):
                      "• Altın küreleri toplayarak süper hıza ulaşın.\n"
                      "• Süper modda engelleri ve rakip yaratıkları yok edin.\n"
                      "• Ayarlar menüsünden tüm fiziksel sınırları canlı olarak yönetin.",
-                markup=True, font_size='15sp', halign='center', valign='top',
-                padding=(40, 40), size_hint=(0.86, 0.58), pos_hint={'x': 0.07, 'y': 0.28}
+                markup=True, 
+                font_size='15sp', 
+                halign='center', 
+                valign='top',  # Yazıyı panelin üst kısmına hizalayarak yukarıdaki gereksiz boşluğu aldık
+                padding=(40, 40),  # Sağ, sol, üst ve alt kenarlardan metne nefes aldıracak şık iç boşluklar ekledik
+                size_hint=(0.86, 0.58),  # Paneli sağa ve sola daha dengeli yaydık
+                pos_hint={'x': 0.07, 'y': 0.28}  # Paneli tam yatay eksende ortaladık
             )
             about_label.bind(size=lambda s, w: setattr(s, 'text_size', s.size))
             
             with about_label.canvas.before:
-                Color(0.05, 0.05, 0.05, 0.85) 
+                Color(0.05, 0.05, 0.05, 0.85) # Şık, koyu panel arka planı
                 about_label.bg_rect = RoundedRectangle(pos=about_label.pos, size=about_label.size, radius=[15])
             
             def _update_about_bg(inst, val): 
@@ -575,6 +583,8 @@ class CreatureOverlayApp(App):
             about_label.bind(pos=_update_about_bg, size=_update_about_bg)
             
             self.ui_layer.add_widget(about_label)
+            
+            # Ana menüye güvenli dönüş butonu (Panel boyutlandığı için butonu y: 0.16'ya çektik)
             self.ui_layer.add_widget(create_visual_button("Ana Menü", (0.13, 0.77, 0.36, 1), 0.16, lambda x: self.switch_view("main")))
 
     def switch_view(self, view_name):
@@ -582,33 +592,41 @@ class CreatureOverlayApp(App):
         self.rebuild_ui()
 
     def _check_button_edge_colors(self, key, min_v, max_v, btn_m, btn_p):
+        """Butonların uç değerlerde renk değiştirmesini sağlayan yardımcı metot."""
         current_folder = self.animation_folders[self.settings["animation_folder_idx"] % len(self.animation_folders)]
         local = self.settings["folder_settings"][current_folder]
         current_value = local.get(key, min_v)
 
+        # Eksi butonu kontrolü (En alt sınıra ulaşıldıysa kırmızı)
         if current_value <= min_v:
-            btn_m.canvas.before.children[0].rgba = (0.93, 0.26, 0.26, 1)  
+            btn_m.canvas.before.children[0].rgba = (0.93, 0.26, 0.26, 1)  # Kırmızı
         else:
-            btn_m.canvas.before.children[0].rgba = (0.2, 0.25, 0.33, 1)   
+            btn_m.canvas.before.children[0].rgba = (0.2, 0.25, 0.33, 1)   # Varsayılan lacivert
 
+        # Artı butonu kontrolü (En üst sınıra ulaşıldıysa yeşil)
         if current_value >= max_v:
-            btn_p.canvas.before.children[0].rgba = (0.13, 0.77, 0.36, 1)  
+            btn_p.canvas.before.children[0].rgba = (0.13, 0.77, 0.36, 1)  # Yeşil
         else:
-            btn_p.canvas.before.children[0].rgba = (0.2, 0.25, 0.33, 1)   
+            btn_p.canvas.before.children[0].rgba = (0.2, 0.25, 0.33, 1)   # Varsayılan lacivert
 
     def update_stat_live(self, key, amount, min_v, max_v, label_obj, prefix, suffix="", btn_m=None, btn_p=None):
+        """Değerleri günceller ve sınır kontrolüne göre buton renklerini tetikler."""
         current_folder = self.animation_folders[self.settings["animation_folder_idx"] % len(self.animation_folders)]
         local = self.settings["folder_settings"][current_folder]
         
+        # Sınırlar dahilinde değeri hesapla
         local[key] = max(min_v, min(local.get(key, min_v) + amount, max_v))
         self.settings[key] = local[key]
         self.save_settings()
         
+        # Etiket metnini güncelle
         label_obj.text = f"{prefix}{local[key]}{suffix}"
         
+        # Buton renklerini dinamik olarak kontrol et
         if btn_m and btn_p:
             self._check_button_edge_colors(key, min_v, max_v, btn_m, btn_p)
         
+        # Yaratık canlı niteliklerini eşzamanlı güncelleme süreçleri
         if key == "max_creatures":
             while len(self.spider_list) > local[key]:
                 last_spider = self.spider_list.pop()
@@ -661,6 +679,7 @@ class CreatureOverlayApp(App):
             except: pass
 
     def change_setting_face_step(self, direction):
+        """Img Face butonuna basılınca 4 yön arasında (0,1,2,3) güvenli döngü sağlar."""
         current_folder = self.animation_folders[self.settings["animation_folder_idx"] % len(self.animation_folders)]
         if current_folder not in self.settings["folder_settings"]:
             self.sync_active_folder_settings()
@@ -697,9 +716,9 @@ class CreatureOverlayApp(App):
     def on_wall_touch(self, widget, touch):
         if self.ui_visible and touch.y < self.SCREEN_HEIGHT * 0.90:
             if touch.x > self.SCREEN_WIDTH * 0.1 and touch.x < self.SCREEN_WIDTH * 0.9:
-                if self.current_view == "main" and touch.y > self.SCREEN_HEIGHT * 0.30: return 
+                if self.current_view == "main" and touch.y > self.SCREEN_HEIGHT * 0.30: return # Çıkış butonunun altına kadar korur
                 if self.current_view == "settings" and touch.y > self.SCREEN_HEIGHT * 0.02: return
-                if self.current_view == "about" and touch.y > self.SCREEN_HEIGHT * 0.15: return 
+                if self.current_view == "about" and touch.y > self.SCREEN_HEIGHT * 0.15: return # Yeni ekranın buton alanını korur
 
         for i, wall in enumerate(list(self.walls)):
             if not wall or "rect" not in wall or len(wall["rect"]) < 4: continue
@@ -775,8 +794,11 @@ class CreatureOverlayApp(App):
         sw = Window.width if (Window.width and Window.width > 100) else self.SCREEN_WIDTH
         sh = Window.height if (Window.height and Window.height > 100) else self.SCREEN_HEIGHT
 
+        # --- DÜZELTİLEN KISIM: Canlı Yaratık Sayısı ve Altın Küre Senkronizasyonu ---
         current_creature_count = len(self.spider_list)
+
         if current_creature_count >= 6:
+            # Eğer ekranda yeterli yaratık varsa ve küre henüz çıkmadıysa zamanlayıcıyı ilerlet
             if not self.gold_orb:
                 self.gold_orb_timer += dt
                 if self.gold_orb_timer >= self.gold_orb_spawn_time:
@@ -784,10 +806,12 @@ class CreatureOverlayApp(App):
                     self.gold_orb_timer = 0.0
                     self.gold_orb_spawn_time = random.uniform(20.0, 40.0)
         else:
-            self.gold_orb_timer = 0.0  
+            # Ekrandaki yaratık sayısı 6'nın altına düştüğü AN canlı takip tetiklenir:
+            self.gold_orb_timer = 0.0  # Zamanlayıcıyı sıfırla (haksız birikmeyi önler)
             if self.gold_orb:
-                self.gold_orb = None  
+                self.gold_orb = None  # Eğer ekranda halihazırda bir küre varsa anında siler
                 self.gold_orb_layer.canvas.clear()
+        # ---------------------------------------------------------------------------
 
         self.big_wall_timer += dt
         if self.big_wall_timer >= self.big_wall_interval: 
@@ -842,26 +866,9 @@ class KivySpiderEntity:
         
         self.size = local.get("creature_size", 120)
         self.canvas_widget = Widget(size_hint=(None, None), size=(self.size, self.size))
-        
-        spawn_edge = random.randint(0, 3)
-        if spawn_edge == 0:    
-            self.x = -self.size - 20
-            self.y = random.randint(0, max(1, sh - self.size))
-            self.angle = random.uniform(-math.pi/4, math.pi/4) % (2 * math.pi)
-        elif spawn_edge == 1:  
-            self.x = sw + 20
-            self.y = random.randint(0, max(1, sh - self.size))
-            self.angle = random.uniform(3 * math.pi / 4, 5 * math.pi / 4) % (2 * math.pi)
-        elif spawn_edge == 2:  
-            self.x = random.randint(0, max(1, sw - self.size))
-            self.y = -self.size - 20
-            self.angle = random.uniform(math.pi / 4, 3 * math.pi / 4) % (2 * math.pi)
-        elif spawn_edge == 3:  
-            self.x = random.randint(0, max(1, sw - self.size))
-            self.y = sh + 20
-            self.angle = random.uniform(5 * math.pi / 4, 7 * math.pi / 4) % (2 * math.pi)
-        
+        self.x, self.y = random.randint(0, max(1, sw - self.size)), random.randint(0, max(1, sh - self.size))
         self.canvas_widget.pos = (self.x, self.y)
+        self.angle = random.uniform(0, 2 * math.pi)
         self.vx = self.vy = 0.0  
         self.is_grabbed = False
         self.last_touch_x = self.last_touch_y = 0.0
@@ -873,7 +880,7 @@ class KivySpiderEntity:
         self.textures = {}
         self.reload_textures(settings, animation_folders)
         self.is_flung = False
-        self.touch_history = []  
+        self.touch_history = []  # Son hareketlerin zaman ve konum geçmişi
 
         self.setup_canvas()
 
@@ -904,10 +911,13 @@ class KivySpiderEntity:
             self.vx = self.vy = 0; self.last_touch_x = touch.x; self.last_touch_y = touch.y
             return True
         return False
+
     def on_touch_move(self, widget, touch):
         if self.is_grabbed:
             import time
+            # Mevcut zamanı ve dokunma konumunu geçmişe ekle
             self.touch_history.append((time.time(), touch.x, touch.y))
+            # Hafızayı son 4 kayıtla sınırla (aşırı şişmesin)
             if len(self.touch_history) > 4:
                 self.touch_history.pop(0)
                 
@@ -920,23 +930,29 @@ class KivySpiderEntity:
     def on_touch_up(self, widget, touch):
         if self.is_grabbed:
             self.is_grabbed = False
+            
+            # Eğer elimizde yeterli hareket geçmişi varsa fırlatma hızını hesapla
             if len(self.touch_history) >= 2:
                 t1, x1, y1 = self.touch_history[0]
                 t2, x2, y2 = self.touch_history[-1]
                 dt = t2 - t1
                 
                 if dt > 0:
+                    # Gerçek fiziksel fırlatma hızı (Mesafe / Zaman)
                     self.vx = (x2 - x1) / dt
                     self.vy = (y2 - y1) / dt
+                    
+                    # Hızı abartmak ve sapan etkisini tam hissetmek için 1.5 kat artırıyoruz
                     self.vx *= 1.5
                     self.vy *= 1.5
                     
+                    # Üst hız sınırını 4000 piksele çıkartıyoruz (Tam bir mermi)
                     spd = math.sqrt(self.vx**2 + self.vy**2)
                     if spd > 4000.0:
                         self.vx = (self.vx / spd) * 4000.0
                         self.vy = (self.vy / spd) * 4000.0
                     
-                    if spd > 100:  
+                    if spd > 100:  # Eğer gerçekten bir savurma yapıldıysa
                         self.angle = math.atan2(self.vy, self.vx) % (2 * math.pi)
                         self.is_flung = True
             
@@ -958,7 +974,7 @@ class KivySpiderEntity:
         
         if os.path.exists(self.anim_path_root):
             try:
-                valid_idx = sorted([int(f.split('.')[0]) for f in os.listdir(self.anim_path_root) if f.lower().endswith('.png') and f.split('.')[0].isdigit() and f.lower() not in [f"bg{local.get('bg_image_idx', 0)}_v.png", f"bg{local.get('bg_image_idx', 0)}_h.png", 'bg.png']])
+                valid_idx = sorted([int(f.split('.')) for f in os.listdir(self.anim_path_root) if f.lower().endswith('.png') and f.split('.').isdigit() and f.lower() not in [f"bg{local.get('bg_image_idx', 0)}_v.png", f"bg{local.get('bg_image_idx', 0)}_h.png", 'bg.png']])
                 self.total_frames = len(valid_idx)
                 for idx, num in enumerate(valid_idx):
                     p = os.path.join(self.anim_path_root, f"{num}.png")
@@ -981,15 +997,18 @@ class KivySpiderEntity:
         f_name = app.animation_folders[settings["animation_folder_idx"] % len(app.animation_folders)]
         local = settings["folder_settings"].get(f_name, settings)
 
+        # --- GÜNCELLENEN KISIM: Klasöre Duyarlı Süper Hız Çarpanı ---
         if self.is_super:
-            mult = local.get("super_speed_mult", 3.0) 
+            mult = local.get("super_speed_mult", 3.0) # <-- 'settings' yerine 'local' yapıldı
             base_spd = local.get("move_speed", 4) * 30 * mult
         else:
             base_spd = local.get("move_speed", 4) * 30        
 
+       # --- SÜRÜKLE FIRLAT GERÇEKÇİ FİZİK SİSTEMİ ---
         if self.is_flung:
             current_speed = math.sqrt(self.vx**2 + self.vy**2)
             if current_speed > base_spd:
+                # Akıcı bir yavaşlama eğrisi için 0.975 sürtünme uyguluyoruz
                 self.vx *= 0.975
                 self.vy *= 0.975
                 self.angle = math.atan2(self.vy, self.vx) % (2 * math.pi)
@@ -998,6 +1017,7 @@ class KivySpiderEntity:
         else:
             self.vx = math.cos(self.angle) * base_spd
             self.vy = math.sin(self.angle) * base_spd
+        # ---------------------------------------------
 
         if self.is_orbiting:
             x_m, x_mx = self.orbit_wx - self.size + 15 + self.visual_offset, self.orbit_wx + self.orbit_ww - 15 - self.visual_offset
@@ -1036,6 +1056,7 @@ class KivySpiderEntity:
                         self.vy = -self.vy
                         n_y = r[1] - self.size + self.visual_offset - 2 if self.y + self.size/2 < r[1] + r[3]/2 else r[1] + r[3] - self.visual_offset + 2
                     self.angle = (math.atan2(self.vy, self.vx) + random.uniform(-0.1, 0.1)) % (2 * math.pi)
+                    # YENİ KOD: Sekme anında fırlatılma hızının %85'ini koruyarak yansıtalım
                     current_speed = math.sqrt(self.vx**2 + self.vy**2)
                     bounce_speed = max(base_spd, current_speed * 0.85) 
                     
@@ -1045,7 +1066,9 @@ class KivySpiderEntity:
                     self.finalize_transforms(settings)
                     return
 
+        # --- YENİLENEN KISIM: Süper yaratığın arkasında parıltılı kuyruk izi bırakması ---
         if self.is_super and app and hasattr(app, 'particle_emitter'):
+            # Altın sarısı tonlarında kuyruk izi bırakması için çağırıyoruz
             app.particle_emitter.spawn_super_trail(self.x, self.y, self.size, [1.0, 0.84, 0.0])
 
         if spider_list:
@@ -1053,6 +1076,9 @@ class KivySpiderEntity:
                 if not other or other.id == self.id or other.is_orbiting or other.is_grabbed: 
                     continue
                 
+                # --- DÜZELTİLEN KISIM: Çarpışma kutusunu (Hitbox) daraltma ---
+                # visual_offset payını daha agresif kullanarak yaratıkların birbirine daha çok yaklaşmasını sağlıyoruz.
+                # Ek olarak 15 piksellik ekstra bir daraltma (tolerance) ekleyerek şeffaf kenarları yok ediyoruz.
                 tolerance = 15
                 my_left = n_x + self.visual_offset + tolerance
                 my_right = n_x + self.size - self.visual_offset - tolerance
@@ -1064,6 +1090,7 @@ class KivySpiderEntity:
                 other_top = other.y + other.size - other.visual_offset - tolerance
                 other_bottom = other.y + other.visual_offset + tolerance
 
+                # AABB Çarpışma kontrolü
                 if (my_left < other_right and my_right > other_left and 
                     my_bottom < other_top and my_top > other_bottom):
                     
@@ -1093,11 +1120,15 @@ class KivySpiderEntity:
                     other_local = settings["folder_settings"].get(other_f_name, settings)
                     other_base_spd = other_local.get("move_speed", 4) * 30
                     if other.is_super:
+                        # --- GÜNCELLENEN KISIM ---
                         other_base_spd *= settings.get("super_speed_mult", 3.0)
+                        # -------------------------
                     other.vx = math.cos(other.angle) * other_base_spd
                     other.vy = math.sin(other.angle) * other_base_spd
                     
                     # --- DÜZELTİLEN KISIM: Dengeli Geri İtme (Pushback) ---
+                    # Yaratıklar artık birbirine iyice sokulduğu için itme mesafesini 
+                    # iç içe geçmeyecek ama uzaktan zıplamayacak şekilde 12 piksele çekiyoruz.
                     push_distance = 12
                     if self.x < other.x:
                         n_x -= push_distance
@@ -1172,10 +1203,11 @@ class KivySpiderEntity:
         base_offset = facing_mode * 90
         fx, fy = 1, 1
 
-        # --- DÜZELTİLEN KISIM: Sizin tam kalibre ettiğiniz 4 kenar hatasız yörünge haritası ---
+        # --- DÜZELTİLEN KISIM: 4 Kenarda Sola Bakan Yaratıklar İçin Kesin Hizalama ---
         if self.is_orbiting:
             if facing_mode == 2:
-                # Sola bakan yaratıklar için başı önde, sırtı dışarıda tutan kesinleşmiş matris:
+                # Sola bakan spriteların kafasını gidiş yönünde tutup 
+                # sırtını ekranın dış çeperine yaslayan tam harita:
                 if self.orbit_phase == 0:    # Alt kenar: Sola gidiyor
                     t_ang = 180
                     fx, fy = -1, 1
@@ -1207,6 +1239,7 @@ class KivySpiderEntity:
             if 90 < check_angle <= 270:
                 t_ang = t_ang - 180
                 fx = -1
+        # ---------------------------------------------------------------------
 
         self.rot_transform.angle = t_ang
         self.scale_transform.x, self.scale_transform.y = fx, fy
