@@ -37,9 +37,15 @@ jobs:
     - name: Buildozer Kurulumu ve APK Derleme
       run: |
         pip3 install --user --upgrade buildozer
-        # GitHub Actions ortamında Buildozer'ın düzgün çalışması için PATH ayarı
         export PATH=$PATH:~/.local/bin
-        # Derlemeyi debug modunda başlatıyoruz
+        
+        # ÇÖZÜM: GitHub'ın kendi NDK'sı ile çakışmayı önlemek için 
+        # Buildozer'ın .spec dosyasındaki NDK'yı (26b) indirmesini zorunlu kılıyoruz.
+        export ANDROID_NDK_HOME=""
+        export ANDROID_NDK_ROOT=""
+        
+        # Eski çakışan önbellekleri (cache) temizleyip temiz bir derleme başlatıyoruz
+        buildozer android clean
         buildozer -v android debug
 
     - name: Hazır APK Dosyasını Yükle
