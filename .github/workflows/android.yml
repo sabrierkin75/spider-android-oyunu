@@ -39,13 +39,11 @@ jobs:
         pip3 install --user --upgrade buildozer
         export PATH=$PATH:~/.local/bin
         
-        # ÇÖZÜM: GitHub'ın kendi NDK'sı ile çakışmayı önlemek için 
-        # Buildozer'ın .spec dosyasındaki NDK'yı (26b) indirmesini zorunlu kılıyoruz.
-        export ANDROID_NDK_HOME=""
-        export ANDROID_NDK_ROOT=""
+        # GitHub'ın sistemindeki uyumsuz NDK değişkenlerini sıfırlıyoruz
+        unset ANDROID_NDK_HOME
+        unset ANDROID_NDK_ROOT
         
-        # Eski çakışan önbellekleri (cache) temizleyip temiz bir derleme başlatıyoruz
-        buildozer android clean
+        # Doğrudan derlemeyi başlatıyoruz (clean komutunu kaldırdık)
         buildozer -v android debug
 
     - name: Hazır APK Dosyasını Yükle
