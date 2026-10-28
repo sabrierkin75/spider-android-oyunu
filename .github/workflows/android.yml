@@ -46,7 +46,7 @@ jobs:
         # Doğrudan derlemeyi başlatıyoruz (clean komutunu kaldırdık)
         buildozer -v android debug
 
-    - name: Hazır APK Dosyasını Yükle
+    - name: Upload Artifact
       uses: actions/upload-artifact@v4
       with:
         name: Spider_Android_Uygulamasi
