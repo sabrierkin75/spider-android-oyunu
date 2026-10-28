@@ -16,7 +16,7 @@ source.dir = .
 source.include_exts = py,png,json,txt
 
 # (list) Dahil edilecek özel klasörler (Görsellerinizin olduğu anims klasörü)
-source.include_patterns = anims/*
+source.include_patterns = anims/*,*.json
 
 # uygulama simgesi
 icon.filename = spider.png
