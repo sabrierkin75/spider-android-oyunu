@@ -11,7 +11,6 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v4
 
-      # Ana makineyi kesin olarak Python 3.11'e sabitliyoruz
       - name: Set up Python 3.11
         uses: actions/setup-python@v5
         with:
@@ -22,27 +21,26 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y build-essential libsqlite3-dev sqlite3 bzip2 libbz2-dev zlib1g-dev libssl-dev openssl libgdbm-dev libgdbm-compat-dev liblzma-dev libreadline-dev libncursesw5-dev libffi-dev uuid-dev openjdk-17-jdk zip unzip
 
-      - name: Install Buildozer and Kivy
+      # Burası çok önemli: Eski araçların Python 3.14 çağırmasını engellemek için sürümleri sabitliyoruz
+      - name: Install Buildozer and Dependencies
         run: |
-          pip install --upgrade pip
+          pip install --upgrade pip setuptools wheel
           pip install Cython==3.0.11
-          pip install buildozer kivy==2.3.0
+          pip install buildozer==1.5.0
+          pip install kivy==2.3.0
 
-      # Geçmişteki tüm hatalı 3.14 ve buildozer önbelleğini tamamen sıfırlıyoruz
-      - name: Clear Buildozer Cache
+      # Gizli kalmış tüm Android SDK/NDK ve python-for-android kalıntılarını kökten kazıyoruz
+      - name: Deep Clean Buildozer
         run: |
           rm -rf .buildozer/
           rm -rf ~/.buildozer/
+          rm -rf ~/.local/share/python-for-android/
 
       - name: Build APK with Buildozer
         run: |
           export PATH=$PATH:~/.local/bin
           unset ANDROID_NDK_HOME
           unset ANDROID_NDK_ROOT
+          # buildozer'a temizlik komutu vererek başlıyoruz
+          buildozer android clean
           buildozer -v android debug
-
-      - name: Upload APK Artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: spider-android-apk
-          path: bin/*.apk
