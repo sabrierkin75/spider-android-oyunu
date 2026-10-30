@@ -10,6 +10,8 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    # GitHub'ın bu adımı yarım kesmesini önlemek için zaman aşımını 45 dakika yapıyoruz.
+    timeout-minutes: 45
 
     steps:
     - name: Checkout Cloud Repository
@@ -22,13 +24,13 @@ jobs:
       shell: bash
 
     - name: Cache Buildozer Global Directory
-      uses: actions/cache@v3
+      uses: actions/cache@v4
       with:
         path: ~/.buildozer
         key: buildozer-global-${{ runner.os }}-${{ steps.get-date.outputs.date }}
 
     - name: Cache Buildozer Local Android SDK/NDK
-      uses: actions/cache@v3
+      uses: actions/cache@v4
       with:
         path: .buildozer
         key: buildozer-local-${{ runner.os }}-${{ steps.get-date.outputs.date }}
@@ -61,4 +63,3 @@ jobs:
       with:
         name: SpiderAndroid-Debug-APK
         path: bin/*.apk
-
