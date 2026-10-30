@@ -16,7 +16,6 @@ jobs:
         with:
           python-version: "3.11"
 
-      # Android SDK/NDK ve Buildozer indirmelerini önbelleğe alıyoruz
       - name: Cache Buildozer Global Dirs
         uses: actions/cache@v4
         with:
@@ -27,13 +26,6 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-buildozer-
 
-      # Java'yı önbelleğe alıyoruz
-      - name: Set up JDK 17
-        uses: actions/setup-python@v5
-        with:
-          python-version: "3.11"
-
-       Tarama ve derleme için gerekli sistem araçları
       - name: Install System Dependencies
         run: |
           sudo apt-get update
@@ -49,8 +41,6 @@ jobs:
           export PATH=$PATH:/home/runner/.local/bin
           unset ANDROID_NDK_HOME
           unset ANDROID_NDK_ROOT
-          
-          # Eğer önbellekten gelen bozuk dosya ihtimali varsa diye p4a'yı sağlama alıyoruz
           python -m buildozer -v android debug
 
       - name: Upload APK Artifact
