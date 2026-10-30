@@ -45,10 +45,10 @@ android.api = 33
 android.minapi = 24
 
 # (int) Android SDK Versiyonu
-android.sdk = 34
+#android.sdk = 34
 
 # (str) Android NDK Versiyonu (Kivy için en kararlı sürüm)
-android.ndk = 25b
+#android.ndk = 25b
 
 # android ndk api
 android.ndk_api = 24
