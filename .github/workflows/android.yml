@@ -39,6 +39,7 @@ jobs:
 # Çekirdek sayısını sabitlemek için komutun önüne env değişkeni ekleyin:
     - name: Build with Buildozer
       run: |
+        pip3 install --user --upgrade buildozer
         export PATH=$PATH:~/.local/bin
         export P4A_NUM_CORES=2
         buildozer -v android debug
