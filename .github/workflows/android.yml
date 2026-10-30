@@ -29,7 +29,7 @@ jobs:
         pip3 install cython virtualenv jinja2 kivy
 
     - name: Java JDK 17 Kurulumu (Gradle Kararlılığı İçin)
-      uses: actions/setup-java@v4 # v4 sürümüne yükseltildi
+      uses: actions/setup-java@v5 # v5 sürümüne yükseltildi
       with:
         distribution: 'temurin'
         java-version: '17'
