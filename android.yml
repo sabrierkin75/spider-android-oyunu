@@ -1,0 +1,63 @@
+name: Build Kivy APK
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout Cloud Repository
+      uses: actions/checkout@v3
+
+    - name: Get Date
+      id: get-date
+      run: |
+        echo "date=$(date +'%Y-%m-%d')" >> $GITHUB_OUTPUT
+      shell: bash
+
+    - name: Cache Buildozer Global Directory
+      uses: actions/cache@v3
+      with:
+        path: ~/.buildozer
+        key: buildozer-global-${{ runner.os }}-${{ steps.get-date.outputs.date }}
+
+    - name: Cache Buildozer Local Android SDK/NDK
+      uses: actions/cache@v3
+      with:
+        path: .buildozer
+        key: buildozer-local-${{ runner.os }}-${{ steps.get-date.outputs.date }}
+
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.10'
+
+    - name: Install System Dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y ccache git libffi-dev libssl-dev autoconf automake libtool pkg-config zlib1g-dev ccmd openjdk-17-jdk unzip zip
+        sudo apt-get install -y libltdl-dev libgstreamer1.0-dev graphviz sqlite3 libsqlite3-dev
+        sudo apt-get install -y python3-setuptools
+
+    - name: Install Buildozer and Cython
+      run: |
+        pip install --upgrade pip
+        pip install buildozer git+https://github.com
+
+    - name: Build APK with Buildozer
+      run: |
+        buildozer android debug
+      env:
+        BUILDOZER_ALLOW_KIVY_NEW_DESIGNER: 1
+
+    - name: Upload APK Artifact
+      uses: actions/artifacts-upload@v4
+      with:
+        name: SpiderAndroid-Debug-APK
+        path: bin/*.apk
