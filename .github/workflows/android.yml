@@ -57,7 +57,8 @@ jobs:
         BUILDOZER_ALLOW_KIVY_NEW_DESIGNER: 1
 
     - name: Upload APK Artifact
-      uses: actions/artifacts-upload@v4
+      uses: actions/upload-artifact@v4
       with:
         name: SpiderAndroid-Debug-APK
         path: bin/*.apk
+
