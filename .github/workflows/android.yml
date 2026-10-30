@@ -41,7 +41,7 @@ jobs:
     - name: Install System Dependencies
       run: |
         sudo apt-get update
-        sudo apt-get install -y ccache git libffi-dev libssl-dev autoconf automake libtool pkg-config zlib1g-dev ccmd openjdk-17-jdk unzip zip
+        sudo apt-get install -y ccache git libffi-dev libssl-dev autoconf automake libtool pkg-config zlib1g-dev openjdk-17-jdk unzip zip
         sudo apt-get install -y libltdl-dev libgstreamer1.0-dev graphviz sqlite3 libsqlite3-dev
         sudo apt-get install -y python3-setuptools
 
