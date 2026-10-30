@@ -38,13 +38,6 @@ jobs:
         run: |
           rm -rf .buildozer/
           rm -rf ~/.buildozer/
-        
-      - name: Build with Buildozer
-        run: |
-          export PATH=$PATH:~/.local/bin
-          unset ANDROID_NDK_HOME
-          unset ANDROID_NDK_ROOT
-          buildozer -v android debug
 
     - name: Hazır APK Dosyasını Yükle
       uses: actions/upload-artifact@v4
