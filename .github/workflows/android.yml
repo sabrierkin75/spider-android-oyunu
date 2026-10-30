@@ -35,6 +35,14 @@ jobs:
         distribution: 'temurin'
         java-version: '17'
 
+    - name: Buildozer Kurulumu ve APK Derleme
+      run: |
+        pip3 install --user --upgrade buildozer
+        # GitHub Actions ortamında Buildozer'ın düzgün çalışması için PATH ayarı
+        export PATH=$PATH:~/.local/bin
+        # Derlemeyi debug modunda başlatıyoruz
+        buildozer -v android debug
+
     - name: Cache Buildozer JSON & Android SDK
       uses: actions/cache@v4
       with:
@@ -45,14 +53,6 @@ jobs:
         restore-keys: |
           ${{ runner.os }}-buildozer-
       
-    - name: Buildozer Kurulumu ve APK Derleme
-      run: |
-        pip3 install --user --upgrade buildozer
-        # GitHub Actions ortamında Buildozer'ın düzgün çalışması için PATH ayarı
-        export PATH=$PATH:~/.local/bin
-        # Derlemeyi debug modunda başlatıyoruz
-        buildozer -v android debug
-
     - name: Hazır APK Dosyasını Yükle
       uses: actions/upload-artifact@v4 # v4 sürümüne yükseltildi
       with:
