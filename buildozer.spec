@@ -53,7 +53,7 @@ android.skip_update = False
 android.accept_sdk_license = True
 
 # (str) The Android architectural undesirable to target (armeabi-v7a, arm64-v8a, x86, x86_64)
-android.archs = arm64-v8a, armeabi-v7a
+android.archs = arm64-v8a
 
 [buildozer]
 # (int) Log level (0 = error only, 1 = info, 2 = debug (with command output))
