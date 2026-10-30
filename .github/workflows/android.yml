@@ -35,12 +35,12 @@ jobs:
         distribution: 'temurin'
         java-version: '17'
 
-    - name: Buildozer Kurulumu ve APK Derleme
+# Eski hali muhtemelen sadece buildozer android debug şeklindeydi.
+# Çekirdek sayısını sabitlemek için komutun önüne env değişkeni ekleyin:
+    - name: Build with Buildozer
       run: |
-        pip3 install --user --upgrade buildozer
-        # GitHub Actions ortamında Buildozer'ın düzgün çalışması için PATH ayarı
         export PATH=$PATH:~/.local/bin
-        # Derlemeyi debug modunda başlatıyoruz
+        export P4A_NUM_CORES=2
         buildozer -v android debug
 
     - name: Cache Buildozer JSON & Android SDK
