@@ -26,7 +26,7 @@ version = 1.4.0
 
 # (list) Uygulamanın çalışması için gereken Python kütüphaneleri
 # GitHub'daki HTML/Şablon çökmesini engellemek için jinja2 eklenmiştir.
-requirements = python3, kivy, jinja2, requests
+requirements = python3, kivy==2.3.0, jinja2, requests
 
 # (str) Uygulamanın başlangıç ekranı yönü (Uygulamanız dikey tasarlanmıştır)
 orientation = portrait
@@ -51,7 +51,7 @@ android.minapi = 24
 #android.ndk = 25b
 
 # android ndk api
-android.ndk_api = 24
+#android.ndk_api = 24
 
 # (bool) Google Play korumaları ve modern Gradle için gerekli olan izin
 android.accept_sdk_license = True
