@@ -15,7 +15,7 @@ jobs:
     - name: Python Kurulumu
       uses: actions/setup-python@v5 # v5 sürümüne yükseltildi
       with:
-        python-version: '3.11'
+        python-version: '3.14'
 
     - name: Sistem Bağımlılıklarını Kur (HTML ve Derleme Kilitleri)
       run: |
