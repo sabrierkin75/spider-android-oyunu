@@ -86,76 +86,125 @@ class ParticleEmitter:
             }
             self.particles.append(p_data)
 
-    def spawn_super_trail(self, x, y, size, color):
-        num_particles = random.randint(3, 7)  
+    def spawn_super_trail(self, x, y, size, color, glow_size=150.0):
+        num_particles = random.randint(4, 7)  
         cx = x + size / 2
         cy = y + size / 2
         for _ in range(num_particles):
-            p_x = cx + random.uniform(-size * 0.2, size * 0.2)
-            p_y = cy + random.uniform(-size * 0.2, size * 0.2)
-            vx = random.uniform(-30, 30)
-            vy = random.uniform(-30, 30)
+            p_x = cx + random.uniform(-glow_size / 2, glow_size / 2)
+            p_y = cy + random.uniform(-glow_size / 2, glow_size / 2)
             
-            life = 1.0  
-            decay = random.uniform(1.5, 2.5)  
-            p_size = random.uniform(10, 20) * (size / 120.0)
+            angle = random.uniform(0, 2 * math.pi)
+            speed = random.uniform(25, 60) 
+            vx = math.cos(angle) * speed
+            vy = math.sin(angle) * speed
             
-            r = random.uniform(0.8, 1.0)
-            g = random.uniform(0.7, 0.9)
-            b = random.uniform(0.0, 0.2)
-            p_color = [r, g, b, 1.0]
+            life = 0.95  
+            decay = random.uniform(1.2, 2.0)  
+            p_size = random.uniform(14, 26) * (size / 120.0) 
             
+            # --- YENİLİK: HER PARÇACIK İÇİN TAMAMEN RASTGELE CANLI NEON RENKLERİ ---
+            # Siyah/koyu tonları elemek için RGB kanallarını yüksek taban değerlerinden (0.3 - 1.0) seçiyoruz
+            r_neon = random.uniform(0.3, 1.0)
+            g_neon = random.uniform(0.3, 1.0)
+            b_neon = random.uniform(0.3, 1.0)
+            
+            # Seçilen rengin çok sönük kalmaması için en az bir kanalı tam parlak yapıyoruz
+            max_channel = max(r_neon, g_neon, b_neon)
+            if max_channel > 0:
+                r_neon /= max_channel
+                g_neon /= max_channel
+                b_neon /= max_channel
+                
             p_data = {
                 "type": 2,  
+                "sub_type": random.choice(["orb", "star"]), 
                 "x": p_x, "y": p_y,
                 "vx": vx, "vy": vy,
                 "size": p_size,
-                "color": p_color,
+                "glow_size": glow_size,
                 "life": life,
                 "decay": decay,
+                "neon_color": [r_neon, g_neon, b_neon], # Rastgele neon renk paleti eklendi
                 "rot": random.uniform(0, 360),
-                "rot_speed": random.uniform(-90, 90)
+                "rot_speed": random.uniform(-150, 150)
             }
             self.particles.append(p_data)
 
     def update_particles(self, dt):
         self.canvas.clear()  
-        self.particles = [p for p in self.particles if p["life"] > 0]
+        
+        valid_particles = []
+        for p in self.particles:
+            if p and isinstance(p, dict) and "life" in p and "type" in p:
+                p["life"] -= dt * p.get("decay", 1.0)
+                if p["life"] > 0:
+                    valid_particles.append(p)
+        self.particles = valid_particles
         
         with self.canvas:
             for p in self.particles:
-                p["life"] -= dt * p["decay"]
-                if p["life"] <= 0: 
-                    continue
+                alpha = min(1.0, max(0.0, p["life"]))
                 
-                p["color"][3] = min(1.0, max(0.0, p["life"] / 0.4 if p["type"] == 2 else p["life"]))
-                
+                # --- SÜPER RENGÂRENK NEON REYONLARI (TİP 2) ---
                 if p["type"] == 2:
                     p["x"] += p["vx"] * dt
                     p["y"] += p["vy"] * dt
-                    p["vx"] *= 0.90  
-                    p["vy"] *= 0.90
-                    p["size"] += dt * 5.0  
+                    p["vx"] *= 0.92  
+                    p["vy"] *= 0.92
+                    p["size"] += dt * 9.0  
+                    p["rot"] += p["rot_speed"] * dt
                     
-                    Color(p["color"][0], p["color"][1], p["color"][2], p["color"][3])
-                    Rectangle(pos=(p["x"] - p["size"]/2, p["y"] - p["size"]/8), size=(p["size"], p["size"]/4))
-                    Rectangle(pos=(p["x"] - p["size"]/8, p["y"] - p["size"]/2), size=(p["size"]/4, p["size"]))
+                    # Kaydedilen rastgele neon rengi al, yoksa varsayılan sarı yap
+                    nc = p.get("neon_color", [1.0, 0.9, 0.0])
                     
+                    if p.get("sub_type", "orb") == "orb":
+                        # Katman 1: Dıştaki geniş parlayan neon çeper (Rastgele Renkli)
+                        Color(nc[0], nc[1], nc[2], alpha * 0.35)
+                        Ellipse(pos=(p["x"] - p["size"]/2, p["y"] - p["size"]/2), size=(p["size"], p["size"]))
+                        # Katman 2: Merkezdeki parlak çekirdek (Sabit Beyaz)
+                        Color(1.0, 1.0, 1.0, alpha * 0.85)
+                        Ellipse(pos=(p["x"] - p["size"]/4, p["y"] - p["size"]/4), size=(p["size"]/2, p["size"]/2))
+                    else:
+                        PushMatrix()
+                        Rotate(angle=p["rot"], origin=(p["x"], p["y"]), axis=(0, 0, 1))
+                        # Katman 1: Dıştaki parlayan neon hatlar (Rastgele Renkli)
+                        Color(nc[0], nc[1], nc[2], alpha * 0.4)
+                        Ellipse(pos=(p["x"] - p["size"]/2, p["y"] - p["size"]/6), size=(p["size"], p["size"]/3))
+                        Ellipse(pos=(p["x"] - p["size"]/6, p["y"] - p["size"]/2), size=(p["size"]/3, p["size"]))
+                        # Katman 2: İçteki keskin parlayan hatlar (Sabit Beyaz)
+                        Color(1.0, 1.0, 1.0, alpha * 0.85)
+                        Ellipse(pos=(p["x"] - p["size"]/2.5, p["y"] - p["size"]/12), size=(p["size"]/1.25, p["size"]/6))
+                        Ellipse(pos=(p["x"] - p["size"]/12, p["y"] - p["size"]/2.5), size=(p["size"]/6, p["size"]/1.25))
+                        PopMatrix()
+                        
+                # --- DUVAR PARÇALANMA DİKDÖRTGENLERİ (TİP 0) ---
                 elif p["type"] == 0:
                     p["x"] += p["vx"] * dt
                     p["y"] += p["vy"] * dt
                     p["rot"] += p["rot_speed"] * dt
-                    Color(p["color"][0], p["color"][1], p["color"][2], p["color"][3])
+                    
+                    if "color" in p and len(p["color"]) >= 4:
+                        Color(p["color"][0], p["color"][1], p["color"][2], alpha)
+                    else:
+                        Color(1, 1, 1, alpha)
+                        
                     PushMatrix()
                     Rotate(angle=p["rot"], origin=(p["x"], p["y"]), axis=(0, 0, 1))
                     Rectangle(pos=(p["x"] - p["size"]/2, p["y"] - p["size"]/2), size=(p["size"], p["size"]))
                     PopMatrix()
                     
+                # --- DUVAR PARÇALANMA ÜÇGENLERİ (TİP 1) ---
                 elif p["type"] == 1:
                     p["x"] += p["vx"] * dt
                     p["y"] += p["vy"] * dt
                     p["rot"] += p["rot_speed"] * dt
-                    Color(p["color"][0], p["color"][1], p["color"][2], p["color"][3])
+                    
+                    if "color" in p and len(p["color"]) >= 4:
+                        Color(p["color"][0], p["color"][1], p["color"][2], alpha)
+                    else:
+                        Color(1, 1, 1, alpha)
+                        
                     PushMatrix()
                     Rotate(angle=p["rot"], origin=(p["x"], p["y"]), axis=(0, 0, 1))
                     s = p["size"] / 2
@@ -173,6 +222,7 @@ class ParticleEmitter:
                     Mesh(vertices=vertices1, indices=indices, mode='triangles')
                     Mesh(vertices=vertices2, indices=indices, mode='triangles')
                     PopMatrix()
+
 class CreatureOverlayApp(App):
     def build(self):
         from kivy.config import Config
@@ -1289,6 +1339,17 @@ class CreatureOverlayApp(App):
                 if self.big_wall_destroy_timer <= 0:
                     self.big_wall_pending_destroy = False
                     self.big_wall_active = False
+                    
+                    # --- SÜRE BİTTİĞİNDE PATLAMA EFEKTİNİ TETİKLE ---
+                    if hasattr(self, 'particle_emitter'):
+                        for wall in self.walls:
+                            if wall.get("is_big", False):
+                                # Orta engelin koordinatlarını alıp parçacık motoruna gönderiyoruz
+                                r = wall["rect"]
+                                # Büyük duvar olduğu için yaratık boyutunu (creature_size) 300 vererek patlamayı devasa yapıyoruz
+                                self.particle_emitter.spawn_shattered_wall(r, wall["color"], creature_size=300)
+                    
+                    # Büyük engeli listeden temizle ve ekranı güncelle
                     self.walls = [w for w in self.walls if not w.get("is_big", False)]
                     self.redraw_walls()
 
@@ -1654,17 +1715,29 @@ class KivySpiderEntity:
             for i in range(len(walls) - 1, -1, -1):
                 r = walls[i]["rect"]
                 if (n_x + self.visual_offset < r[0] + r[2] and n_x + self.visual_offset + r_sz > r[0] and n_y + self.visual_offset < r[1] + r[3] and n_y + self.visual_offset + r_sz > r[1]):
+                    # --- SÜPER MODDA ENGELE ÇARPMA DURUMU ---
                     if self.is_super: 
+                        # Eğer çarptığımız engel ortadaki büyük engelse, ana uygulamadaki durumları sıfırla
                         if walls[i].get("is_big", False) and app:
                             app.big_wall_active = False
                             app.big_wall_pending_destroy = False
                             app.big_wall_timer = 0.0
+                            # Yörüngede dönen diğer yaratıkları serbest bırak
                             for s in spider_list:
-                                if s.is_orbiting: s.is_orbiting = False; s.angle = random.uniform(0, 2 * math.pi)
-                        app.particle_emitter.spawn_shattered_wall(r, walls[i]["color"], self.size)
+                                if s.is_orbiting: 
+                                    s.is_orbiting = False
+                                    s.angle = random.uniform(0, 2 * math.pi)
+                        
+                        # Parçacık efektini başlat ve duvarı listeden silerek patlat
+                        if app and hasattr(app, 'particle_emitter'):
+                            app.particle_emitter.spawn_shattered_wall(r, walls[i]["color"], self.size)
+                        
                         walls.pop(i)
-                        app.redraw_walls()
+                        if app and hasattr(app, 'redraw_walls'):
+                            app.redraw_walls()
                         continue
+                    
+                    # --- NORMAL MODDA ENGELE ÇARPMA (YANSIMA) DURUMU ---
                     if min(self.x + self.visual_offset + r_sz - r[0], r[0] + r[2] - (self.x + self.visual_offset)) < min(self.y + self.visual_offset + r_sz - r[1], r[1] + r[3] - (self.y + self.visual_offset)):
                         self.vx = -self.vx
                         n_x = r[0] - self.size + self.visual_offset - 2 if self.x + self.size/2 < r[0] + r[2]/2 else r[0] + r[2] - self.visual_offset + 2
@@ -1678,8 +1751,10 @@ class KivySpiderEntity:
                     self.x, self.y = n_x, n_y
                     self.finalize_transforms(settings)
                     return
+
         if self.is_super and app and hasattr(app, 'particle_emitter'):
-            app.particle_emitter.spawn_super_trail(self.x, self.y, self.size, [1.0, 0.84, 0.0])
+            glow_sz = getattr(self, 'super_glow_size', self.size * 1.25)
+            app.particle_emitter.spawn_super_trail(self.x, self.y, self.size, [1.0, 0.84, 0.0], glow_size=glow_sz)
 
         if app and app.gold_orb:
             orb_dist = math.sqrt(((app.gold_orb["x"] + app.gold_orb["size"]/2) - (n_x + self.size/2))**2 + ((app.gold_orb["y"] + app.gold_orb["size"]/2) - (n_y + self.size/2))**2)
