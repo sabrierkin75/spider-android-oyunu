@@ -6,6 +6,7 @@ on:
 jobs:
   build:
     runs-on: ubuntu-22.04
+    timeout-minutes: 360  # Süreyi uzatın
 
     steps:
     - name: Depoyu Klonla
@@ -34,6 +35,16 @@ jobs:
         distribution: 'temurin'
         java-version: '17'
 
+    - name: Cache Buildozer JSON & Android SDK
+      uses: actions/cache@v4
+      with:
+        path: |
+          ~/.buildozer
+          .buildozer
+        key: ${{ runner.os }}-buildozer-${{ github.sha }}
+        restore-keys: |
+          ${{ runner.os }}-buildozer-
+      
     - name: Buildozer Kurulumu ve APK Derleme
       run: |
         pip3 install --user --upgrade buildozer
