@@ -21,26 +21,24 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y build-essential libsqlite3-dev sqlite3 bzip2 libbz2-dev zlib1g-dev libssl-dev openssl libgdbm-dev libgdbm-compat-dev liblzma-dev libreadline-dev libncursesw5-dev libffi-dev uuid-dev openjdk-17-jdk zip unzip
 
-      # Burası çok önemli: Eski araçların Python 3.14 çağırmasını engellemek için sürümleri sabitliyoruz
-      - name: Install Buildozer and Dependencies
-        run: |
-          pip install --upgrade pip setuptools wheel
-          pip install Cython==3.0.11
-          pip install buildozer==1.5.0
-          pip install kivy==2.3.0
-
-      # Gizli kalmış tüm Android SDK/NDK ve python-for-android kalıntılarını kökten kazıyoruz
+      # Önceki tüm bozuk paketleri ve kalıntıları temizliyoruz
       - name: Deep Clean Buildozer
         run: |
           rm -rf .buildozer/
           rm -rf ~/.buildozer/
           rm -rf ~/.local/share/python-for-android/
 
+      # Temiz kurulum ile doğrudan derlemeye geçiyoruz
       - name: Build APK with Buildozer
         run: |
           export PATH=$PATH:~/.local/bin
           unset ANDROID_NDK_HOME
           unset ANDROID_NDK_ROOT
-          # buildozer'a temizlik komutu vererek başlıyoruz
-          buildozer android clean
+          # Hatalı "clean" satırını buradan kaldırdık, doğrudan debug modunda derliyoruz
           buildozer -v android debug
+
+      - name: Upload APK Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: spider-android-apk
+          path: bin/*.apk
