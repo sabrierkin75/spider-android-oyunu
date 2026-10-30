@@ -26,7 +26,7 @@ version = 1.4.0
 
 # (list) Uygulamanın çalışması için gereken Python kütüphaneleri
 # GitHub'daki HTML/Şablon çökmesini engellemek için jinja2 eklenmiştir.
-requirements = python3.11, kivy, jinja2, requests, altgraph
+requirements = python3, kivy, jinja2, requests
 
 # (str) Uygulamanın başlangıç ekranı yönü (Uygulamanız dikey tasarlanmıştır)
 orientation = portrait
@@ -39,7 +39,7 @@ fullscreen = 1
 # =============================================================================
 
 # (int) Hedef Android API Seviyesi (Modern Android standartları için API 35 / Android 15)
-android.api = 34
+android.api = 33
 
 # (int) Minimum Android API Seviyesi (Uygulamanın çalışabileceği en eski sürüm: Android 7.0)
 android.minapi = 24
@@ -48,7 +48,7 @@ android.minapi = 24
 android.sdk = 34
 
 # (str) Android NDK Versiyonu (Kivy için en kararlı sürüm)
-android.ndk = 26b
+android.ndk = 25b
 
 # android ndk api
 android.ndk_api = 24
