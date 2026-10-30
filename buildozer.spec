@@ -23,7 +23,7 @@ version = 1.4.0
 
 # (list) Application requirements
 # pyjnius kütüphanesi Android arka ışık ve SystemUI kontrolleri için zorunludur.
-requirements = python3==3.14,kivy==2.3.0,pyjnius,pillow
+requirements = python3==3.14,kivy==2.3.1,pyjnius,pillow
 
 # (str) Supported orientations (landscape, portrait or all)
 orientation = portrait
