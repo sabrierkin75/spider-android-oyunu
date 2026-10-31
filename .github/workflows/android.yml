@@ -22,16 +22,22 @@ jobs:
     - name: Sistem Paketlerini Kur
       run: |
         sudo apt-get update
-        sudo apt-get install -y git zip unzip openjdk-17-jdk python3-pip autoconf libtool pkg-config zlib1g-dev libncurses5-dev libgdbm-dev libnss3-dev libssl-dev libreadline-dev libffi-dev libsqlite3-dev sqlite3 bzip2 libbz2-dev
+        sudo apt-get install -y git zip unzip openjdk-17-jdk python3-pip autoconf libtool pkg-config zlib1g-dev libncurses5-dev libgdbm-dev libnss3-dev libssl-dev libreadline-dev libffi-dev libsqlite3-dev sqlite3 bzip2 libbz2-dev wget
 
-    - name: Kararlı Derleme Paketlerini Kur
+    - name: En Güncel Buildozer ve Cython Motorunu Kur
       run: |
-        pip3 install --user --upgrade buildozer Cython virtualenv
-        # Sunucunun RAM'ini bitiren güncel p4a sürümü yerine stabil kütüphane havuzunu kilitliyoruz
-        pip3 install --user --upgrade "python-for-android==2024.1.21"
+        # Sürüm uyuşmazlıklarını engellemek için her şeyi en son resmi kararlı sürüme güncelliyoruz
+        pip3 install --user --upgrade buildozer cython virtualenv python-for-android
 
     - name: APK Derleme İşlemini Başlat
       run: |
         export PATH=$PATH:~/.local/bin
-        # Ağır grafik paketlerini (jpeg, webp, avif) indirmemesi için sadece çekirdek bileşenleri zorluyoruz
-        buildozer android debug
+        # Tüm lisans sözleşmelerini otomatik onaylayarak derlemeyi tetikliyoruz
+        yes | buildozer android debug
+
+    - name: Hazır APK Dosyasını Yükle
+      if: success()
+      uses: actions/upload-artifact@v4
+      with:
+        name: Spider-Android-Debug-APK
+        path: bin/*.apk
