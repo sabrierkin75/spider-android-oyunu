@@ -22,38 +22,18 @@ jobs:
     - name: Sistem Paketlerini Kur
       run: |
         sudo apt-get update
-        sudo apt-get install -y git zip unzip openjdk-17-jdk python3-pip autoconf libtool pkg-config zlib1g-dev libncurses5-dev libgdbm-dev libnss3-dev libssl-dev libreadline-dev libffi-dev libsqlite3-dev sqlite3 bzip2 libbz2-dev wget
+        sudo apt-get install -y git zip unzip openjdk-17-jdk python3-pip autoconf libtool pkg-config zlib1g-dev libncurses5-dev libgdbm-dev libnss3-dev libssl-dev libreadline-dev libffi-dev libsqlite3-dev sqlite3 bzip2 libbz2-dev
 
-    - name: Buildozer ve Bağımlılıkları Yükle
+    - name: Buildozer ve Cython Yükle
       run: |
+        # En kararlı Buildozer sürümünü temiz bir şekilde kuruyoruz
         pip3 install --user --upgrade "buildozer>=1.5.0" Cython==0.29.36 virtualenv
-
-    - name: SDK ve Sdkmanager Hatalarını Güncel Link ile Çöz
-      run: |
-        # Klasör yapılarını önceden hazırlıyoruz
-        mkdir -p /home/runner/.buildozer/android/platform/android-sdk/tools/bin/
-        mkdir -p /home/runner/.buildozer/android/platform/android-sdk/cmdline-tools
-        
-        # Güncel resmi Google komut satırı araçlarını (v15859902) indiriyoruz
-        wget https://google.com -O cmdline-tools.zip
-        
-        # Zip dosyasının sağlamlığını doğrulayarak açıyoruz
-        unzip -q cmdline-tools.zip -d /home/runner/.buildozer/android/platform/android-sdk/cmdline-tools
-        mv /home/runner/.buildozer/android/platform/android-sdk/cmdline-tools/cmdline-tools /home/runner/.buildozer/android/platform/android-sdk/cmdline-tools/latest
-        rm cmdline-tools.zip
-
-        # Kısayol köprüsünü kuruyoruz
-        ln -s /home/runner/.buildozer/android/platform/android-sdk/cmdline-tools/latest/bin/sdkmanager /home/runner/.buildozer/android/platform/android-sdk/tools/bin/sdkmanager
-        ln -s /home/runner/.buildozer/android/platform/android-sdk/cmdline-tools/latest/bin/avdmanager /home/runner/.buildozer/android/platform/android-sdk/tools/bin/avdmanager
-
-        # Lisansları önceden otomatik onaylıyoruz
-        yes | /home/runner/.buildozer/android/platform/android-sdk/cmdline-tools/latest/bin/sdkmanager --licenses || true
 
     - name: APK Derleme İşlemini Başlat
       run: |
         export PATH=$PATH:~/.local/bin
-        # Artık zip başarıyla açıldı ve köprü hazır; Buildozer paketlemeyi başlatacaktır
-        buildozer android debug
+        # Buildozer indirmeleri kendi yönetirken lisans ekranında takılmaması için otomatik 'yes' veriyoruz
+        yes | buildozer android debug
 
     - name: Hazır APK Dosyasını Yükle
       if: success()
