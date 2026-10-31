@@ -19,7 +19,7 @@ jobs:
         distribution: 'temurin'
         java-version: '17'
 
-    - name: Python 3.11 Kur (Uyuşmazlık Çözümü)
+    - name: Python 3.11 Kur (Temiz Yapı)
       uses: actions/setup-python@v5
       with:
         python-version: '3.11'
@@ -29,17 +29,21 @@ jobs:
         sudo apt-get update
         sudo apt-get install -y git zip unzip openjdk-17-jdk python3-pip autoconf libtool pkg-config zlib1g-dev libncurses5-dev libgdbm-dev libnss3-dev libssl-dev libreadline-dev libffi-dev libsqlite3-dev sqlite3 bzip2 libbz2-dev wget
 
-    - name: Derleme Motoru Sürümlerini Kilitle
+    - name: Eski Hatalı Önbelleği Temizle ve Motoru Kilitle
       run: |
+        # Sunucuda kalmış olabilecek tüm hatalı Python 3.14 önbellek klasörlerini tamamen kazıyoruz
+        rm -rf ~/.buildozer
+        rm -rf .buildozer
+        
+        # Derleme motorunu stabil sürümlere sabitliyoruz
         python3 -m pip install --upgrade pip
-        # 3.14 dayatmasını yapan güncel motor yerine kararlı eski yapıyı kilitliyoruz
         python3 -m pip install "buildozer==1.5.0" "Cython<3.0.0" virtualenv wheel sh
         python3 -m pip install "python-for-android==2024.1.21"
 
     - name: APK Derleme İşlemini Başlat
       run: |
         export PATH=$PATH:~/.local/bin
-        # Derleme motorunu 1.5.0'a çektiğimiz için artık 3.14.2'yi aramayı bırakıp kararlı paketleri basacaktır
+        # Önbellek sıfırlandığı ve fazlalık paket temizlendiği için doğrudan kararlı paket derlemesine geçecektir
         yes | buildozer android debug
 
     - name: Hazır APK Dosyasını Yükle
