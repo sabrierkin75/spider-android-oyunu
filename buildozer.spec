@@ -6,6 +6,8 @@ package.domain = org.sabrierkin
 source.dir = .
 source.include_exts = py,png,jpg,json
 
+# (str) Icon of the application
+icon.filename = %(source.dir)s/spider.png
 version = 1.4.0
 requirements = python3,kivy==2.3.0
 
