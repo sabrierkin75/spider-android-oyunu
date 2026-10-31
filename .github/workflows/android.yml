@@ -5,7 +5,7 @@ on:
     branches: [ "main", "master" ]
   pull_request:
     branches: [ "main", "master" ]
-  workflow_dispatch: # GitHub arayüzünden manuel olarak tetiklemek için
+  workflow_dispatch:
 
 jobs:
   build:
@@ -15,17 +15,6 @@ jobs:
     - name: Checkout Code
       uses: actions/checkout@v4
 
-    - name: Set up Python
-      uses: actions/setup-python@v5
-      with:
-        python-version: '3.10'
-
-    - name: Install System Dependencies
-      run: |
-        sudo apt update
-        sudo apt install -y git zip unzip openjdk-17-jdk python3-pip autoconf libtool pkg-config zlib1g-dev libncurses5-dev libncursesw5-dev libtinfo5 cmake libffi-dev libssl-dev automake autopoint gettext
-        pip3 install --user --upgrade buildozer Cython==0.29.36 virtualenv
-
     - name: Cache Buildozer global directory
       uses: actions/cache@v4
       with:
@@ -34,23 +23,18 @@ jobs:
         restore-keys: |
           ${{ runner.os }}-buildozer-
 
-    - name: Build APK with Buildozer
-      run: |
-        # GitHub Actions'da root/interaktif uyarıları geçmek için doğrudan çalıştırıyoruz
-        buildozer -v android debug
-      env:
-        BUILDOZER_ALLOW_KIVY_NEW_DESIGNER: 1
+    # Aidl not found hatasını engelleyen resmi ve izole edilmiş Kivy Buildozer Action motoru
+    - name: Build APK with Buildozer Action
+      uses: ArtemGovorov/buildozer-action@v1
+      id: buildozer
+      with:
+        buildozer_version: stable
+        command: buildozer -v android debug
+        repository_txt: ""
 
     - name: Upload APK Artifact
       uses: actions/upload-artifact@v4
       with:
         name: spider-android-apk
-        path: bin/*.apk
+        path: ${{ steps.buildozer.outputs.filename }}
         retention-days: 7
-
-
-    - name: Hazır APK Dosyasını Yükle
-      uses: actions/upload-artifact@v4 # v4 sürümüne yükseltildi
-      with:
-        name: Spider_Android_Uygulamasi
-        path: bin/*.apk
