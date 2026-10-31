@@ -13,33 +13,11 @@ jobs:
     - name: Kodu Klonla
       uses: actions/checkout@v4
 
-    - name: Java Kurulumu (JDK 17)
-      uses: actions/setup-java@v5
+    - name: Kivy Buildozer Action ile APK Derle
+      uses: kivy/buildozer-action@v1
       with:
-        distribution: 'temurin'
-        java-version: '17'
-
-    - name: Sistem Paketlerini Kur
-      run: |
-        sudo apt-get update
-        sudo apt-get install -y git zip unzip openjdk-17-jdk python3-pip autoconf libtool pkg-config zlib1g-dev libncurses5-dev libgdbm-dev libnss3-dev libssl-dev libreadline-dev libffi-dev libsqlite3-dev sqlite3 bzip2 libbz2-dev
-
-    - name: Kararlı Buildozer ve Bağımlılıkları Yükle
-      run: |
-        # Kivy 2.3.0 ile sorunsuz çalışan en kararlı üst Buildozer sürümünü kuruyoruz
-        pip3 install --user --upgrade "buildozer>=1.5.0" Cython==0.29.36 virtualenv
-
-    - name: Android SDK Lisans Klasörünü Önceden Yetkilendir
-      run: |
-        # Otomatik indirme başladığında lisans ekranında takılmaması için onay klasörünü hazırlıyoruz
-        mkdir -p ~/.buildozer/android/platform/android-sdk/licenses
-        echo -e "\n8933bad161af4178b1185d1a37fbf41ea5269c55\nd56f5187479451eabf01fb74bf367b9fe3b9de17\n24333f8a63b6825ea9c5514f83c2829b004d1fee" > ~/.buildozer/android/platform/android-sdk/licenses/android-sdk-license
-
-    - name: APK Derleme İşlemini Başlat
-      run: |
-        export PATH=$PATH:~/.local/bin
-        # Buildozer 1.5.0+ sürümleri yeni Google SDK (cmdline-tools) yapısını otomatik yönetir
-        yes | buildozer android debug
+        command: buildozer android debug
+        repository_root: .
 
     - name: Hazır APK Dosyasını Yükle
       if: success()
