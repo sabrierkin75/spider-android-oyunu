@@ -22,22 +22,39 @@ jobs:
     - name: Sistem Paketlerini Kur
       run: |
         sudo apt-get update
-        sudo apt-get install -y git zip unzip openjdk-17-jdk python3-pip autoconf libtool pkg-config zlib1g-dev libncurses5-dev libgdbm-dev libnss3-dev libssl-dev libreadline-dev libffi-dev libsqlite3-dev sqlite3 bzip2 libbz2-dev
+        sudo apt-get install -y git zip unzip openjdk-17-jdk python3-pip autoconf libtool pkg-config zlib1g-dev libncurses5-dev libgdbm-dev libnss3-dev libssl-dev libreadline-dev libffi-dev libsqlite3-dev sqlite3 bzip2 libbz2-dev Android-sdk
 
     - name: Buildozer ve Bağımlılıkları Yükle
       run: |
         pip3 install --user --upgrade buildozer Cython==0.29.36 virtualenv
 
-    - name: Android SDK Dizinini ve Gerekli Araçları Hazırla
+    - name: Buildozer SDK ve Aidl Dizin Hatasını Çöz
       run: |
-        mkdir -p ~/.buildozer/android/platform/
-        # Buildozer'ın otomatik SDK indirme aşamasında hata yapmaması için temel klasör yapısını önceden oluşturuyoruz
+        # Buildozer'ın hata verdiği tam dizin yapısını oluşturuyoruz
+        mkdir -p /home/runner/.buildozer/android/platform/android-sdk/build-tools/33.0.1/
+        mkdir -p /home/runner/.buildozer/android/platform/android-sdk/platform-tools/
+        
+        # Ubuntu üzerinde yüklü gelen veya indirilen SDK araçlarını Buildozer'ın beklediği klasöre kopyalıyoruz
+        sudo apt-get install -y google-android-build-tools-33.0.1-installer || true
+        
+        # Eğer sistemde aidl varsa doğrudan Buildozer klasörüne bağla
+        if command -v aidl &> /dev/null; then
+          cp $(which aidl) /home/runner/.buildozer/android/platform/android-sdk/build-tools/33.0.1/aidl
+        else
+          # Alternatif olarak android-sdk paketinden aracı çekmeyi dene
+          sudo apt-get install -y android-sdk-build-tools || true
+          cp /usr/lib/android-sdk/build-tools/debian/aidl /home/runner/.buildozer/android/platform/android-sdk/build-tools/33.0.1/aidl || true
+          cp /usr/bin/aidl /home/runner/.buildozer/android/platform/android-sdk/build-tools/33.0.1/aidl || true
+        fi
+        
+        # Dosyanın çalıştırılabilir olduğunu garanti et
+        chmod +x /home/runner/.buildozer/android/platform/android-sdk/build-tools/33.0.1/aidl || true
 
     - name: APK Derleme İşlemini Başlat
       run: |
         export PATH=$PATH:~/.local/bin
-        # İlk çalıştırmada lisans sözleşmelerini otomatik onaylaması için buildozer'ı tetikliyoruz
-        buildozer android debug
+        # Lisansları otomatik kabul etmesi ve derlemesi için komutu çalıştırıyoruz
+        yes | buildozer android debug
 
     - name: Hazır APK Dosyasını Yükle
       if: success()
