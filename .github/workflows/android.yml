@@ -29,8 +29,14 @@ jobs:
       run: |
         python -m pip install --upgrade pip
         pip install cython
-        # Hatayı önlemek için tam ve kararlı sürüm adresi tanımlandı
         pip install buildozer
+
+    - name: Android SDK ve Aidl Araçlarını Hazırla
+      run: |
+        mkdir -p /home/runner/.buildozer/android/platform/android-sdk/build-tools/33.0.2
+        # Ubuntu üzerindeki varsayılan aidl aracını Buildozer klasörüne bağlıyoruz
+        sudo apt-get install -y aidl
+        ln -s /usr/bin/aidl /home/runner/.buildozer/android/platform/android-sdk/build-tools/33.0.2/aidl
 
     - name: APK Dosyasını Derle
       run: |
