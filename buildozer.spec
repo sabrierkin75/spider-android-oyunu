@@ -66,7 +66,7 @@ android.archs = arm64-v8a
 android.allow_backup = True
 
 # (string) Android için kullanılacak olan Gradle versiyonu
-#android.gradle_dependencies = 'com.android.tools.build:gradle:8.3.2'
+android.gradle_dependencies = 'com.android.tools.build:gradle:8.3.2'
 
 # =============================================================================
 # Buildozer Gelişmiş Ayarlar
