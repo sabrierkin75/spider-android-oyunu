@@ -24,35 +24,21 @@ jobs:
         sudo apt-get update
         sudo apt-get install -y git zip unzip openjdk-17-jdk python3-pip autoconf libtool pkg-config zlib1g-dev libncurses5-dev libgdbm-dev libnss3-dev libssl-dev libreadline-dev libffi-dev libsqlite3-dev sqlite3 bzip2 libbz2-dev
 
-    - name: Buildozer ve Bağımlılıkları Yükle
+    - name: Kararlı Buildozer ve Bağımlılıkları Yükle
       run: |
-        pip3 install --user --upgrade buildozer Cython==0.29.36 virtualenv
+        # Kivy 2.3.0 ile sorunsuz çalışan en kararlı üst Buildozer sürümünü kuruyoruz
+        pip3 install --user --upgrade "buildozer>=1.5.0" Cython==0.29.36 virtualenv
 
-    - name: Android Komut Satırı Araçlarını Kur (sdkmanager Dizin Çözümü)
+    - name: Android SDK Lisans Klasörünü Önceden Yetkilendir
       run: |
-        # Buildozer'ın hata verdiği dizin yapısını oluşturuyoruz
-        mkdir -p ~/.buildozer/android/platform/android-sdk/cmdline-tools
-        mkdir -p ~/.buildozer/android/platform/android-sdk/tools/bin
-        
-        # Resmi Google Android komut satırı araçlarını indiriyoruz
-        curl -sL https://google.com -o cmdline-tools.zip
-        unzip -q cmdline-tools.zip -d ~/.buildozer/android/platform/android-sdk/cmdline-tools
-        rm cmdline-tools.zip
-        
-        # İçeriği 'latest' klasörüne taşıyarak standartlaştırıyoruz
-        mv ~/.buildozer/android/platform/android-sdk/cmdline-tools/cmdline-tools ~/.buildozer/android/platform/android-sdk/cmdline-tools/latest
-        
-        # EN KRİTİK ADIM: Buildozer'ın aradığı eski yola, yeni sdkmanager'ın kısayolunu bağlıyoruz
-        ln -s ~/.buildozer/android/platform/android-sdk/cmdline-tools/latest/bin/sdkmanager ~/.buildozer/android/platform/android-sdk/tools/bin/sdkmanager
-        ln -s ~/.buildozer/android/platform/android-sdk/cmdline-tools/latest/bin/avdmanager ~/.buildozer/android/platform/android-sdk/tools/bin/avdmanager
-        
-        # Lisansları otomatik olarak kabul ediyoruz
-        yes | ~/.buildozer/android/platform/android-sdk/cmdline-tools/latest/bin/sdkmanager --licenses || true
+        # Otomatik indirme başladığında lisans ekranında takılmaması için onay klasörünü hazırlıyoruz
+        mkdir -p ~/.buildozer/android/platform/android-sdk/licenses
+        echo -e "\n8933bad161af4178b1185d1a37fbf41ea5269c55\nd56f5187479451eabf01fb74bf367b9fe3b9de17\n24333f8a63b6825ea9c5514f83c2829b004d1fee" > ~/.buildozer/android/platform/android-sdk/licenses/android-sdk-license
 
     - name: APK Derleme İşlemini Başlat
       run: |
         export PATH=$PATH:~/.local/bin
-        # Artık sdkmanager ve aidl yerinde hazır olduğu için Buildozer doğrudan paketlemeye geçecek
+        # Buildozer 1.5.0+ sürümleri yeni Google SDK (cmdline-tools) yapısını otomatik yönetir
         yes | buildozer android debug
 
     - name: Hazır APK Dosyasını Yükle
