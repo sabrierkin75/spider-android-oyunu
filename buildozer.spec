@@ -40,7 +40,7 @@ fullscreen = 1
 # -----------------------------------------------------------------------------
 
 # (int) Android API Hedefi (33 veya 34 güncel cihazlar için idealdir)
-android.api = 33
+android.api = 34
 
 # (int) Minimum Android API Desteği
 android.minapi = 21
@@ -49,7 +49,7 @@ android.minapi = 21
 android.ndk_api = 21
 
 # Build-tools sürümünü açıkça belirtiyoruz:
-android.build_tools_version = 33.0.2
+android.build_tools_version = 
 
 # (str) Android NDK sürümü (Kivy 2.3.0 ile kararlı çalışan sürüm)
 android.ndk = 25b
