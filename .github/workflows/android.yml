@@ -32,12 +32,24 @@ jobs:
         pip install cython
         pip install buildozer
 
-    - name: Buildozer Aidl Kontrolünü Atlat (Sahte Yol Oluşturma)
+    - name: Modern Android Cmdline-Tools Ayarla (sdkmanager Hatası Çözümü)
       run: |
-        # Buildozer'ın hata verdiği tam klasör yapısını el ile oluşturuyoruz
-        mkdir -p /home/runner/.buildozer/android/platform/android-sdk/build-tools/34.0.0
-        # Sistemdeki gerçek aidl aracını bu klasörün içine bağlıyoruz
-        ln -s /usr/bin/aidl /home/runner/.buildozer/android/platform/android-sdk/build-tools/34.0.0/aidl
+        # Gerekli SDK ve Sahte Aidl klasör yapısını kuruyoruz
+        mkdir -p /home/runner/.buildozer/android/platform/android-sdk/build-tools/33.0.2
+        ln -s /usr/bin/aidl /home/runner/.buildozer/android/platform/android-sdk/build-tools/33.0.2/aidl
+        
+        # Buildozer'ın eski kafayla aradığı 'tools/bin' klasörünü oluşturuyoruz
+        mkdir -p /home/runner/.buildozer/android/platform/android-sdk/tools/bin
+        
+        # Resmi Google Cmdline-Tools (sdkmanager) paketini indiriyoruz
+        wget https://google.com -O cmdline-tools.zip
+        unzip cmdline-tools.zip
+        
+        # sdkmanager'ı Buildozer'ın inatla aradığı eski klasör yoluna kopyalıyoruz
+        cp -r cmdline-tools/bin/* /home/runner/.buildozer/android/platform/android-sdk/tools/bin/
+        
+        # Çalıştırılabilirlik izinlerini veriyoruz
+        chmod +x /home/runner/.buildozer/android/platform/android-sdk/tools/bin/*
 
     - name: APK Dosyasını Derle
       run: |
