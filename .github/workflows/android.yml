@@ -1,4 +1,4 @@
-name: Buildozer  KivyAPK Derleyici
+name: Buildozer APK Derleyici
 
 on:
   push:
@@ -13,6 +13,12 @@ jobs:
     - name: Kodu Klonla
       uses: actions/checkout@v4
 
+    - name: Java Kurulumu (JDK 17)
+      uses: actions/setup-java@v5
+      with:
+        distribution: 'temurin'
+        java-version: '17'
+
     - name: Sistem Paketlerini Kur
       run: |
         sudo apt-get update
@@ -20,20 +26,21 @@ jobs:
 
     - name: Buildozer ve Bağımlılıkları Yükle
       run: |
-        pip3 install --user --upgrade buildozer Cython virtualenv
+        pip3 install --user --upgrade buildozer Cython==0.29.36 virtualenv
 
-    - name: Android SDK/NDK Önbelleğe Al
-      uses: actions/cache@v4
-      with:
-        path: ~/.buildozer
-        key: ${{ runner.os }}-buildozer-${{ hashFiles('buildozer.spec') }}
+    - name: Android SDK Dizinini ve Gerekli Araçları Hazırla
+      run: |
+        mkdir -p ~/.buildozer/android/platform/
+        # Buildozer'ın otomatik SDK indirme aşamasında hata yapmaması için temel klasör yapısını önceden oluşturuyoruz
 
     - name: APK Derleme İşlemini Başlat
       run: |
         export PATH=$PATH:~/.local/bin
+        # İlk çalıştırmada lisans sözleşmelerini otomatik onaylaması için buildozer'ı tetikliyoruz
         buildozer android debug
 
     - name: Hazır APK Dosyasını Yükle
+      if: success()
       uses: actions/upload-artifact@v4
       with:
         name: Spider-Android-Debug-APK
