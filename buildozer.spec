@@ -1,81 +1,65 @@
 [app]
 
-# (string) Uygulamanızın ekranda görünecek adı
+# (str) Uygulama başlığı
 title = Spider Android
 
-# (string) Paket adı (com.ssae.spiderandroid yapısının son kelimesi)
+# (str) Paket ismi (Boşluksuz ve küçük harflerle)
 package.name = spiderandroid
 
-# (string) Şirket/Geliştirici alan adı (com.ssae.spiderandroid yapısının ilk iki kelimesi)
-package.domain = com.ssae
+# (str) Paket domain adresi (Kurumsal kimlik için)
+package.domain = org.sabrierkin
 
-# (string) Kodların ve görsellerin bulunduğu ana dizin (.)
+# (str) Ana giriş kodunun bulunduğu dizin
 source.dir = .
 
-# (list) Uygulamaya dahil edilecek dosya uzantıları
-source.include_exts = py,png,json
+# (list) APK içerisine dahil edilecek uzantılar
+# NOT: .json, .png uzantıları ve anims klasörünüz APK içine mutlaka eklenmelidir!
+source.include_exts = py,png,jpg,json,kv,atlas
 
-# (list) Dahil edilecek özel klasörler (Görsellerinizin olduğu anims klasörü)
-source.include_patterns = anims/*, *.json, *.png
+# (list) APK içerisine dahil edilecek özel klasör isimleri
+source.include_patterns = anims/*
 
-# --- DÜZELTME: Uygulama Simgesi (Icon) Tanımlaması Eklendi ---
-# Ana dizindeki spider.png dosyasını uygulamanın resmi simgesi yapar.
-icon.filename = spider.png
-
-# (string) Uygulamanın versiyonu
+# (str) Uygulama versiyonu
 version = 1.4.0
 
-# (list) Uygulamanın çalışması için gereken Python kütüphaneleri
-# GitHub'daki HTML/Şablon çökmesini engellemek için jinja2 eklenmiştir.
-requirements = python3==3.11.9,kivy==2.3.0,jinja2,pyjnius
+# (list) Uygulama gereksinimleri (Kivy ve Android kütüphaneleri)
+# Pyjnius ve Android paketleri kodunuzdaki Java sınıflarını (autoclass) çağırır.
+requirements = python3,kivy==2.3.0,pyjnius,android
 
-# (str) Uygulamanın başlangıç ekranı yönü (Uygulamanız dikey tasarlanmıştır)
+# (str) Desteklenen ekran yönü (Kodunuz iki yönü de destekliyor)
 orientation = portrait
 
-# (bool) Uygulamanın tam ekran (Fullscreen) başlamasını zorlar
+# (bool) Uygulama tam ekran mı başlayacak
 fullscreen = 1
 
-# =============================================================================
-# Android Ayarları
-# =============================================================================
+# (list) Android İzinleri (Gerekirse wakelock eklenebilir)
+# android.permissions = WAKE_LOCK
 
-# (int) Hedef Android API Seviyesi (Modern Android standartları için API 35 / Android 15)
-android.api = 34
+# -----------------------------------------------------------------------------
+# Android Yapılandırmaları
+# -----------------------------------------------------------------------------
 
-# (int) Minimum Android API Seviyesi (Uygulamanın çalışabileceği en eski sürüm: Android 7.0)
-android.minapi = 24
+# (int) Android API Hedefi (33 veya 34 güncel cihazlar için idealdir)
+android.api = 33
 
-# (int) Android SDK Versiyonu
-android.sdk = 34
+# (int) Minimum Android API Desteği
+android.minapi = 21
 
-# (str) Android NDK Versiyonu (Kivy için en kararlı sürüm)
-android.ndk = 26b
+# (bool) Android kilitlenme koruması için eski grafik motoru uyumluluğu
+android.ndk_api = 21
 
-# (bool) Google Play korumaları ve modern Gradle için gerekli olan izin
-android.accept_sdk_license = True
+# (str) Android NDK sürümü (Kivy 2.3.0 ile kararlı çalışan sürüm)
+android.ndk = 25b
 
-# (list) Uygulamanın talep ettiği Android izinleri
-# Ekranı açık tutma (WAKE_LOCK) işlevi için gerekli izin eklenmiştir.
-android.permissions = WAKE_LOCK
-
-# (list) Desteklenen işlemci mimarileri
-# Sadece arm64-v8a seçmek modern cihazların %99'unu kapsar ve paketlemeyi çok hızlandırır.
+# (list) Mimari desteği (Modern telefonlar için arm64-v8a şarttır)
 android.archs = arm64-v8a
 
-# (bool) Uygulamanın telefona kurulduğunda dış hafızaya taşınabilmesine izin verir
-android.allow_backup = True
-
-# (string) Android için kullanılacak olan Gradle versiyonu
-android.gradle_dependencies = 'com.android.tools.build:gradle:8.3.2'
-
-# =============================================================================
-# Buildozer Gelişmiş Ayarlar
-# =============================================================================
+# (bool) Kalıcı ekran ışığı veya UI thread işlemlerini koşturmak için izin ver
+android.meta_data = android.view.View=true
 
 [buildozer]
-
-# (int) Log detay seviyesi (2 = Her şeyi terminale yazdırır, hataları görmenizi sağlar)
+# (int) Log seviyesi (Hataları görebilmek için 2 kalmalıdır)
 log_level = 2
 
-# (int) Hatalı derleme durumunda ccache kullanımını aktif tutar
-ccache = 1
+# (int) Buildozer hata durumunda işlemi durdursun mu
+warn_on_root = 1
