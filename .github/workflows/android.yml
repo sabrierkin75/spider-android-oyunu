@@ -19,20 +19,26 @@ jobs:
         distribution: 'temurin'
         java-version: '17'
 
+    - name: Python 3.11 Kur (Kivy Uyumluluk Çözümü)
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.11'
+
     - name: Sistem Paketlerini Kur
       run: |
         sudo apt-get update
         sudo apt-get install -y git zip unzip openjdk-17-jdk python3-pip autoconf libtool pkg-config zlib1g-dev libncurses5-dev libgdbm-dev libnss3-dev libssl-dev libreadline-dev libffi-dev libsqlite3-dev sqlite3 bzip2 libbz2-dev wget
 
-    - name: En Güncel Buildozer ve Cython Motorunu Kur
+    - name: Kararlı Derleme Paketlerini Kur
       run: |
-        # Sürüm uyuşmazlıklarını engellemek için her şeyi en son resmi kararlı sürüme güncelliyoruz
-        pip3 install --user --upgrade buildozer cython virtualenv python-for-android
+        # Python 3.11 üzerinden bağımlılıkları kararlı sürümlere kilitliyoruz
+        python3 -m pip install --upgrade pip
+        python3 -m pip install Cython==0.29.36 virtualenv wheel
+        python3 -m pip install "buildozer>=1.5.0" "python-for-android"
 
     - name: APK Derleme İşlemini Başlat
       run: |
-        export PATH=$PATH:~/.local/bin
-        # Tüm lisans sözleşmelerini otomatik onaylayarak derlemeyi tetikliyoruz
+        # Kivy'nin Python 3.11 ile derlenmesini Buildozer'a zorla dikte ediyoruz
         yes | buildozer android debug
 
     - name: Hazır APK Dosyasını Yükle
