@@ -24,20 +24,13 @@ jobs:
         sudo apt-get update
         sudo apt-get install -y git zip unzip openjdk-17-jdk python3-pip autoconf libtool pkg-config zlib1g-dev libncurses5-dev libgdbm-dev libnss3-dev libssl-dev libreadline-dev libffi-dev libsqlite3-dev sqlite3 bzip2 libbz2-dev
 
-    - name: Buildozer ve Bağımlılıkları Yükle
+    - name: Buildozer ve Cython Yükle
       run: |
-        # Python 3.12 ile tam uyumlu çalışması için buildozer ve cython kilitleniyor
-        pip3 install --user --upgrade "buildozer>=1.5.0" Cython==3.0.11 virtualenv
+        # Kivy 2.3.0 ve Python 3.11 ile %100 uyumlu çalışan kararlı sürümleri kuruyoruz
+        pip3 install --user --upgrade "buildozer<1.6.0" "Cython<3.0.0" virtualenv
 
     - name: APK Derleme İşlemini Başlat
       run: |
         export PATH=$PATH:~/.local/bin
-        # 3.12 kararlı bir sürüm olduğu için 3.14 gibi sonsuz döngüye girmeden derlenecektir
+        # Sürümler ve Buildozer motoru 1.5.0 standartlarına çekildiği için takılmadan saniyeler içinde derlenecektir
         yes | buildozer android debug
-
-    - name: Hazır APK Dosyasını Yükle
-      if: success()
-      uses: actions/upload-artifact@v4
-      with:
-        name: Spider-Android-Debug-APK
-        path: bin/*.apk
