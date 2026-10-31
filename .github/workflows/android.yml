@@ -10,10 +10,17 @@ on:
 jobs:
   build:
     runs-on: ubuntu-22.04
+    # Aidl ve SDK yolları düzeltilmiş hazır Buildozer ortamını konteyner olarak çağırıyoruz
+    container:
+      image: subaltaic/buildozer:latest
 
     steps:
     - name: Checkout Code
       uses: actions/checkout@v4
+
+    # GitHub Runner kullanıcısının izinlerini konteyner içiyle eşitler
+    - name: Fix ownership
+      run: chown -R $(id -u):$(id -g) $GITHUB_WORKSPACE
 
     - name: Cache Buildozer global directory
       uses: actions/cache@v4
@@ -23,18 +30,15 @@ jobs:
         restore-keys: |
           ${{ runner.os }}-buildozer-
 
-    # Aidl not found hatasını engelleyen resmi ve izole edilmiş Kivy Buildozer Action motoru
-    - name: Build APK with Buildozer Action
-      uses: ArtemGovorov/buildozer-action@v1
-      id: buildozer
-      with:
-        buildozer_version: stable
-        command: buildozer -v android debug
-        repository_txt: ""
+    - name: Build APK with Buildozer
+      run: |
+        # Konteyner içindeki kararlı Buildozer motoru ile derleme başlatılır
+        buildozer -v android debug
 
+     Tarayıcıdan indirirken kolaylık olması için üretilen APK'yı GitHub Actions paneline yükler
     - name: Upload APK Artifact
       uses: actions/upload-artifact@v4
       with:
         name: spider-android-apk
-        path: ${{ steps.buildozer.outputs.filename }}
+        path: bin/*.apk
         retention-days: 7
