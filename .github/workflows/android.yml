@@ -1,54 +1,49 @@
-name: Buildozer APK Derleyici
+name: Kivy Android APK Paketleyici
 
 on:
-  push:
-    branches: [ main, master ]
-  workflow_dispatch:
+  workflow_dispatch: # Manuel olarak "Run Workflow" butonuna basarak başlatmanızı sağlar.
 
 jobs:
   build:
     runs-on: ubuntu-22.04
 
     steps:
-    - name: Kodu Klonla
-      uses: actions/checkout@v4
+    - name: Depoyu Klonla
+      uses: actions/checkout@v3
 
-    - name: Java Kurulumu (JDK 17)
-      uses: actions/setup-java@v5
+    - name: Python Kurulumu
+      uses: actions/setup-python@v4
+      with:
+        python-size: '3.10'
+
+    - name: Sistem Bağımlılıklarını Kur (HTML ve Derleme Kilitleri)
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y build-essential libffi-dev install-info
+        sudo apt-get install -y git zip unzip colordiff ccache
+        sudo apt-get install -y python3-pip python3-setuptools python3-dev
+        sudo apt-get install -y libsdl2-dev libsdl2-image-dev libsdl2-mixer-dev libsdl2-ttf-dev
+        sudo apt-get install -y libgpgme11-dev libgpgme-dev libassuan-dev libb64-dev
+        # HTML bağımlılık çökmesini önleyen Jinja2 ve temel araçlar
+        pip3 install --upgrade pip
+        pip3 install cython virtualenv jinja2 kivy
+
+    - name: Java JDK 17 Kurulumu (Gradle Kararlılığı İçin)
+      uses: actions/setup-java@v3
       with:
         distribution: 'temurin'
         java-version: '17'
 
-    - name: Python 3.11 Kur (Temiz Yapı)
-      uses: actions/setup-python@v5
-      with:
-        python-version: '3.11'
-
-    - name: Sistem Paketlerini Kur
+    - name: Buildozer Kurulumu ve APK Derleme
       run: |
-        sudo apt-get update
-        sudo apt-get install -y git zip unzip openjdk-17-jdk python3-pip autoconf libtool pkg-config zlib1g-dev libncurses5-dev libgdbm-dev libnss3-dev libssl-dev libreadline-dev libffi-dev libsqlite3-dev sqlite3 bzip2 libbz2-dev wget
-
-    - name: Eski Hatalı Önbelleği Temizle ve Motoru Kilitle
-      run: |
-        # Sunucuda kalmış olabilecek tüm hatalı Python 3.14 önbellek klasörlerini tamamen kazıyoruz
-        rm -rf ~/.buildozer
-        rm -rf .buildozer
-        
-        # Derleme motorunu stabil sürümlere sabitliyoruz
-        python3 -m pip install --upgrade pip
-        python3 -m pip install "buildozer==1.5.0" "Cython<3.0.0" virtualenv wheel sh
-        python3 -m pip install "python-for-android==2024.1.21"
-
-    - name: APK Derleme İşlemini Başlat
-      run: |
+        pip3 install --user --upgrade buildozer
+        # GitHub Actions ortamında Buildozer'ın düzgün çalışması için PATH ayarı
         export PATH=$PATH:~/.local/bin
-        # Önbellek sıfırlandığı ve fazlalık paket temizlendiği için doğrudan kararlı paket derlemesine geçecektir
-        yes | buildozer android debug
+        # Derlemeyi debug modunda başlatıyoruz
+        buildozer -v android debug
 
     - name: Hazır APK Dosyasını Yükle
-      if: success()
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v3
       with:
-        name: Spider-Android-Debug-APK
+        name: Spider_Android_Uygulamasi
         path: bin/*.apk
