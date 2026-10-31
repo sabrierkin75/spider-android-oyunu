@@ -19,3 +19,4 @@ android.ndk = 25b
 android.ndk_api = 21
 android.sdk_buildtools_source = cmdline-tools
 android.accept_sdk_license = True
+p4a.branch = release-2024.01.21
