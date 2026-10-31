@@ -15,5 +15,6 @@ android.archs = arm64-v8a
 android.allow_backup = True
 android.api = 33
 android.minapi = 21
+android.ndk = 26b
 android.sdk_buildtools_source = cmdline-tools
 android.accept_sdk_license = True
