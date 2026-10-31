@@ -15,17 +15,6 @@ jobs:
     - name: Checkout Code
       uses: actions/checkout@v4
 
-    - name: Set up Python
-      uses: actions/setup-python@v5
-      with:
-        python-version: '3.10'
-
-    - name: Install System Dependencies
-      run: |
-        sudo apt update
-        sudo apt install -y git zip unzip openjdk-17-jdk python3-pip autoconf libtool pkg-config zlib1g-dev libncurses5-dev libncursesw5-dev libtinfo5 cmake libffi-dev libssl-dev automake autopoint gettext
-        pip3 install --user --upgrade "buildozer>=1.5.0" Cython==0.29.36 virtualenv
-
     - name: Cache Buildozer global directory
       uses: actions/cache@v4
       with:
@@ -34,27 +23,18 @@ jobs:
         restore-keys: |
           ${{ runner.os }}-buildozer-
 
-    # Sdkmanager not found hatasını çözmek için Buildozer'ın aradığı sanal klasör yapısını el ile oluşturuyoruz
-    - name: Fix Android SDK Manager Legacy Paths
-      run: |
-        mkdir -p ~/.buildozer/android/platform/android-sdk/cmdline-tools/latest/bin
-        mkdir -p ~/.buildozer/android/platform/android-sdk/tools/bin
-        # Modern cmdline-tools ile eski araçlar arasında sanal köprü kuruyoruz
-        ln -sf ~/.buildozer/android/platform/android-sdk/cmdline-tools/latest/bin/sdkmanager ~/.buildozer/android/platform/android-sdk/tools/bin/sdkmanager || true
-
-    - name: Build APK with Buildozer
-      run: |
-        # Broken pipe hatası veren 'yes' yerine Buildozer'ın resmi lisans kabul değişkenini kullanıyoruz
-        buildozer -v android debug
-      env:
-        BUILDOZER_ALLOW_KIVY_NEW_DESIGNER: 1
-        APP_ANDROID_ACCEPT_SDK_LICENSE: 1
-        ANDROID_ACCEPT_MSC_LICENSES: 1
+    # Sdkmanager, aidl ve lisans onay hatalarını otomatik düzelten resmi Kivy eylemi
+    - name: Build APK with Buildozer Action
+      uses: kivy/buildozer-action@v1
+      id: buildozer
+      with:
+        buildozer_version: stable
+        command: buildozer -v android debug
 
     - name: Upload APK Artifact
       uses: actions/upload-artifact@v4
       with:
         name: spider-android-apk
-        path: bin/*.apk
+        path: ${{ steps.buildozer.outputs.filename }}
         retention-days: 7
         
