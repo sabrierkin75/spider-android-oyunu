@@ -48,6 +48,9 @@ android.minapi = 21
 # (bool) Android kilitlenme koruması için eski grafik motoru uyumluluğu
 android.ndk_api = 21
 
+# Build-tools sürümünü açıkça belirtiyoruz:
+android.build_tools_version = 33.0.2
+
 # (str) Android NDK sürümü (Kivy 2.3.0 ile kararlı çalışan sürüm)
 android.ndk = 25b
 
