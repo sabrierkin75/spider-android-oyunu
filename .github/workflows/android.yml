@@ -29,7 +29,7 @@ jobs:
     - name: Install System Dependencies
       run: |
         sudo apt update
-        sudo apt install -y git zip unzip python3-pip autoconf libtool pkg-config zlib1g-dev libncurses5-dev libncursesw5-dev libtinfo5 cmake libffi-dev libssl-dev automake autopoint gettext aidl
+        sudo apt install -y git zip unzip python3-pip autoconf libtool pkg-config zlib1g-dev libncurses5-dev libncursesw5-dev libtinfo5 cmake libffi-dev libssl-dev automake autopoint gettext
         pip3 install --user --upgrade "buildozer>=1.5.0" Cython==0.29.36 virtualenv
 
     - name: Cache Buildozer global directory
@@ -40,23 +40,20 @@ jobs:
         restore-keys: |
           ${{ runner.os }}-buildozer-
 
-    # Aidl hatasını çözmek için ilk adım: Buildozer'ın temel Android SDK dizinlerini önceden tetikliyoruz
-    - name: Pre-extract Android SDK SDKManager
+    # Kritik Çözüm: Buildozer'ın ilk indirme (bootstrap) sürecini sadece SDK'ları kuracak şekilde tetikliyoruz
+    - name: Download and Accept Android SDK Licenses
       run: |
-        buildozer android status || true
-
-    # Kesin Çözüm Adımı: Google lisans sözleşmelerini etkileşimsiz arka planda zorla onaylıyoruz
-    - name: Accept Android SDK Licenses Manually
-      run: |
-        if [ -f ~/.buildozer/android/platform/android-sdk/cmdline-tools/latest/bin/sdkmanager ]; then
+        # Buildozer'a entegre --auto-accept-licenses argümanıyla tüm indirme altyapısını kurup lisansları onaylatıyoruz
+        buildozer android debug --auto-accept-licenses || true
+        
+        # Olası cmdline-tools veya eski tools lisanslarını elle garantiye alıyoruz
+        if [ -d ~/.buildozer/android/platform/android-sdk/cmdline-tools/latest/bin ]; then
           yes | ~/.buildozer/android/platform/android-sdk/cmdline-tools/latest/bin/sdkmanager --licenses || true
-        fi
-        if [ -f ~/.buildozer/android/platform/android-sdk/tools/bin/sdkmanager ]; then
-          yes | ~/.buildozer/android/platform/android-sdk/tools/bin/sdkmanager --licenses || true
         fi
 
     - name: Build APK with Buildozer
       run: |
+        # Asıl APK derleme işlemini başlatıyoruz
         buildozer -v android debug
       env:
         BUILDOZER_ALLOW_KIVY_NEW_DESIGNER: 1
