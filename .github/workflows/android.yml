@@ -35,10 +35,11 @@ jobs:
         # Konteyner içindeki kararlı Buildozer motoru ile derleme başlatılır
         buildozer -v android debug
 
-     Tarayıcıdan indirirken kolaylık olması için üretilen APK'yı GitHub Actions paneline yükler
+    # Tarayıcıdan indirirken kolaylık olması için üretilen APK'yı GitHub Actions paneline yükler
     - name: Upload APK Artifact
       uses: actions/upload-artifact@v4
       with:
         name: spider-android-apk
         path: bin/*.apk
         retention-days: 7
+        
