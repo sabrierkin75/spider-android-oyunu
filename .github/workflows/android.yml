@@ -24,15 +24,15 @@ jobs:
         sudo apt-get update
         sudo apt-get install -y git zip unzip openjdk-17-jdk python3-pip autoconf libtool pkg-config zlib1g-dev libncurses5-dev libgdbm-dev libnss3-dev libssl-dev libreadline-dev libffi-dev libsqlite3-dev sqlite3 bzip2 libbz2-dev
 
-    - name: Buildozer ve Cython Yükle
+    - name: Buildozer ve Bağımlılıkları Yükle
       run: |
-        # En kararlı Buildozer sürümünü temiz bir şekilde kuruyoruz
-        pip3 install --user --upgrade "buildozer>=1.5.0" Cython==0.29.36 virtualenv
+        # Python 3.12 ile tam uyumlu çalışması için buildozer ve cython kilitleniyor
+        pip3 install --user --upgrade "buildozer>=1.5.0" Cython==3.0.11 virtualenv
 
     - name: APK Derleme İşlemini Başlat
       run: |
         export PATH=$PATH:~/.local/bin
-        # Buildozer indirmeleri kendi yönetirken lisans ekranında takılmaması için otomatik 'yes' veriyoruz
+        # 3.12 kararlı bir sürüm olduğu için 3.14 gibi sonsuz döngüye girmeden derlenecektir
         yes | buildozer android debug
 
     - name: Hazır APK Dosyasını Yükle
