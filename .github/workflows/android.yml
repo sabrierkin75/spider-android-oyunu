@@ -10,17 +10,21 @@ on:
 jobs:
   build:
     runs-on: ubuntu-22.04
-    # Aidl ve SDK yolları düzeltilmiş hazır Buildozer ortamını konteyner olarak çağırıyoruz
-    container:
-      image: subaltaic/buildozer:latest
 
     steps:
     - name: Checkout Code
       uses: actions/checkout@v4
 
-    # GitHub Runner kullanıcısının izinlerini konteyner içiyle eşitler
-    - name: Fix ownership
-      run: chown -R $(id -u):$(id -g) $GITHUB_WORKSPACE
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.10'
+
+    - name: Install System Dependencies
+      run: |
+        sudo apt update
+        sudo apt install -y git zip unzip openjdk-17-jdk python3-pip autoconf libtool pkg-config zlib1g-dev libncurses5-dev libncursesw5-dev libtinfo5 cmake libffi-dev libssl-dev automake autopoint gettext
+        pip3 install --user --upgrade buildozer Cython==0.29.36 virtualenv
 
     - name: Cache Buildozer global directory
       uses: actions/cache@v4
@@ -30,16 +34,22 @@ jobs:
         restore-keys: |
           ${{ runner.os }}-buildozer-
 
+    # Android SDK'nın aidl aracını Buildozer'ın aradığı eski konuma manuel olarak linkliyoruz
+    - name: Fix Android SDK AIDL Path
+      run: |
+        mkdir -p ~/.buildozer/android/platform/android-sdk/build-tools/33.0.0/
+        # Eğer Buildozer SDK'yı henüz indirmediyse klasör yapısını hazırlarız, indirdiğinde aidl sorunsuz eşleşir.
+        ln -sf ~/.buildozer/android/platform/android-sdk/build-tools/*/aidl ~/.buildozer/android/platform/android-sdk/build-tools/33.0.0/aidl || true
+
     - name: Build APK with Buildozer
       run: |
-        # Konteyner içindeki kararlı Buildozer motoru ile derleme başlatılır
-        buildozer -v android debug
+        yes | buildozer -v android debug
+      env:
+        BUILDOZER_ALLOW_KIVY_NEW_DESIGNER: 1
 
-    # Tarayıcıdan indirirken kolaylık olması için üretilen APK'yı GitHub Actions paneline yükler
     - name: Upload APK Artifact
       uses: actions/upload-artifact@v4
       with:
         name: spider-android-apk
         path: bin/*.apk
         retention-days: 7
-        
