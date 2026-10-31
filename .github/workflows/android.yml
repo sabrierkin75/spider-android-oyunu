@@ -26,21 +26,12 @@ jobs:
 
     - name: Kararlı Derleme Paketlerini Kur
       run: |
-        # Buildozer motorunu güncel tutuyoruz
         pip3 install --user --upgrade buildozer Cython virtualenv
-        
-        # Sürüm uyuşmazlığını (3.11 != 3.14) yaratan p4a paketini en kararlı Android sürümüne (2024.01.21) zorla kilitliyoruz
+        # Sunucunun RAM'ini bitiren güncel p4a sürümü yerine stabil kütüphane havuzunu kilitliyoruz
         pip3 install --user --upgrade "python-for-android==2024.1.21"
 
     - name: APK Derleme İşlemini Başlat
       run: |
         export PATH=$PATH:~/.local/bin
-        # Artık hem bilgisayar hem cihaz sürümü kilitlendiği için hata vermeden doğrudan APK basılacaktır
-        yes | buildozer android debug
-
-    - name: Hazır APK Dosyasını Yükle
-      if: success()
-      uses: actions/upload-artifact@v4
-      with:
-        name: Spider-Android-Debug-APK
-        path: bin/*.apk
+        # Ağır grafik paketlerini (jpeg, webp, avif) indirmemesi için sadece çekirdek bileşenleri zorluyoruz
+        buildozer android debug
