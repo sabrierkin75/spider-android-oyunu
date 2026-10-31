@@ -13,19 +13,11 @@ jobs:
     - name: Depoyu Klonla
       uses: actions/checkout@v4
 
-    - name: Java Ortamını Kur
-      uses: actions/setup-java@v5
-      with:
-        distribution: 'temurin'
-        java-version: '17'
-
-    - name: Resmi Android SDK ve Araçlarını Kur (Garantili Çözüm)
-      uses: android-actions/setup-android@v3
-
-    - name: Sistem Bağımlılıklarını Kur
+    - name: Sistem Paketlerini Kur
       run: |
         sudo apt-get update
         sudo apt-get install -y build-essential ccache git zlib1g-dev libncurses5-dev libgdbm-dev libnss3-dev libssl-dev libreadline-dev libffi-dev libsqlite3-dev wget curl xz-utils tk-dev libxml2-dev libxslt1-dev
+        sudo apt-get install -y openjdk-17-jdk unzip zip
         sudo apt-get install -y autoconf automake libtool pkg-config cmake aidl
 
     - name: Python Kurulumu
@@ -33,20 +25,17 @@ jobs:
       with:
         python-version: '3.11'
 
-    - name: Buildozer ve Bağımlılıkları Yükle
+    - name: Kararlı Buildozer Sürümünü Kur
       run: |
         python -m pip install --upgrade pip
         pip install cython
-        pip install buildozer
-
-    - name: Buildozer Çevre Değişkenlerini Eşitle
-      run: |
-        # GitHub'ın kurduğu resmi SDK'yı Buildozer'ın görebileceği varsayılan yola bağlıyoruz
-        mkdir -p /home/runner/.buildozer/android/platform
-        ln -s $ANDROID_HOME /home/runner/.buildozer/android/platform/android-sdk
+        # En sorunsuz indirme yönetimine sahip kararlı sürümü kuruyoruz
+        pip install buildozer==1.5.0
 
     - name: APK Dosyasını Derle
       run: |
+        # Eski hatalı kalıntı klasörler varsa temizleyip sıfırdan başlasın
+        rm -rf .buildozer/
         buildozer android debug
       env:
         ACCEPT_ANDROID_SDK_LICENSES: 'y'
