@@ -62,4 +62,4 @@ android.meta_data = android.view.View=true
 log_level = 2
 
 # (int) Buildozer hata durumunda işlemi durdursun mu
-warn_on_root = 1
+warn_on_root = 0
