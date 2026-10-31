@@ -22,38 +22,23 @@ jobs:
     - name: Sistem Paketlerini Kur
       run: |
         sudo apt-get update
-        sudo apt-get install -y git zip unzip openjdk-17-jdk python3-pip autoconf libtool pkg-config zlib1g-dev libncurses5-dev libgdbm-dev libnss3-dev libssl-dev libreadline-dev libffi-dev libsqlite3-dev sqlite3 bzip2 libbz2-dev Android-sdk
+        sudo apt-get install -y git zip unzip openjdk-17-jdk python3-pip autoconf libtool pkg-config zlib1g-dev libncurses5-dev libgdbm-dev libnss3-dev libssl-dev libreadline-dev libffi-dev libsqlite3-dev sqlite3 bzip2 libbz2-dev
 
     - name: Buildozer ve Bağımlılıkları Yükle
       run: |
         pip3 install --user --upgrade buildozer Cython==0.29.36 virtualenv
 
-    - name: Buildozer SDK ve Aidl Dizin Hatasını Çöz
+    - name: Android Lisanslarını Otomatik Kabul Et
       run: |
-        # Buildozer'ın hata verdiği tam dizin yapısını oluşturuyoruz
-        mkdir -p /home/runner/.buildozer/android/platform/android-sdk/build-tools/33.0.1/
-        mkdir -p /home/runner/.buildozer/android/platform/android-sdk/platform-tools/
-        
-        # Ubuntu üzerinde yüklü gelen veya indirilen SDK araçlarını Buildozer'ın beklediği klasöre kopyalıyoruz
-        sudo apt-get install -y google-android-build-tools-33.0.1-installer || true
-        
-        # Eğer sistemde aidl varsa doğrudan Buildozer klasörüne bağla
-        if command -v aidl &> /dev/null; then
-          cp $(which aidl) /home/runner/.buildozer/android/platform/android-sdk/build-tools/33.0.1/aidl
-        else
-          # Alternatif olarak android-sdk paketinden aracı çekmeyi dene
-          sudo apt-get install -y android-sdk-build-tools || true
-          cp /usr/lib/android-sdk/build-tools/debian/aidl /home/runner/.buildozer/android/platform/android-sdk/build-tools/33.0.1/aidl || true
-          cp /usr/bin/aidl /home/runner/.buildozer/android/platform/android-sdk/build-tools/33.0.1/aidl || true
-        fi
-        
-        # Dosyanın çalıştırılabilir olduğunu garanti et
-        chmod +x /home/runner/.buildozer/android/platform/android-sdk/build-tools/33.0.1/aidl || true
+        # Buildozer'ın SDK'yı sorunsuz indirebilmesi için tüm lisans onay dosyalarını önceden oluşturuyoruz
+        mkdir -p ~/.buildozer/android/platform/android-sdk/licenses
+        echo -e "\n8933bad161af4178b1185d1a37fbf41ea5269c55\nd56f5187479451eabf01fb74bf367b9fe3b9de17\n24333f8a63b6825ea9c5514f83c2829b004d1fee" > ~/.buildozer/android/platform/android-sdk/licenses/android-sdk-license
+        echo -e "\n84831b9409646a918e30573bab4c9c91346d8abd" > ~/.buildozer/android/platform/android-sdk/licenses/android-sdk-preview-license
 
     - name: APK Derleme İşlemini Başlat
       run: |
         export PATH=$PATH:~/.local/bin
-        # Lisansları otomatik kabul etmesi ve derlemesi için komutu çalıştırıyoruz
+        # Derleme esnasında çıkabilecek tüm istemleri otomatik "evet" olarak yanıtla
         yes | buildozer android debug
 
     - name: Hazır APK Dosyasını Yükle
