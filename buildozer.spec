@@ -13,10 +13,10 @@ package.domain = com.ssae
 source.dir = .
 
 # (list) Uygulamaya dahil edilecek dosya uzantıları
-source.include_exts = py,png,json,txt
+source.include_exts = py,png,json
 
 # (list) Dahil edilecek özel klasörler (Görsellerinizin olduğu anims klasörü)
-source.include_patterns = anims/*
+source.include_patterns = anims/*, *.json, *.png
 
 # --- DÜZELTME: Uygulama Simgesi (Icon) Tanımlaması Eklendi ---
 # Ana dizindeki spider.png dosyasını uygulamanın resmi simgesi yapar.
@@ -27,7 +27,7 @@ version = 1.4.0
 
 # (list) Uygulamanın çalışması için gereken Python kütüphaneleri
 # GitHub'daki HTML/Şablon çökmesini engellemek için jinja2 eklenmiştir.
-requirements = python3,kivy==2.3.0,jinja2,pyjnius
+requirements = python3==3.11.9,kivy==2.3.0,jinja2,pyjnius
 
 # (str) Uygulamanın başlangıç ekranı yönü (Uygulamanız dikey tasarlanmıştır)
 orientation = portrait
@@ -46,7 +46,7 @@ android.api = 34
 android.minapi = 24
 
 # (int) Android SDK Versiyonu
-android.sdk = 33
+android.sdk = 34
 
 # (str) Android NDK Versiyonu (Kivy için en kararlı sürüm)
 android.ndk = 26b
@@ -66,7 +66,7 @@ android.archs = arm64-v8a
 android.allow_backup = True
 
 # (string) Android için kullanılacak olan Gradle versiyonu
-android.gradle_dependencies = 'com.android.tools.build:gradle:8.3.2'
+#android.gradle_dependencies = 'com.android.tools.build:gradle:8.3.2'
 
 # =============================================================================
 # Buildozer Gelişmiş Ayarlar
