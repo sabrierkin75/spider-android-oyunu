@@ -10,15 +10,15 @@ on:
 jobs:
   build:
     runs-on: ubuntu-22.04
-    # Aidl ve SDK yolları Docker seviyesinde yamalanmış resmi Buildozer konteynerini kullanıyoruz
+    # Hatalı olan :master etiketi resmi ve kararlı olan :latest ile değiştirildi
     container:
-      image: ghcr.io/kivy/buildozer:master
+      image: ghcr.io/kivy/buildozer:latest
 
     steps:
     - name: Checkout Code
       uses: actions/checkout@v4
 
-    # GitHub Actions kullanıcısının izinlerini konteyner içiyle eşitler
+    # GitHub Actions kullanıcısının dosya izinlerini konteyner içiyle eşitler
     - name: Fix ownership
       run: chown -R $(id -u):$(id -g) $GITHUB_WORKSPACE
 
@@ -32,7 +32,7 @@ jobs:
 
     - name: Build APK with Buildozer
       run: |
-        # Konteyner içindeki hazır ortam ve onaylı lisanslar ile doğrudan güvenli derleme
+        # Hazır resmi imaj ortamında doğrudan hatasız derleme başlatılır
         buildozer -v android debug
 
     - name: Upload APK Artifact
