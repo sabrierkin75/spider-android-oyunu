@@ -27,7 +27,7 @@ version = 1.4.0
 
 # (list) Uygulamanın çalışması için gereken Python kütüphaneleri
 # GitHub'daki HTML/Şablon çökmesini engellemek için jinja2 eklenmiştir.
-requirements = python3==3.11,kivy,jinja2,pyjnius
+requirements = python3==3.10,kivy==2.3.0,jinja2,pyjnius
 
 # (str) Uygulamanın başlangıç ekranı yönü (Uygulamanız dikey tasarlanmıştır)
 orientation = portrait
