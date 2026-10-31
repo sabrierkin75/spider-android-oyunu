@@ -19,7 +19,6 @@ jobs:
         sudo apt-get install -y build-essential ccache git zlib1g-dev libncurses5-dev libgdbm-dev libnss3-dev libssl-dev libreadline-dev libffi-dev libsqlite3-dev wget curl xz-utils tk-dev libxml2-dev libxslt1-dev
         sudo apt-get install -y openjdk-17-jdk unzip zip
         sudo apt-get install -y autoconf automake libtool pkg-config cmake
-        # Buildozer'ın aradığı kritik aracı Ubuntu sistemine kuruyoruz
         sudo apt-get install -y aidl
 
     - name: Python Kurulumu
@@ -32,6 +31,13 @@ jobs:
         python -m pip install --upgrade pip
         pip install cython
         pip install buildozer
+
+    - name: Buildozer Aidl Kontrolünü Atlat (Sahte Yol Oluşturma)
+      run: |
+        # Buildozer'ın hata verdiği tam klasör yapısını el ile oluşturuyoruz
+        mkdir -p /home/runner/.buildozer/android/platform/android-sdk/build-tools/34.0.0
+        # Sistemdeki gerçek aidl aracını bu klasörün içine bağlıyoruz
+        ln -s /usr/bin/aidl /home/runner/.buildozer/android/platform/android-sdk/build-tools/34.0.0/aidl
 
     - name: APK Dosyasını Derle
       run: |
