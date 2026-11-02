@@ -49,7 +49,6 @@ jobs:
       env:
         APP_CFLAGS: "-Wno-error=cast-function-type-strict"
       run: |
-        python -m buildozer android clean
         python -m buildozer android debug
 
     - name: Hazır APK Dosyasını Yükle
