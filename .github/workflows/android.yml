@@ -14,7 +14,7 @@ jobs:
     - name: Python Kurulumu
       uses: actions/setup-python@v5
       with:
-        python-version: '3.10' # Hatalı olan python-version düzeltildi
+        python-version: '3.10'
  
     - name: Java JDK 17 Kurulumu
       uses: actions/setup-java@v5
@@ -22,13 +22,36 @@ jobs:
         distribution: 'temurin'
         java-version: '17'
 
+    - name: Gerekli Linux Bağımlılıklarını Kur
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y --no-install-recommends \
+          build-essential \
+          ccache \
+          git \
+          libncurses5 \
+          libssl-dev \
+          unzip \
+          zip \
+          zlib1g-dev \
+          autoconf \
+          automake \
+          libtool \
+          pkg-config
+
+    - name: Buildozer ve p4a Kurulumu
+      run: |
+        pip install --upgrade pip
+        pip install "cython<3.0.0"
+        pip install git+https://github.com
+        pip install git+https://github.com
+
     - name: Build with Buildozer
       env:
         APP_CFLAGS: "-Wno-error=cast-function-type-strict"
       run: |
         python -m buildozer android clean
         python -m buildozer android debug
-
 
     - name: Hazır APK Dosyasını Yükle
       uses: actions/upload-artifact@v4
