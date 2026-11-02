@@ -34,13 +34,9 @@ jobs:
         
     - name: Clean Buildozer Cache
       run: |
-        # Eski ve bozuk Buildozer kalıntılarını Linux seviyesinde zorla siliyoruz
+        # Önceki hatalı nesne (object) dosyası artıklarını tamamen uçuruyoruz
         rm -rf .buildozer/
-        rm -rf ~/.buildozer/
-
-    - name: Build with Buildozer
-      run: |
-        # Direkt olarak derlemeyi başlatıyoruz (Asla araya buildozer clean komutu eklemeyin)
+        # Temiz indirmeyle süreci başlatıyoruz
         buildozer android debug
 
     - name: Hazır APK Dosyasını Yükle
