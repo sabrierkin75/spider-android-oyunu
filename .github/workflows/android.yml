@@ -36,10 +36,14 @@ jobs:
       run: buildozer android clean
 
     - name: Buildozer Kurulumu ve APK Derleme
+      env:
+        # Buildozer'ın bağımlılıkları çekerken hata vermemesi için koruma değişkenleri
+        APP_ANDROID_ARCH: "arm64-v8a"
       run: |
-        pip3 install --user --upgrade "buildozer==1.5.0" # Kararlı sürüm kilitlendi
-        export PATH=$PATH:~/.local/bin
-        buildozer -v android debug
+        # Varsa eski kilitlenmiş profil klasörlerini tamamen uçuruyoruz
+        rm -rf .buildozer/
+        # Buildozer'ın tüm Android paketlerini (p4a dahil) sıfırdan indirmesini tetikliyoruz
+        buildozer android debug
 
     - name: Hazır APK Dosyasını Yükle
       uses: actions/upload-artifact@v4
