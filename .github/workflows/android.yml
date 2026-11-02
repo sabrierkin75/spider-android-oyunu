@@ -15,16 +15,7 @@ jobs:
       uses: actions/setup-python@v5
       with:
         python-version: '3.10' # Hatalı olan python-version düzeltildi
-
-    - name: Sistem Bağımlılıklarını Kur
-      run: |
-        sudo apt-get update
-        sudo apt-get install -y build-essential libffi-dev install-info
-        sudo apt-get install -y git zip unzip colordiff ccache
-        sudo apt-get install -y python3-pip python3-setuptools python3-dev
-        sudo apt-get install -y libsdl2-dev libsdl2-image-dev libsdl2-mixer-dev libsdl2-ttf-dev
-        sudo apt-get install -y libgpgme11-dev libgpgme-dev libassuan-dev libb64-dev
-               
+ 
     - name: Java JDK 17 Kurulumu
       uses: actions/setup-java@v5
       with:
@@ -33,17 +24,20 @@ jobs:
 
     - name: Buildozer Kurulumu ve APK Derleme
       run: |
-        # 1. Pip ve Buildozer'ın en güncel sürümünü yükleyin
+        # 1. Gerekli sistem paketlerini ve Python kütüphanelerini yükleyin
+        sudo apt-get update
+        sudo apt-get install -y libffi-dev gettext altinstall
         pip install --upgrade pip
-        pip install --upgrade buildozer cython
+        pip install --upgrade buildozer cython toml sh virtualenv
 
-        # 2. Buildozer'ın yüklendiği konumu sistem PATH değişkenine zorunlu olarak ekleyin
+        # 2. PATH ayarını tanımlayın
         export PATH=$PATH:~/.local/bin
 
-        # 3. Önceki kalıntıları temizleyin
-        buildozer android clean
+        # 3. Hata veren global temizlik yerine sadece yerel .buildozer klasörünü silin
+        rm -rf .buildozer/
+        rm -f buildozer.spec.bak
 
-        # 4. Detaylı log açık şekilde derlemeyi başlatın
+        # 4. Derlemeyi sıfırdan ve detaylı log ile başlatın
         buildozer -v android debug
         
     - name: Hazır APK Dosyasını Yükle
