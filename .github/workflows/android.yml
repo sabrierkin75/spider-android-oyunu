@@ -22,19 +22,10 @@ jobs:
         distribution: 'temurin'
         java-version: '17'
 
-    - name: Buildozer ve p4a Kurulumu
+    - name: Buildozer Kurulumu
       run: |
         pip install --upgrade pip
-        pip install git+https://github.com
-        pip install git+https://github.com
-
-    - name: Build with Buildozer
-      env:
-        APP_CFLAGS: "-Wno-error=cast-function-type-strict"
-      run: |
-        buildozer android clean
-        buildozer android debug
-
+        pip install buildozer setuptools
 
     - name: Hazır APK Dosyasını Yükle
       uses: actions/upload-artifact@v4
