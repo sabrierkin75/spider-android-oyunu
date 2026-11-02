@@ -367,7 +367,7 @@ class CreatureOverlayApp(App):
             return "DIGER"
         elif fn.startswith("kara") or "orumcek" in fn or "bocek" in fn:
             return "KARA"
-        elif fn.startswith("hava") or "kus" in fn or "ucak" in fn or "ari" in fn:
+        elif fn.startswith("hava") or "kus" in fn or "ucak" in fn:
             return "HAVA"
         elif fn.startswith("deniz") or "balik" in fn or "gemisi" in fn:
             return "DENIZ"
