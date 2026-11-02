@@ -17,11 +17,14 @@ jobs:
         python-version: '3.10' # Hatalı olan python-size düzeltildi
 
     - name: Sistem Bağımlılıklarını Kur
+      env:
+        PIP_CONSTRAINT: ""
+        PIP_BREAK_SYSTEM_PACKAGES: "1"
       run: |
-        python3 -m pip install --upgrade pip
-        python3 -m pip install Cython==0.29.36
-        python3 -m pip install "git+https://github.com"
-        python3 -m pip install "git+https://github.com"
+        python3 -m pip cache purge
+        python3 -m pip install --upgrade pip setuptools wheel
+        python3 -m pip install "Cython<3.0.0"
+        python3 -m pip install --upgrade buildozer python-for-android
 
     - name: Java JDK 11 Kurulumu
       uses: actions/setup-java@v5
