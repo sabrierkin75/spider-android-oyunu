@@ -24,9 +24,9 @@ jobs:
 
     - name: Buildozer Kurulumu ve APK Derleme
       run: |
-        # 1. Gerekli tüm sistem kütüphanelerini eksiksiz kurun
+        # 1. Gerekli tüm sistem kütüphanelerini eksiksiz kurun (32-bit desteği dahil edildi)
         sudo apt-get update
-        sudo apt-get install -y build-essential ccache git libffi-dev libssl-dev lld bzip2 libgmp3-dev libmpfr-dev libmpc-dev
+        sudo apt-get install -y build-essential ccache git libffi-dev libssl-dev lld bzip2 libgmp3-dev libmpfr-dev libmpc-dev lib32stdc++6 lib32z1
 
         # 2. Pip ve Python bağımlılıklarını güncelleyin
         pip install --upgrade pip
