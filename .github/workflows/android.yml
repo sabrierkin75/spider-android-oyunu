@@ -24,20 +24,22 @@ jobs:
 
     - name: Buildozer Kurulumu ve APK Derleme
       run: |
-        # 1. Gerekli sistem paketlerini ve Python kütüphanelerini yükleyin
+        # 1. Gerekli tüm sistem kütüphanelerini eksiksiz kurun
         sudo apt-get update
-        sudo apt-get install -y libffi-dev gettext altinstall
+        sudo apt-get install -y build-essential ccache git libffi-dev libssl-dev lld bzip2 libgmp3-dev libmpfr-dev libmpc-dev
+
+        # 2. Pip ve Python bağımlılıklarını güncelleyin
         pip install --upgrade pip
         pip install --upgrade buildozer cython toml sh virtualenv
 
-        # 2. PATH ayarını tanımlayın
+        # 3. PATH ayarını tanımlayın
         export PATH=$PATH:~/.local/bin
 
-        # 3. Hata veren global temizlik yerine sadece yerel .buildozer klasörünü silin
+        # 4. Hata veren clean komutları yerine önbelleği doğrudan Linux ile temizleyin
         rm -rf .buildozer/
         rm -f buildozer.spec.bak
 
-        # 4. Derlemeyi sıfırdan ve detaylı log ile başlatın
+        # 5. Derlemeyi detaylı log ile başlatın
         buildozer -v android debug
         
     - name: Hazır APK Dosyasını Yükle
