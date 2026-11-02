@@ -56,3 +56,4 @@ jobs:
       with:
         name: Spider_Android_Uygulamasi
         path: bin/*.apk
+        
