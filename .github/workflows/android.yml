@@ -22,10 +22,12 @@ jobs:
         distribution: 'temurin'
         java-version: '17'
 
-    - name: Buildozer Kurulumu
+    - name: Build with Buildozer
+      env:
+        APP_CFLAGS: "-Wno-error=cast-function-type-strict"
       run: |
-        pip install --upgrade pip
-        pip install buildozer setuptools
+        buildozer android clean
+        buildozer android debug
 
     - name: Hazır APK Dosyasını Yükle
       uses: actions/upload-artifact@v4
