@@ -15,10 +15,11 @@ orientation = portrait
 fullscreen = 1
 android.archs = arm64-v8a
 android.allow_backup = True
-android.api = 33
-android.minapi = 21
+android.api = 35
+android.minapi = 24
 android.ndk = 25b
-android.ndk_api = 23
+android.ndk_api = 24
 android.sdk_buildtools_source = cmdline-tools
 android.accept_sdk_license = True
 p4a.branch = master
+android.additional_cflags = -Wno-error=implicit-function-declaration -Wno-implicit-function-declaration
