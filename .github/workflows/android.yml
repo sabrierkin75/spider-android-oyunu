@@ -28,6 +28,9 @@ jobs:
       with:
         distribution: 'temurin'
         java-version: '17'
+        
+    - name: Clean Buildozer Cache
+      run: buildozer android clean
 
     - name: Buildozer Kurulumu ve APK Derleme
       run: |
