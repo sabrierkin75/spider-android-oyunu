@@ -19,9 +19,9 @@ jobs:
     - name: Sistem Bağımlılıklarını Kur
       run: |
         pip install --upgrade pip
-        pip install --upgrade Cython==0.29.36
-        pip install --upgrade git+https://github.com
-        pip install --upgrade git+https://github.com
+        pip install Cython==0.29.36
+        pip install git+https://github.com
+        pip install git+https://github.com
 
     - name: Java JDK 11 Kurulumu
       uses: actions/setup-java@v5
