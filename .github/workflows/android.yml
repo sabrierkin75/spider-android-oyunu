@@ -39,12 +39,11 @@ jobs:
           libtool \
           pkg-config
 
-    - name: Buildozer ve p4a Kurulumu
+    - name: Buildozer ve Cython Kurulumu (Resmi Paketler)
       run: |
-        pip install --upgrade pip
+        pip install --upgrade pip setuptools wheel
         pip install "cython<3.0.0"
-        pip install git+https://github.com
-        pip install git+https://github.com
+        pip install buildozer
 
     - name: Build with Buildozer
       env:
