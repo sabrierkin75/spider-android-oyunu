@@ -27,11 +27,11 @@ jobs:
         pip3 install --upgrade pip
         pip3 install "cython<3.0.0" virtualenv jinja2 kivy
 
-    - name: Java JDK 17 Kurulumu
-      uses: actions/setup-java@v5
+    - name: Java JDK 11 Kurulumu
+      uses: actions/setup-java@v4
       with:
         distribution: 'temurin'
-        java-version: '17'
+        java-version: '11'
 
     - name: Buildozer Kurulumu ve APK Derleme
       run: |
