@@ -33,16 +33,14 @@ jobs:
         java-version: '17'
         
     - name: Clean Buildozer Cache
-      run: buildozer android clean
-
-    - name: Buildozer Kurulumu ve APK Derleme
-      env:
-        # Buildozer'ın bağımlılıkları çekerken hata vermemesi için koruma değişkenleri
-        APP_ANDROID_ARCH: "arm64-v8a"
       run: |
-        # Varsa eski kilitlenmiş profil klasörlerini tamamen uçuruyoruz
+        # Eski ve bozuk Buildozer kalıntılarını Linux seviyesinde zorla siliyoruz
         rm -rf .buildozer/
-        # Buildozer'ın tüm Android paketlerini (p4a dahil) sıfırdan indirmesini tetikliyoruz
+        rm -rf ~/.buildozer/
+
+    - name: Build with Buildozer
+      run: |
+        # Direkt olarak derlemeyi başlatıyoruz (Asla araya buildozer clean komutu eklemeyin)
         buildozer android debug
 
     - name: Hazır APK Dosyasını Yükle
