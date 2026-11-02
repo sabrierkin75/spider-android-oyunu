@@ -10,7 +10,7 @@ icon.filename = %(source.dir)s/spider.png
 version = 1.4.0
 requirements = python3,kivy==2.3.0
 
-orientation = portrait
+orientation = all
 fullscreen = 1
 android.archs = arm64-v8a
 android.allow_backup = True
