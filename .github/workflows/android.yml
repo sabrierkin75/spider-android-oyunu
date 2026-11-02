@@ -26,8 +26,9 @@ jobs:
       env:
         APP_CFLAGS: "-Wno-error=cast-function-type-strict"
       run: |
-        buildozer android clean
-        buildozer android debug
+        python -m buildozer android clean
+        python -m buildozer android debug
+
 
     - name: Hazır APK Dosyasını Yükle
       uses: actions/upload-artifact@v4
