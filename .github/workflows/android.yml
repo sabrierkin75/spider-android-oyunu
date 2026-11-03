@@ -11,18 +11,15 @@ jobs:
     - name: Depoyu Klonla
       uses: actions/checkout@v4
 
-    - name: Java 17 Ortamını Kur
-      uses: actions/setup-java@v5
-      with:
-        distribution: 'temurin'
-        java-version: '17'
-
-    - name: Derleme Bağımlılıklarını Yükle
-      run: |
-        sudo apt-get update
-        sudo apt-get install -y libsqlite3-dev lldd libffi-dev libssl-dev
-
-    - name: Buildozer ile APK Üret (Temiz ve İzole)
-      uses: ArtemGovorov/buildozer-action@v1
+    - name: Buildozer ile APK Üret (İzole Docker Modu)
+      uses: ArtemSBulgakov/buildozer-action@v1
+      id: buildozer
       with:
         command: buildozer -v android debug
+        buildozer_version: stable
+
+    - name: APK Dosyasını Çıktı Olarak Yükle
+      uses: actions/upload-artifact@v4
+      with:
+        name: Spider-Android-APK
+        path: ${{ steps.buildozer.outputs.filename }}
