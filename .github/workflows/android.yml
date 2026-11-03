@@ -11,7 +11,6 @@ jobs:
     - name: Depoyu Klonla
       uses: actions/checkout@v4
 
-    # --- GÜNCELLENEN ALAN: SETUP-JAVA EYLEM SÜRÜMÜ V5 YAPILDI ---
     - name: Java 17 Kurulumu
       uses: actions/setup-java@v5
       with:
@@ -33,6 +32,14 @@ jobs:
       run: |
         rm -rf .buildozer/
         rm -rf bin/
+        
+        # --- GÜNCELLENEN ALAN: GRADLE VE ANDROID LİSANS İZOLASYONU ---
+        # Android SDK lisanslarını otomatik olarak kabul etmeye zorlar
+        mkdir -p ~/.android && touch ~/.android/repositories.cfg
+        yes | sdkmanager --licenses || true
+        
+        # Buildozer'ın dışarıdaki Gradle yerine kendi izole Gradle motorunu sıfırdan kurmasını sağlar
+        export GRADLE_OPTS="-Dorg.gradle.daemon=false -Dorg.gradle.jvmargs=-Xmx2048m"
         ~/.local/bin/buildozer -v android debug
 
     - name: Üretilen APK Dosyasını artifact Olarak Yükle
