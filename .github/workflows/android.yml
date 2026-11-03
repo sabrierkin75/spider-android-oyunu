@@ -32,11 +32,22 @@ jobs:
         distribution: 'temurin'
         java-version: '17'
 
-    - name: Buildozer Kurulumu ve APK Derleme
+  #  - name: Buildozer Kurulumu ve APK Derleme
+ #     run: |
+   #     pip3 install --user --upgrade "buildozer==1.5.0" # Kararlı sürüm kilitlendi
+    #    export PATH=$PATH:~/.local/bin
+        
+    - name: Hard Clean and Build with Buildozer
       run: |
-        pip3 install --user --upgrade "buildozer==1.5.0" # Kararlı sürüm kilitlendi
-        export PATH=$PATH:~/.local/bin
+        # Sistemdeki tüm eski buildozer ve gradle artıklarını kazıyalım
+        rm -rf ~/.buildozer
+        rm -rf ~/.gradle
+        rm -rf .buildozer
+    
+        # Derleme sürecini verbose (detaylı) modda sıfırdan başlatalım
+        buildozer android clean
         buildozer -v android debug
+    
         
     - name: Hazır APK Dosyasını Yükle
       uses: actions/upload-artifact@v4
