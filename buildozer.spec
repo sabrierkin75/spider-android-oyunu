@@ -14,11 +14,12 @@ orientation = portrait, landscape
 fullscreen = 1
 android.archs = arm64-v8a
 android.allow_backup = True
-android.api = 34
+android.api = 33
 android.minapi = 21
-#android.ndk = 26b
+# Sanal makinedeki NDK 27 sürümünün kararlı çalışması için API hedefini yükseltin
 android.ndk_api = 21
+# Gradle'ın modern AndroidX kütüphanelerini yükleyebilmesi için bu değeri kesinlikle 1 yapın
+android.enable_androidx = 1
 android.sdk_buildtools_source = cmdline-tools
 android.accept_sdk_license = True
 p4a.branch = release-2024.01.21
-android.enable_androidx = True
