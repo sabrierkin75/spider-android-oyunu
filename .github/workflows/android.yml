@@ -36,7 +36,6 @@ jobs:
       run: |
         pip3 install --user --upgrade "buildozer==1.5.0" # Kararlı sürüm kilitlendi
         export PATH=$PATH:~/.local/bin
-        buildozer android clean
         buildozer -v android debug
         
     - name: Hazır APK Dosyasını Yükle
