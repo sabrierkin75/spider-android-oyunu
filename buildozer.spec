@@ -5,12 +5,10 @@ package.domain = org.sabrierkin
 
 source.dir = .
 source.include_exts = py,png,jpg,kv,atlas,json
-
 # Proje dizininde setup.py algılanması için şu satırın önündeki '#' işaretini kaldırın veya ekleyin:
 android.ignore_setup_py = True
-# 2. Resimlerin, klasörlerin ve JSON dosyalarının ham kopyalanması için kuralı netleştirin
 # (Büyük/küçük harf duyarlılığı veya alt klasör kaçırma riskini bitirir)
-source.include_patterns = anims/*, anims/**/*, *.json, anims/*.png, anims/**/*.png
+#source.include_patterns = anims/*, anims/**/*, *.json, anims/*.png, anims/**/*.png
 icon.filename = %(source.dir)s/spider.png
 version = 1.4.0
 requirements = python3,kivy==2.3.0,pyjnius
