@@ -42,7 +42,6 @@ jobs:
         rm -rf ~/.gradle/
     
         # Dağıtım şablonunu (dist) sıfırlamaya zorlayalım
-        ~/.local/bin/buildozer android clean
         ~/.local/bin/buildozer -v android debug
 
     - name: Hazır APK Dosyasını Yükle
