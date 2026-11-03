@@ -7,7 +7,9 @@ source.dir = .
 source.include_exts = py,png,jpg,kv,atlas,json
 
 # Proje dizininde setup.py algılanması için şu satırın önündeki '#' işaretini kaldırın veya ekleyin:
-android.ignore_setup_py = False
+android.ignore_setup_py = True
+# (list) Source files to include (patterns)
+source.include_patterns = assets/*, images/*, anims/*, anims/**/*
 icon.filename = %(source.dir)s/spider.png
 version = 1.4.0
 requirements = python3,kivy==2.3.0,pyjnius
