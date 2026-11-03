@@ -5,47 +5,24 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-latest
 
     steps:
     - name: Depoyu Klonla
       uses: actions/checkout@v4
 
-    - name: Python Kurulumu
-      uses: actions/setup-python@v5
-      with:
-        python-version: '3.10' # Hatalı olan python-size düzeltildi
-
-    - name: Sistem Bağımlılıklarını Kur
-      run: |
-        sudo apt-get update
-        sudo apt-get install -y build-essential libffi-dev install-info
-        sudo apt-get install -y git zip unzip colordiff ccache
-        sudo apt-get install -y python3-pip python3-setuptools python3-dev
-        sudo apt-get install -y libsdl2-dev libsdl2-image-dev libsdl2-mixer-dev libsdl2-ttf-dev
-        sudo apt-get install -y libgpgme11-dev libgpgme-dev libassuan-dev libb64-dev
-        pip3 install --upgrade pip
-        pip3 install "cython<3.0.0" virtualenv jinja2 kivy
-    - name: Java JDK 17 Kurulumu
+    - name: Java 17 Ortamını Kur
       uses: actions/setup-java@v5
       with:
         distribution: 'temurin'
         java-version: '17'
-        
-    - name: Hard Purge and Build with Buildozer
+
+    - name: Derleme Bağımlılıklarını Yükle
       run: |
-        # Bağımlılıkları kontrol edelim
-        pip install --user --upgrade buildozer setuptools cython
+        sudo apt-get update
+        sudo apt-get install -y libsqlite3-dev lldd libffi-dev libssl-dev
 
-        # Eski önbelleği ve Gradle artıklarını temizleyelim
-        rm -rf .buildozer/
-        rm -rf ~/.gradle/
-    
-        # Dağıtım şablonunu (dist) sıfırlamaya zorlayalım
-        ~/.local/bin/buildozer -v android debug
-
-    - name: Hazır APK Dosyasını Yükle
-      uses: actions/upload-artifact@v4
+    - name: Buildozer ile APK Üret (Temiz ve İzole)
+      uses: ArtemGovorov/buildozer-action@v1
       with:
-        name: Spider_Android_Uygulamasi
-        path: bin/*.apk
+        command: buildozer -v android debug
