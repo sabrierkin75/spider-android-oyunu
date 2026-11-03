@@ -32,18 +32,17 @@ jobs:
         distribution: 'temurin'
         java-version: '17'
         
-    - name: Hard Purge and Clean Build with Buildozer
+    - name: Hard Purge and Build with Buildozer
       run: |
-        # 1. Buildozer ve gerekli bağımlılıkları kuralım
+        # Bağımlılıkları kontrol edelim
         pip install --user --upgrade buildozer setuptools cython
 
-        # 2. Hatalı bağları koparmak için .buildozer ve altındaki tüm gizli yapıları tamamen silelim
+        # Eski önbelleği ve Gradle artıklarını temizleyelim
         rm -rf .buildozer/
-        rm -rf ~/.buildozer/
         rm -rf ~/.gradle/
-
-        # 3. KRİTİK SIRALAMA: Önce platform dizinlerini ayağa kaldırması için 'build' tetikliyoruz,
-        # ardından detaylı log ile hata vermesini engelleyerek debug APK'sını üretiyoruz.
+    
+        # Dağıtım şablonunu (dist) sıfırlamaya zorlayalım
+        ~/.local/bin/buildozer android clean
         ~/.local/bin/buildozer -v android debug
 
     - name: Hazır APK Dosyasını Yükle
