@@ -34,14 +34,18 @@ jobs:
 
     - name: Hard Purge and Build with Buildozer
       run: |
-        # Sanal makinedeki tüm eski Gradle, Python-for-Android ve Buildozer artıklarını temizleyelim
+        # 1. Önce Buildozer'ı sistemde garanti altına almak için tekrar kuralım
+        pip install --user --upgrade buildozer setuptools cython
+
+        # 2. Sadece Buildozer'ın Android paket önbelleklerini temizleyelim (Komut silinmez)
         rm -rf .buildozer/
-        rm -rf ~/.buildozer/
+        rm -rf ~/.buildozer/android/platform/build-*
         rm -rf ~/.gradle/
     
-        # Derleyiciye sıfırdan tertemiz bir Android dağıtım şablonu indirtelim
-        buildozer android clean
-        buildozer -v android debug
+        # 3. Buildozer'ı yerel kullanıcı yolundan (local path) çağırarak derlemeyi başlatalım
+        ~/.local/bin/buildozer android clean
+        ~/.local/bin/buildozer -v android debug
+
         
     - name: Hazır APK Dosyasını Yükle
       uses: actions/upload-artifact@v4
