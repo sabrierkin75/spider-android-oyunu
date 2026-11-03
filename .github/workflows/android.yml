@@ -32,10 +32,10 @@ jobs:
         distribution: 'temurin'
         java-version: '17'
 
-  #  - name: Buildozer Kurulumu ve APK Derleme
- #     run: |
-   #     pip3 install --user --upgrade "buildozer==1.5.0" # Kararlı sürüm kilitlendi
-    #    export PATH=$PATH:~/.local/bin
+    - name: Buildozer Kurulumu ve APK Derleme
+      run: |
+        pip3 install --user --upgrade "buildozer==1.5.0" # Kararlı sürüm kilitlendi
+        export PATH=$PATH:~/.local/bin
         
     - name: Hard Clean and Build with Buildozer
       run: |
