@@ -5,21 +5,39 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
 
     steps:
     - name: Depoyu Klonla
       uses: actions/checkout@v4
 
-    - name: Buildozer ile APK Üret (İzole Docker Modu)
-      uses: ArtemSBulgakov/buildozer-action@v1
-      id: buildozer
+    - name: Java 17 Kurulumu
+      uses: actions/setup-java@v5
       with:
-        command: buildozer -v android debug
-        buildozer_version: stable
+        distribution: 'temurin'
+        java-version: '17'
 
-    - name: APK Dosyasını Çıktı Olarak Yükle
+    - name: İşletim Sistemi Bağımlılıklarını Yükle
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y git zip unzip skaut-gdrive-cli zlib1g-dev \
+          libssl-dev libffi-dev libsqlite3-dev build-essential \
+          autoconf libtool pkg-config python3-pip python3-setuptools python3-dev
+
+    - name: Buildozer Kurulumu
+      run: |
+        pip install --user --upgrade buildozer cython setuptools
+
+    - name: APK Derleme (Sıfırdan Saf Çıktı)
+      run: |
+        # Eski hatalı tüm Docker ve yerel kalıntıları silelim
+        rm -rf .buildozer/
+        
+        # Buildozer'ı doğrudan yerel binary yolundan çağırıp derliyoruz
+        ~/.local/bin/buildozer -v android debug
+
+    - name: Üretilen APK Dosyasını artifact Olarak Yükle
       uses: actions/upload-artifact@v4
       with:
-        name: Spider-Android-APK
-        path: ${{ steps.buildozer.outputs.filename }}
+        name: Spider-Android-Uygulaması
+        path: .buildozer/android/platform/build-arm64-v8a/dists/spiderandroid/build/outputs/apk/debug/*.apk
