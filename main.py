@@ -457,21 +457,32 @@ class CreatureOverlayApp(App):
                 base_dir = app.directory
 
         folders = ["default"]
-        anims_path = os.path.join(base_dir, "anims")
         
-        # --- DEĞİŞECEK ALAN BAŞLANGICI ---
-        # anims klasörünün altındaki tüm alt kırılımları otomatik olarak listeye ekler
+        # --- ANDROID İÇİN EN GARANTİ YÖNTEM: ÖNCE JSON ENDEKSİNE BAK ---
+        json_path = os.path.join(base_dir, "anims_index.json")
+        if os.path.exists(json_path):
+            try:
+                with open(json_path, "r", encoding="utf-8") as f:
+                    structure = json.load(f)
+                # JSON yapısındaki habitat ve alt klasör kombinasyonlarını "HAVA/kus" şeklinde listeye ekle
+                for habitat, subfolders in structure.items():
+                    if isinstance(subfolders, dict):
+                        for sf in subfolders.keys():
+                            folders.append(f"{habitat}/{sf}")
+                return folders
+            except Exception as e:
+                print(f"JSON endeksi okunurken hata, os.walk denenecek: {e}")
+
+        # Eğer JSON bulunamazsa eski os.walk yedek mekanizması çalışır
+        anims_path = os.path.join(base_dir, "anims")
         if os.path.exists(anims_path):
             for root, dirs, files in os.walk(anims_path):
-                # Eğer klasör içinde en az bir adet sayısal yaratık resmi varsa klasörü listeye dahil et
                 if any(f.rsplit('.', 1)[0].isdigit() for f in files if '.' in f):
                     rel_path = os.path.relpath(root, anims_path)
                     if rel_path != ".":
-                        # Windows ve Android yol ayracı uyumluluğu için '/' formatına çeviriyoruz
                         normalized_path = rel_path.replace("\\", "/")
                         if normalized_path not in folders:
                             folders.append(normalized_path)
-        # --- DEĞİŞECEK ALAN BİTİŞİ ---
         return folders
 
     def update_background_image(self):
