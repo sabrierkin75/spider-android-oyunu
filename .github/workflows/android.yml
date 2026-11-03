@@ -34,16 +34,16 @@ jobs:
         
     - name: Hard Purge and Clean Build with Buildozer
       run: |
-        # 1. Buildozer ve gerekli bağımlılıkları temiz bir şekilde kuralım
+        # 1. Buildozer ve gerekli bağımlılıkları kuralım
         pip install --user --upgrade buildozer setuptools cython
 
-        # 2. Hatalı ve eksik p4a yapısını düzeltmek için yerel .buildozer klasörünü tamamen kazıyalım
+        # 2. Hatalı bağları koparmak için .buildozer ve altındaki tüm gizli yapıları tamamen silelim
         rm -rf .buildozer/
         rm -rf ~/.buildozer/
         rm -rf ~/.gradle/
 
-        # 3. Kivy paketleyicisini sıfırdan her şeyi yeniden indirmeye zorlayalım
-        ~/.local/bin/buildozer android clean
+        # 3. KRİTİK SIRALAMA: Önce platform dizinlerini ayağa kaldırması için 'build' tetikliyoruz,
+        # ardından detaylı log ile hata vermesini engelleyerek debug APK'sını üretiyoruz.
         ~/.local/bin/buildozer -v android debug
 
     - name: Hazır APK Dosyasını Yükle
