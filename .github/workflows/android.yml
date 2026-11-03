@@ -31,22 +31,21 @@ jobs:
       with:
         distribution: 'temurin'
         java-version: '17'
-
-    - name: Hard Purge and Build with Buildozer
+        
+    - name: Hard Purge and Clean Build with Buildozer
       run: |
-        # 1. Önce Buildozer'ı sistemde garanti altına almak için tekrar kuralım
+        # 1. Buildozer ve gerekli bağımlılıkları temiz bir şekilde kuralım
         pip install --user --upgrade buildozer setuptools cython
 
-        # 2. Sadece Buildozer'ın Android paket önbelleklerini temizleyelim (Komut silinmez)
+        # 2. Hatalı ve eksik p4a yapısını düzeltmek için yerel .buildozer klasörünü tamamen kazıyalım
         rm -rf .buildozer/
-        rm -rf ~/.buildozer/android/platform/build-*
+        rm -rf ~/.buildozer/
         rm -rf ~/.gradle/
-    
-        # 3. Buildozer'ı yerel kullanıcı yolundan (local path) çağırarak derlemeyi başlatalım
+
+        # 3. Kivy paketleyicisini sıfırdan her şeyi yeniden indirmeye zorlayalım
         ~/.local/bin/buildozer android clean
         ~/.local/bin/buildozer -v android debug
 
-        
     - name: Hazır APK Dosyasını Yükle
       uses: actions/upload-artifact@v4
       with:
