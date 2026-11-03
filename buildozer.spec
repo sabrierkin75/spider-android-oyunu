@@ -4,8 +4,10 @@ package.name = spiderandroid
 package.domain = org.sabrierkin
 
 source.dir = .
-source.include_exts = py,png,jpg,json
+source.include_exts = py,png,jpg,kv,atlas,json
 
+# Proje dizininde setup.py algılanması için şu satırın önündeki '#' işaretini kaldırın veya ekleyin:
+android.ignore_setup_py = False
 icon.filename = %(source.dir)s/spider.png
 version = 1.4.0
 requirements = python3,kivy==2.3.0,pyjnius
