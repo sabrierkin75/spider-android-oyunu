@@ -11,15 +11,13 @@ from kivy.uix.floatlayout import FloatLayout
 from kivy.uix.button import Button
 from kivy.uix.label import Label
 from kivy.uix.widget import Widget
-from kivy.uix.scrollview import ScrollView
 from kivy.clock import Clock
 from kivy.core.window import Window
+from kivy.uix.scrollview import ScrollView
 from kivy.core.image import Image as CoreImage
 from kivy.graphics import Color, Rectangle, PushMatrix, PopMatrix, Scale, Rotate, Mesh, RoundedRectangle, Ellipse
 from kivy.animation import Animation
-from kivy.config import Config
-# Ekran yönü filtresini kapatarak işletim sistemine (Android'e) bırakır
-Config.set('graphics', 'resizable', '1') 
+Window.allow_screensize_orientation = True
 
 # Android telefonda OpenGL motorunun kilitlenmemesi için opak yapıyoruz.
 Window.clearcolor = (0.12, 0.12, 0.12, 1)
@@ -49,7 +47,7 @@ except ImportError:
     ANDROID_AVAILABLE = False
 
 class ParticleEmitter:
-    """Yok olan duvarların, süper mod efektlerinin ve yıldız parçacıklarının yöneticisi."""
+    """Yok olan duvarların, süper mod efektlerinin og yıldız parçacıklarının yöneticisi."""
     def __init__(self, canvas):
         self.canvas = canvas
         self.particles = []
@@ -107,13 +105,11 @@ class ParticleEmitter:
             decay = random.uniform(1.2, 2.0)  
             p_size = random.uniform(14, 26) * (size / 120.0) 
             
-            # --- YENİLİK: HER PARÇACIK İÇİN TAMAMEN RASTGELE CANLI NEON RENKLERİ ---
-            # Siyah/koyu tonları elemek için RGB kanallarını yüksek taban değerlerinden (0.3 - 1.0) seçiyoruz
+            # --- HER PARÇACIK İÇİN RASTGELE CANLI NEON RENKLERİ ---
             r_neon = random.uniform(0.3, 1.0)
             g_neon = random.uniform(0.3, 1.0)
             b_neon = random.uniform(0.3, 1.0)
             
-            # Seçilen rengin çok sönük kalmaması için en az bir kanalı tam parlak yapıyoruz
             max_channel = max(r_neon, g_neon, b_neon)
             if max_channel > 0:
                 r_neon /= max_channel
@@ -129,7 +125,7 @@ class ParticleEmitter:
                 "glow_size": glow_size,
                 "life": life,
                 "decay": decay,
-                "neon_color": [r_neon, g_neon, b_neon], # Rastgele neon renk paleti eklendi
+                "neon_color": [r_neon, g_neon, b_neon],
                 "rot": random.uniform(0, 360),
                 "rot_speed": random.uniform(-150, 150)
             }
@@ -179,7 +175,7 @@ class ParticleEmitter:
                         # Katman 2: İçteki keskin parlayan hatlar (Sabit Beyaz)
                         Color(1.0, 1.0, 1.0, alpha * 0.85)
                         Ellipse(pos=(p["x"] - p["size"]/2.5, p["y"] - p["size"]/12), size=(p["size"]/1.25, p["size"]/6))
-                        Ellipse(pos=(p["x"] - p["size"]/12, p["y"] - p["size"]/2.5), size=(p["size"]/6, p["size"]/1.25))
+                        Ellipse(pos=(p["x"] - p["off_size" if "off_size" in p else "size"]/12, p["y"] - p["size"]/2.5), size=(p["size"]/6, p["size"]/1.25))
                         PopMatrix()
                         
                 # --- DUVAR PARÇALANMA DİKDÖRTGENLERİ (TİP 0) ---
@@ -262,14 +258,7 @@ class CreatureOverlayApp(App):
 
         self.particle_emitter = ParticleEmitter(self.particle_layer.canvas)
 
-        # --- GÜNCELLENEN ALAN: ANDROID UYUMLU GÜVENLİ DOSYA YOLU ---
-        # Eğer Android üzerindeyse yazma yetkisi olan özel 'user_data_dir' klasörünü kullanır,
-        # Bilgisayarda (Pydroid/PC) ise normal yerel klasörü kullanmaya devam eder.
-        if ANDROID_AVAILABLE:
-            self.CONFIG_FILE = os.path.join(self.user_data_dir, "settings_android.json")
-        else:
-            self.CONFIG_FILE = "settings_android.json"
-            
+        self.CONFIG_FILE = "settings_android.json"
         self.settings = {
             "animation_folder_idx": 0, "animation_folder_idx2": 0, "start_program": 0, 
             "creature_size": 120, "anim_speed": 80, "move_speed": 4, "max_creatures": 6,
@@ -279,7 +268,6 @@ class CreatureOverlayApp(App):
             "current_hab_idx2": 0   
         }
         self.load_settings()
-
         self.habitats_list = ["KARA", "HAVA", "DENIZ", "UZAY", "DIGER"]
         self.spider_list = []
         self.walls = [] 
@@ -293,17 +281,6 @@ class CreatureOverlayApp(App):
         self.gold_orb_spawn_time = 20.0 
 
         self.animation_folders = self.get_available_animation_folders()
-        
-        hab_idx = self.settings.get("current_hab_idx1", 0)
-        target_hab = self.habitats_list[hab_idx % len(self.habitats_list)]
-        initial_filtered = [f for f in self.animation_folders if self.get_folder_habitat(f) == target_hab]
-        
-        if len(initial_filtered) <= 1:
-            self.settings["type2_enabled"] = 0
-            current_folder = initial_filtered[self.settings["animation_folder_idx"] % len(initial_filtered)] if initial_filtered else "default"
-            if current_folder in self.settings["folder_settings"]:
-                self.settings["folder_settings"][current_folder]["type2_enabled"] = 0
-
         self.sync_active_folder_settings()
         
         self.rebuild_toggle_button()
@@ -318,7 +295,7 @@ class CreatureOverlayApp(App):
         self.big_wall_destroy_timer = 0.0  
         self.wall_timer = 0
         self.big_wall_timer = 0
-        self.big_wall_interval = 120.0  
+        self.big_wall_interval = 40.0  
      
         Window.bind(on_resize=self.on_window_resize)
         
@@ -331,32 +308,39 @@ class CreatureOverlayApp(App):
     def sync_active_folder_settings(self):
         filtered1 = self.get_filtered_folders_by_slot(1)
         filtered2 = self.get_filtered_folders_by_slot(2)
+        
         current_folder = filtered1[self.settings["animation_folder_idx"] % len(filtered1)]
         current_folder2 = filtered2[self.settings["animation_folder_idx2"] % len(filtered2)]
         
-        is_single_folder = len(filtered1) <= 1
-        default_type2_status = 0 if is_single_folder else 1
-        
-        if is_single_folder:
+        # 1. TÜR İÇİN BAĞIMSIZ HAFIZA ALANI KURULUMU
+        if current_folder not in self.settings["folder_settings"]:
+            self.settings["folder_settings"][current_folder] = {
+                "move_speed": 4, "anim_speed": 80, "max_creatures": 6, "max_creatures2": 1,
+                "type2_enabled": 0 if len(filtered1) <= 1 else 1, "image_facing": 0,
+                "visual_offset": 15, "creature_size": 120, "bg_image_idx": 0, "super_speed_mult": 3.0
+            }
+            
+        # 2. TÜR İÇİN TAMAMEN BAĞIMSIZ VE YALITILMIŞ HAFIZA ALANI KURULUMU
+        if current_folder2 not in self.settings["folder_settings"]:
+            self.settings["folder_settings"][current_folder2] = {
+                "move_speed": 4, "anim_speed": 80, "max_creatures": 6, "max_creatures2": 1,
+                "type2_enabled": 0 if len(filtered1) <= 1 else 1, "image_facing": 0,
+                "visual_offset": 15, "creature_size": 120, "bg_image_idx": 0, "super_speed_mult": 3.0
+            }
+            
+        # Eğer sınıfta tek tür varsa her iki yerel hafızada da type2'yi kesin olarak kapat
+        if len(filtered1) <= 1:
             self.settings["type2_enabled"] = 0
-
-        for folder in [current_folder, current_folder2]:
-            if folder not in self.settings["folder_settings"]:
-                self.settings["folder_settings"][folder] = {
-                    "move_speed": self.settings.get("move_speed", 4),
-                    "anim_speed": self.settings.get("anim_speed", 80),
-                    "max_creatures": self.settings.get("max_creatures", 6),
-                    "max_creatures2": self.settings.get("max_creatures2", 1),
-                    "type2_enabled": default_type2_status,
-                    "image_facing": self.settings.get("image_facing", 0),
-                    "visual_offset": self.settings.get("visual_offset", 15),
-                    "creature_size": self.settings.get("creature_size", 120),
-                    "bg_image_idx": self.settings.get("bg_image_idx", 0),
-                    "super_speed_mult": self.settings.get("super_speed_mult", 3.0)  
-                }
-            elif is_single_folder:
-                self.settings["folder_settings"][folder]["type2_enabled"] = 0
+            self.settings["folder_settings"][current_folder]["type2_enabled"] = 0
+            self.settings["folder_settings"][current_folder2]["type2_enabled"] = 0
+        else:
+            # --- MUTLAK KORUMA BARİYERİ ---
+            # Geçiş anlarında hafızanın bozulmaması için yerel type2_enabled ayarını 
+            # daima global ayarlardaki "type2_enabled" değerine eşitliyoruz.
+            self.settings["folder_settings"][current_folder]["type2_enabled"] = self.settings.get("type2_enabled", 1)
+            self.settings["folder_settings"][current_folder2]["type2_enabled"] = self.settings.get("type2_enabled", 1)
         
+        # Sadece o an aktif olan 1. slotun ayarlarını globale yansıt
         local = self.settings["folder_settings"][current_folder]
         for key in ["move_speed", "anim_speed", "max_creatures", "max_creatures2", "type2_enabled", "image_facing", "visual_offset", "creature_size", "bg_image_idx", "super_speed_mult"]:
             if key in local:
@@ -365,21 +349,14 @@ class CreatureOverlayApp(App):
     def get_folder_habitat(self, folder_name):
         if folder_name == "default":
             return "DIGER"
-        
-        # Klasör adını normalize edip parçalıyoruz (Örn: "DIGER/orumcek" -> ["DIGER", "orumcek"])
         if "/" in folder_name:
             prefix = folder_name.split("/")[0].upper()
-            if prefix in ["KARA", "HAVA", "DENIZ", "UZAY", "DIGER"]:
+            if prefix in ["KARA", "HAVA", "DENIZ", "UZAY"]:
                 return prefix
-                
-        # Eğer alt kırılım yoksa eski tahmin mekanizmasını yedek olarak çalıştır, 
-        # ama "diger" kelimesini de kontrol et.
         fn = folder_name.lower()
-        if fn.startswith("diger") or "diger" in fn:
-            return "DIGER"
-        elif fn.startswith("kara") or "orumcek" in fn or "bocek" in fn:
+        if fn.startswith("kara") or "orumcek" in fn or "bocek" in fn:
             return "KARA"
-        elif fn.startswith("hava") or "kus" in fn or "ucak" in fn:
+        elif fn.startswith("hava") or "kus" in fn or "ucak" in fn or "ari" in fn:
             return "HAVA"
         elif fn.startswith("deniz") or "balik" in fn or "gemisi" in fn:
             return "DENIZ"
@@ -392,18 +369,10 @@ class CreatureOverlayApp(App):
         target_hab = self.habitats_list[hab_idx % len(self.habitats_list)]
         filtered = [f for f in self.animation_folders if self.get_folder_habitat(f) == target_hab]
         
-        if not filtered:
+        if not filtered: 
             return ["default"]
-
-        if slot_type == 2:
-            filtered1 = [f for f in self.animation_folders if self.get_folder_habitat(f) == target_hab]
-            if filtered1:
-                current_folder1 = filtered1[self.settings["animation_folder_idx"] % len(filtered1)]
-                if len(filtered) > 1 and current_folder1 in filtered:
-                    filtered.remove(current_folder1)
-                elif len(filtered) == 1 and current_folder1 in filtered:
-                    return ["default"]
-                    
+            
+        # --- KESİN TAMİR: 9 türün de sırası ve uzunluğu daima sabit kalır, asla dalgalanmaz ---
         return filtered
 
     def get_filtered_folders_by_current_habitat(self):
@@ -447,100 +416,53 @@ class CreatureOverlayApp(App):
         try:
             with open(self.CONFIG_FILE, "w", encoding="utf-8") as f: 
                 json.dump(self.settings, f)
-        except Exception as e:
-            print(f"Ayarlar kaydedilirken hata oluştu: {e}")
+        except: pass
 
     def get_available_animation_folders(self):
         base_dir = os.path.dirname(os.path.abspath(__file__))
-        if app := App.get_running_app():
-            if hasattr(app, 'directory') and app.directory:
-                base_dir = app.directory
-
+        anims_root = os.path.join(base_dir, "anims")
         folders = ["default"]
-        anims_path = os.path.join(base_dir, "anims")
+        habitats = ["kara", "hava", "deniz", "uzay"]
         
-        # --- DEĞİŞECEK ALAN BAŞLANGICI ---
-        # anims klasörünün altındaki tüm alt kırılımları otomatik olarak listeye ekler
-        if os.path.exists(anims_path):
-            for root, dirs, files in os.walk(anims_path):
-                # Eğer klasör içinde en az bir adet sayısal yaratık resmi varsa klasörü listeye dahil et
-                if any(f.rsplit('.', 1)[0].isdigit() for f in files if '.' in f):
-                    rel_path = os.path.relpath(root, anims_path)
-                    if rel_path != ".":
-                        # Windows ve Android yol ayracı uyumluluğu için '/' formatına çeviriyoruz
-                        normalized_path = rel_path.replace("\\", "/")
-                        if normalized_path not in folders:
-                            folders.append(normalized_path)
-        # --- DEĞİŞECEK ALAN BİTİŞİ ---
+        if os.path.exists(anims_root):
+            try:
+                for hab in habitats:
+                    hab_path = os.path.join(anims_root, hab)
+                    if os.path.exists(hab_path) and os.path.isdir(hab_path):
+                        subfolders = sorted([d for d in os.listdir(hab_path) if os.path.isdir(os.path.join(hab_path, d)) and not d.startswith('.')])
+                        for sf in subfolders:
+                            folders.append(f"{hab}/{sf}")
+            except Exception as e:
+                print(f"Klasör tarama hatası: {e}")
         return folders
 
     def update_background_image(self):
         try:
             self.bg_layer.canvas.clear()
             base_dir = os.path.dirname(os.path.abspath(__file__))
-            app = App.get_running_app()
-            if app and hasattr(app, 'directory') and app.directory:
-                base_dir = app.directory
-
             filtered1 = self.get_filtered_folders_by_slot(1)
             chosen_folder = filtered1[self.settings["animation_folder_idx"] % len(filtered1)]
-            
-            anims_root = os.path.join(base_dir, "anims")
-            theme_dir = anims_root
-            target_hab, target_sf = None, None
-            
-            if chosen_folder != "default" and "/" in chosen_folder:
-                hab, sf = chosen_folder.split("/")
-                real_hab = next((d for d in os.listdir(anims_root) if d.lower() == hab.lower() and os.path.isdir(os.path.join(anims_root, d))), hab)
-                hab_path = os.path.join(anims_root, real_hab)
-                if os.path.exists(hab_path):
-                    real_sf = next((d for d in os.listdir(hab_path) if d.lower() == sf.lower() and os.path.isdir(os.path.join(hab_path, d))), sf)
-                    theme_dir = os.path.join(hab_path, real_sf)
-                    target_hab, target_sf = real_hab, real_sf
-            
+            theme_dir = os.path.join(base_dir, "anims") if chosen_folder == "default" else os.path.join(base_dir, "anims", chosen_folder)
             is_portrait = Window.height >= Window.width
-            json_path = os.path.join(base_dir, "anims_index.json")
             valid_bg_count = 1  
-            
-            if target_hab and target_sf and os.path.exists(json_path):
-                try:
-                    with open(json_path, "r", encoding="utf-8") as f:
-                        structure = json.load(f)
-                    
-                    j_hab = next((k for k in structure.keys() if k.lower() == target_hab.lower()), None)
-                    j_sf = next((sk for sk in structure[j_hab].keys() if sk.lower() == target_sf.lower()), None) if j_hab else None
-                    
-                    if j_hab and j_sf:
-                        all_files = structure[j_hab][j_sf]
-                        bg_files = [f for f in all_files if f.lower().startswith("bg") and ("_v" in f.lower() or "_h" in f.lower())]
-                        bg_indices = set()
-                        for bf in bg_files:
-                            clean_name = bf.lower().replace("bg", "")
-                            if "_" in clean_name:
-                                num_part = clean_name.split("_")[0]
-                                if num_part.isdigit():
-                                    bg_indices.add(int(num_part))
-                        if bg_indices:
-                            valid_bg_count = max(bg_indices) + 1
-                except Exception as e:
-                    print(f"Arka plan JSON tarama hatası: {e}")
-
+            while True:
+                suffix = str(valid_bg_count)
+                if os.path.exists(os.path.join(theme_dir, f"bg{suffix}_v.png")) or os.path.exists(os.path.join(theme_dir, f"bg{suffix}_h.png")):
+                    valid_bg_count += 1
+                else: break
             local = self.settings["folder_settings"].get(chosen_folder, self.settings)
             bg_idx = local.get("bg_image_idx", 0) % valid_bg_count
             suffix = "" if bg_idx == 0 else str(bg_idx)
-            
             bg_path = os.path.join(theme_dir, f"bg{suffix}_v.png" if is_portrait else f"bg{suffix}_h.png")
             if not os.path.exists(bg_path): bg_path = os.path.join(theme_dir, "bg.png")
             if not os.path.exists(bg_path): bg_path = os.path.join(base_dir, "anims", "bg.png")
-            
             if os.path.exists(bg_path):
                 bg_texture = CoreImage(bg_path).texture
                 bg_texture.wrap = 'repeat'
                 with self.bg_layer.canvas:
                     Color(1, 1, 1, 1)
                     Rectangle(pos=(0, 0), size=(Window.width, Window.height), texture=bg_texture)
-        except Exception as e:
-            print(f"Arka plan güncellenirken hata oluştu: {e}")
+        except: pass
 
     def on_window_resize(self, window, width, height):
         self.SCREEN_WIDTH = width if width > 100 else 1080
@@ -561,13 +483,11 @@ class CreatureOverlayApp(App):
             icon_path = "eye.png" if self.ui_visible else "close.png"
             if os.path.exists(icon_path):
                 self.toggle_btn.icon_rect = Rectangle(texture=CoreImage(icon_path).texture, size=(icon_size, icon_size), pos=(0, 0))
-                
         def _update_toggle_icon(instance, value):
             if hasattr(instance, 'icon_rect'):
                 instance.icon_rect.pos = (instance.x + (instance.width - icon_size) / 2, instance.y + (instance.height - icon_size) / 2)
         self.toggle_btn.bind(pos=_update_toggle_icon, size=_update_toggle_icon)
         self.toggle_layer.add_widget(self.toggle_btn)
-
     def rebuild_ui(self):
         self.ui_layer.clear_widgets()
         if not self.ui_visible: return
@@ -578,7 +498,6 @@ class CreatureOverlayApp(App):
             with btn.canvas.before:
                 Color(*bg_color)
                 btn.bg_rect = RoundedRectangle(pos=btn.pos, size=btn.size, radius=[12])
-
             def _update_rect(instance, value):
                 instance.bg_rect.pos = instance.pos
                 instance.bg_rect.size = instance.size
@@ -613,11 +532,20 @@ class CreatureOverlayApp(App):
             self.ui_layer.add_widget(create_visual_button("Ayarlar", (0.2, 0.25, 0.33, 1), 0.50, lambda x: self.switch_view("settings")))
             self.ui_layer.add_widget(create_visual_button("Hakkında", (0.2, 0.5, 0.6, 1), 0.40, lambda x: self.switch_view("about")))
             self.ui_layer.add_widget(create_visual_button("Çıkış", (0.93, 0.26, 0.26, 1), 0.30, lambda x: sys.exit()))
+                
         elif self.current_view == "settings":
             filtered1 = self.get_filtered_folders_by_slot(1)
             filtered2 = self.get_filtered_folders_by_slot(2)
             current_folder = filtered1[self.settings["animation_folder_idx"] % len(filtered1)]
             current_folder2 = filtered2[self.settings["animation_folder_idx2"] % len(filtered2)]
+            
+            if len(filtered1) <= 1:
+                self.settings["type2_enabled"] = 0
+                is_type2_on = False
+                if self.active_settings_tab == "type2":
+                    self.active_settings_tab = "visual"
+            else:
+                is_type2_on = self.settings.get("type2_enabled", 1) == 1
             
             if self.active_settings_tab == "type2":
                 target_folder = current_folder2
@@ -625,24 +553,23 @@ class CreatureOverlayApp(App):
                 target_folder = current_folder
                 
             local1 = self.settings["folder_settings"].setdefault(target_folder, {
-                "move_speed": 4, "anim_speed": 80, "max_creatures": 6, "max_creatures2": 1, "type2_enabled": 1,
+                "move_speed": 4, "anim_speed": 80, "max_creatures": 6, "max_creatures2": 6, "type2_enabled": 1,
                 "image_facing": 0, "visual_offset": 15, "creature_size": 120, "bg_image_idx": 0, "super_speed_mult": 3.0
             })
-            is_type2_on = self.settings.get("type2_enabled", 1) == 1
             
             tab_y = 0.82
             
-            btn_tab1 = Button(text="Genel/Çevre", size_hint=(0.26, 0.05), pos_hint={'x': 0.08, 'y': tab_y}, font_size='16sp', bold=True, background_color=(0, 0, 0, 0))
+            btn_tab1 = Button(text="Genel/Çevre", size_hint=(0.26, 0.05), pos_hint={'x': 0.08, 'y': tab_y}, font_size='11sp', bold=True, background_color=(0, 0, 0, 0))
             with btn_tab1.canvas.before:
                 Color(*(0.13, 0.77, 0.36, 1) if self.active_settings_tab == "visual" else (0.2, 0.25, 0.33, 1))
                 btn_tab1.bg_rect = RoundedRectangle(pos=btn_tab1.pos, size=btn_tab1.size, radius=[10])
                 
-            btn_tab2 = Button(text="1. Tür Ayar", size_hint=(0.26, 0.05), pos_hint={'x': 0.37, 'y': tab_y}, font_size='16sp', bold=True, background_color=(0, 0, 0, 0))
+            btn_tab2 = Button(text="1. Tür Ayar", size_hint=(0.26, 0.05), pos_hint={'x': 0.37, 'y': tab_y}, font_size='11sp', bold=True, background_color=(0, 0, 0, 0))
             with btn_tab2.canvas.before:
                 Color(*(0.13, 0.77, 0.36, 1) if self.active_settings_tab == "type1" else (0.2, 0.25, 0.33, 1))
                 btn_tab2.bg_rect = RoundedRectangle(pos=btn_tab2.pos, size=btn_tab2.size, radius=[10])
                 
-            btn_tab3 = Button(text="2. Tür Ayar", size_hint=(0.26, 0.05), pos_hint={'x': 0.66, 'y': tab_y}, font_size='16sp', bold=True, background_color=(0, 0, 0, 0))
+            btn_tab3 = Button(text="2. Tür Ayar", size_hint=(0.26, 0.05), pos_hint={'x': 0.66, 'y': tab_y}, font_size='11sp', bold=True, background_color=(0, 0, 0, 0))
             btn_tab3.disabled = not is_type2_on
             
             with btn_tab3.canvas.before:
@@ -666,7 +593,7 @@ class CreatureOverlayApp(App):
             self.ui_layer.add_widget(btn_tab1)
             self.ui_layer.add_widget(btn_tab2)
             self.ui_layer.add_widget(btn_tab3)
-            
+
             def _setup_setting_row(label, btn_m, btn_p, y_pos, bg_m_color=(0.2, 0.25, 0.33, 1), bg_p_color=(0.2, 0.25, 0.33, 1)):
                 btn_m.size_hint = (0.12, btn_h)
                 btn_m.pos_hint = {'x': 0.65, 'y': y_pos}
@@ -702,9 +629,7 @@ class CreatureOverlayApp(App):
                 label.bind(pos=_update_bg, size=_update_bg)
                 btn_m.bind(pos=_update_bg, size=_update_bg)
                 btn_p.bind(pos=_update_bg, size=_update_bg)
-
             if self.active_settings_tab == "visual":
-                # --- Sınıf Seçim Satırı ---
                 hab_idx1 = self.settings.get("current_hab_idx1", 0) % len(self.habitats_list)
                 current_hab1 = self.habitats_list[hab_idx1]
                 self.hab1_label = Label(text=f"Seçili Sınıf: [color=45b870][b]{current_hab1}[/b][/color]", markup=True)
@@ -716,7 +641,6 @@ class CreatureOverlayApp(App):
                 self.ui_layer.add_widget(self.h1_m)
                 self.ui_layer.add_widget(self.h1_p)
 
-                # --- 1. Alt Tür Seçim Satırı ---
                 self.type_label = Label(text=f"1. Alt Tür: [b]{current_folder.upper()}[/b]", markup=True)
                 self.t_minus, self.t_plus = Button(text="<"), Button(text=">")
                 _setup_setting_row(self.type_label, self.t_minus, self.t_plus, 0.70)
@@ -726,59 +650,51 @@ class CreatureOverlayApp(App):
                 self.ui_layer.add_widget(self.t_minus)
                 self.ui_layer.add_widget(self.t_plus)
 
-                # --- YENİLİK: TEK TÜR KONTROLÜ VE DİNAMİK ARAYÜZ KILITLEMESİ ---
-                is_single_folder = len(filtered1) <= 1
-                
-                if is_single_folder:
-                    # Tek klasör varsa: Durum metni değiştirilir, oklar 'X' yapılır ve butonlar işlevsizleştirilir
-                    t2_status_text = "[color=ed4242][b]YOK\n(TEK TÜR)[/b][/color]"
-                    self.t2_toggle_label = Label(text=f"2. Tür Durumu: {t2_status_text}", markup=True, halign='center')
+                if len(self.get_filtered_folders_by_slot(1)) <= 1:
+                    t2_status_text = "[color=a0a0a0]YOK\n(TEK TÜR)[/color]"
+                    self.t2_toggle_label = Label(text=f"2. Tür Durumu: {t2_status_text}", markup=True)
                     self.t2_left_btn, self.t2_right_btn = Button(text="X"), Button(text="X")
+                    _setup_setting_row(self.t2_toggle_label, self.t2_left_btn, self.t2_right_btn, 0.62, (0.15, 0.15, 0.15, 0.6), (0.15, 0.15, 0.15, 0.6))
                     self.t2_left_btn.disabled = True
                     self.t2_right_btn.disabled = True
                 else:
-                    # Birden fazla klasör varsa: Normal çalışma düzeni korunur
                     t2_status_text = "[color=13c444][b]AKTİF[/b][/color]" if is_type2_on else "[color=ed4242][b]PASİF[/b][/color]"
                     self.t2_toggle_label = Label(text=f"2. Tür Durumu: {t2_status_text}", markup=True)
                     self.t2_left_btn, self.t2_right_btn = Button(text="<"), Button(text=">")
-                
-                _setup_setting_row(self.t2_toggle_label, self.t2_left_btn, self.t2_right_btn, 0.62)
-                
-                def _toggle_type2_switch():
-                    filtered_check = self.get_filtered_folders_by_slot(1)
-                    if len(filtered_check) <= 1:
-                        self.settings["type2_enabled"] = 0
-                        self.save_settings()
-                        return
-
-                    current_status = 1 if self.settings.get("type2_enabled", 1) == 1 else 0
-                    new_status = 0 if current_status == 1 else 1
-                    local1["type2_enabled"] = new_status
-                    self.settings["type2_enabled"] = new_status
-                    self.save_settings()
+                    _setup_setting_row(self.t2_toggle_label, self.t2_left_btn, self.t2_right_btn, 0.62)
                     
-                    if new_status == 0:
-                        for spider in list(self.spider_list):
-                            if spider.assigned_folder == current_folder2:
-                                try:
-                                    spider.canvas_widget.canvas.clear()
-                                    self.creature_layer.remove_widget(spider.canvas_widget)
-                                    self.spider_list.remove(spider)
-                                except: pass
-                    self.rebuild_ui()
+                    def _toggle_type2_switch():
+                        current_status = 1 if self.settings.get("type2_enabled", 1) == 1 else 0
+                        new_status = 0 if current_status == 1 else 1
+                        
+                        # Hem global ayarı hem de iki slotun yerel hafıza ayarını aynı anda güncelliyoruz
+                        self.settings["type2_enabled"] = new_status
+                        
+                        if current_folder in self.settings["folder_settings"]:
+                            self.settings["folder_settings"][current_folder]["type2_enabled"] = new_status
+                        if current_folder2 in self.settings["folder_settings"]:
+                            self.settings["folder_settings"][current_folder2]["type2_enabled"] = new_status
+                            
+                        self.save_settings()
+                        
+                        if new_status == 0:
+                            for spider in list(self.spider_list):
+                                if spider.assigned_folder == current_folder2:
+                                    try:
+                                        spider.canvas_widget.canvas.clear()
+                                        self.creature_layer.remove_widget(spider.canvas_widget)
+                                        self.spider_list.remove(spider)
+                                    except: pass
+                        self.rebuild_ui()
 
-                if not is_single_folder:
                     self.t2_left_btn.bind(on_press=lambda x: _toggle_type2_switch())
                     self.t2_right_btn.bind(on_press=lambda x: _toggle_type2_switch())
-                    
+
                 self.ui_layer.add_widget(self.t2_toggle_label)
                 self.ui_layer.add_widget(self.t2_left_btn)
                 self.ui_layer.add_widget(self.t2_right_btn)
-                
-                # --- 2. Alt Tür Seçim Satırı ---
-                if is_type2_on and not is_single_folder:
-                    filtered2 = self.get_filtered_folders_by_slot(2)
-                    current_folder2 = filtered2[self.settings["animation_folder_idx2"] % len(filtered2)]
+
+                if is_type2_on and len(self.get_filtered_folders_by_slot(1)) > 1:
                     self.type2_label = Label(text=f"2. Alt Tür: [b]{current_folder2.upper()}[/b]", markup=True)
                     self.t2_m, self.t2_p = Button(text="<"), Button(text=">")
                     _setup_setting_row(self.type2_label, self.t2_m, self.t2_p, 0.54)
@@ -788,21 +704,9 @@ class CreatureOverlayApp(App):
                     self.ui_layer.add_widget(self.t2_m)
                     self.ui_layer.add_widget(self.t2_p)
                     y_pos_bg = 0.46
-                elif is_single_folder:
-                    # Eğer tek klasör varsa, seçim satırını kilitli (X) olarak yine de gösteriyoruz
-                    self.type2_label = Label(text="2. Alt Tür: [color=ed4242][b]KİLİTLİ[/b][/color]", markup=True)
-                    self.t2_m, self.t2_p = Button(text="X"), Button(text="X")
-                    self.t2_m.disabled = True
-                    self.t2_p.disabled = True
-                    _setup_setting_row(self.type2_label, self.t2_m, self.t2_p, 0.54)
-                    self.ui_layer.add_widget(self.type2_label)
-                    self.ui_layer.add_widget(self.t2_m)
-                    self.ui_layer.add_widget(self.t2_p)
-                    y_pos_bg = 0.46
                 else:
                     y_pos_bg = 0.54
 
-                # --- Arka Plan Seçim Satırı ---
                 bg_display_text = "Varsayılan (bg)" if self.settings.get("bg_image_idx", 0) == 0 else f"Tema {self.settings.get('bg_image_idx', 0)}"
                 self.bg_img_label = Label(text=f"Arka Plan: [color=e0a040][b]{bg_display_text}[/b][/color]", markup=True)
                 self.bg_minus, self.bg_plus = Button(text="<"), Button(text=">")
@@ -812,6 +716,7 @@ class CreatureOverlayApp(App):
                 self.ui_layer.add_widget(self.bg_img_label)
                 self.ui_layer.add_widget(self.bg_minus)
                 self.ui_layer.add_widget(self.bg_plus)
+
             elif self.active_settings_tab == "type1":
                 self.size_label = Label(text=f"1. Tür Boyut: {local1.get('creature_size', 120)} px")
                 self.sz_minus, self.sz_plus = Button(text="-"), Button(text="+")
@@ -841,7 +746,7 @@ class CreatureOverlayApp(App):
                 self.ui_layer.add_widget(self.anim_label)
                 self.ui_layer.add_widget(self.a_minus)
                 self.ui_layer.add_widget(self.a_plus)
-                
+
                 self.count_label = Label(text=f"1. Tür Toplam Sayı: {local1.get('max_creatures', 6)}")
                 self.c_minus, self.c_plus = Button(text="-"), Button(text="+")
                 _setup_setting_row(self.count_label, self.c_minus, self.c_plus, 0.48)
@@ -851,10 +756,10 @@ class CreatureOverlayApp(App):
                 self.ui_layer.add_widget(self.count_label)
                 self.ui_layer.add_widget(self.c_minus)
                 self.ui_layer.add_widget(self.c_plus)
-                
+
                 self.offset1_label = Label(text=f"1. Tür Ofset: {local1.get('visual_offset', 15)} px")
                 self.o1_minus, self.o1_plus = Button(text="-"), Button(text="+")
-                _setup_setting_row(self.offset1_label, self.o1_minus, self.o1_plus, 0.40) 
+                _setup_setting_row(self.offset1_label, self.o1_minus, self.o1_plus, 0.40)
                 self._check_button_edge_colors_v2("visual_offset", 0, 50, self.o1_minus, self.o1_plus, local1)
                 self.o1_minus.bind(on_press=lambda x: self.update_stat_live("visual_offset", -5, 0, 50, self.offset1_label, "1. Tür Ofset: ", " px", self.o1_minus, self.o1_plus, target_type=1))
                 self.o1_plus.bind(on_press=lambda x: self.update_stat_live("visual_offset", 5, 0, 50, self.offset1_label, "1. Tür Ofset: ", " px", self.o1_minus, self.o1_plus, target_type=1))
@@ -865,12 +770,13 @@ class CreatureOverlayApp(App):
                 face1_deg = local1.get("image_facing", 0) * 90
                 self.face1_label = Label(text=f"1. Tür Görsel Açısı: {face1_deg}°")
                 self.f1_minus, self.f1_plus = Button(text="<"), Button(text=">")
-                _setup_setting_row(self.face1_label, self.f1_minus, self.f1_plus, 0.32)
+                _setup_setting_row(self.face1_label, self.f1_minus, self.f1_plus, 0.33)
                 self.f1_minus.bind(on_press=lambda x: [self.change_setting_face_step(-1), self.rebuild_ui()])
                 self.f1_plus.bind(on_press=lambda x: [self.change_setting_face_step(1), self.rebuild_ui()])
                 self.ui_layer.add_widget(self.face1_label)
                 self.ui_layer.add_widget(self.f1_minus)
                 self.ui_layer.add_widget(self.f1_plus)
+
             elif self.active_settings_tab == "type2":
                 self.size2_label = Label(text=f"2. Tür Boyut: {local1.get('creature_size', 120)} px")
                 self.sz2_minus, self.sz2_plus = Button(text="-"), Button(text="+")
@@ -891,6 +797,7 @@ class CreatureOverlayApp(App):
                 self.ui_layer.add_widget(self.speed2_label)
                 self.ui_layer.add_widget(self.s2_minus)
                 self.ui_layer.add_widget(self.s2_plus)
+
                 self.anim2_label = Label(text=f"2. Tür Anim Hızı: {local1.get('anim_speed', 80)} ms")
                 self.a2_minus, self.a2_plus = Button(text="-"), Button(text="+")
                 _setup_setting_row(self.anim2_label, self.a2_minus, self.a2_plus, 0.56)
@@ -900,7 +807,8 @@ class CreatureOverlayApp(App):
                 self.ui_layer.add_widget(self.anim2_label)
                 self.ui_layer.add_widget(self.a2_minus)
                 self.ui_layer.add_widget(self.a2_plus)                
-                self.count2_label = Label(text=f"2. Tür Toplam Sayı: {local1.get('max_creatures2', 1)}")
+
+                self.count2_label = Label(text=f"2. Tür Toplam Sayı: {local1.get('max_creatures2', 6)}")
                 self.c2_minus, self.c2_plus = Button(text="-"), Button(text="+")
                 _setup_setting_row(self.count2_label, self.c2_minus, self.c2_plus, 0.48)
                 self._check_button_edge_colors_v2("max_creatures2", 1, 30, self.c2_minus, self.c2_plus, local1)
@@ -909,10 +817,10 @@ class CreatureOverlayApp(App):
                 self.ui_layer.add_widget(self.count2_label)
                 self.ui_layer.add_widget(self.c2_minus)
                 self.ui_layer.add_widget(self.c2_plus)
-                
+
                 self.offset2_label = Label(text=f"2. Tür Ofset: {local1.get('visual_offset', 15)} px")
                 self.o2_minus, self.o2_plus = Button(text="-"), Button(text="+")
-                _setup_setting_row(self.offset2_label, self.o2_minus, self.o2_plus, 0.40) 
+                _setup_setting_row(self.offset2_label, self.o2_minus, self.o2_plus, 0.40)
                 self._check_button_edge_colors_v2("visual_offset", 0, 50, self.o2_minus, self.o2_plus, local1)
                 self.o2_minus.bind(on_press=lambda x: self.update_stat_live("visual_offset", -5, 0, 50, self.offset2_label, "2. Tür Ofset: ", " px", self.o2_minus, self.o2_plus, target_type=2))
                 self.o2_plus.bind(on_press=lambda x: self.update_stat_live("visual_offset", 5, 0, 50, self.offset2_label, "2. Tür Ofset: ", " px", self.o2_minus, self.o2_plus, target_type=2))
@@ -923,7 +831,7 @@ class CreatureOverlayApp(App):
                 face2_deg = local1.get("image_facing", 0) * 90
                 self.face2_label = Label(text=f"2. Tür Görsel Açısı: {face2_deg}°")
                 self.f2_minus, self.f2_plus = Button(text="<"), Button(text=">")
-                _setup_setting_row(self.face2_label, self.f2_minus, self.f2_plus, 0.32)
+                _setup_setting_row(self.face2_label, self.f2_minus, self.f2_plus, 0.33)
                 
                 def _change_face2(direction):
                     current_face = local1.get("image_facing", 0)
@@ -975,26 +883,29 @@ class CreatureOverlayApp(App):
             self.about_sparkles.clear()
             self.sparkle_spawn_timer = 0.0
             
-            # --- GÜNCELLENEN ALAN: YÜKSEKLİK ARTTIRILDI VE KONUM YUKARI KAYDIRILDI ---
-            # size_hint Y değeri 0.48'den 0.65'e yükseltildi, pos_hint Y değeri 0.32'den 0.20'ye çekildi
-            scroll_container = ScrollView(
-                size_hint=(0.86, 0.65), 
-                pos_hint={'x': 0.07, 'y': 0.20},
-                do_scroll_x=False,  
-                do_scroll_y=True    
-            )
-            
-            # Arka plan rengini ve oval köşeleri doğrudan ScrollView arkasına çiziyoruz
-            with scroll_container.canvas.before:
+            # --- DÜĞMEYİ KAPATMAYACAK ŞEKİLDE YENİ KONUMLANDIRMA ÖLÇÜLERİ ---
+
+            panel_y = 0.24
+            panel_h = 0.62
+            panel_w = 0.86
+            panel_x = 0.07
+
+            # --- 1. ADIM: İÇERİK İÇİN SABİT ARKA PLAN PANELİ ---
+            about_panel = Widget(size_hint=(panel_w, panel_h), pos_hint={'x': panel_x, 'y': panel_y})
+            with about_panel.canvas.before:
                 Color(0.05, 0.05, 0.05, 0.85) 
-                scroll_container.bg_rect = RoundedRectangle(pos=scroll_container.pos, size=scroll_container.size, radius=[15])
-            
-            def _update_scroll_bg(inst, val): 
+                about_panel.bg_rect = RoundedRectangle(pos=about_panel.pos, size=about_panel.size, radius=[15])
+            def _update_about_bg(inst, val): 
                 inst.bg_rect.pos = inst.pos
                 inst.bg_rect.size = inst.size
-            scroll_container.bind(pos=_update_scroll_bg, size=_update_scroll_bg)
+            about_panel.bind(pos=_update_about_bg, size=_update_about_bg)
+            self.ui_layer.add_widget(about_panel)
 
-            # Hakkında metnini içeren Label bileşeni (Boyutunu içeriğe göre dinamik büyüteceğiz)
+            # --- 2. ADIM: GÜVENLİ KAYDIRMA ALANI (SCROLLVIEW) ---
+            # Kaydırma alanını yeni panel sınırlarına tam olarak eşitliyoruz
+            scroll_container = ScrollView(size_hint=(panel_w, panel_h), pos_hint={'x': panel_x, 'y': panel_y}, do_scroll_x=False, do_scroll_y=True)
+
+            # --- 3. ADIM: TAM YATAY ORTALANMIŞ METİN KATMANI ---
             self.about_label = Label(
                 text="[color=45b870][b]SPIDER ANDROID[/b][/color]\n\n"
                      "[b]Sürüm:[/b] v1.4.0\n"
@@ -1008,32 +919,33 @@ class CreatureOverlayApp(App):
                      "• Ayarlar menüsünden tüm fiziksel sınırları canlı olarak yönetin.",
                 markup=True, font_size='15sp', halign='center', valign='top',
                 padding=(40, 40),
-                size_hint_y=None  
+                size_hint_x=None,
+                size_hint_y=None
             )
             
-            # Metnin kutu genişliğine göre otomatik kırpılması ve yüksekliğin dinamik hesaplanması için bind işlemleri
-            def _update_label_height(inst, val):
-                inst.text_size = (inst.width, None)  
+            # Kesin ortalama motoru
+            def _sync_sizes(instance, value):
+                self.about_label.width = value
+                self.about_label.text_size = (value, None)
+            scroll_container.bind(width=_sync_sizes)
             
-            def _set_texture_height(inst, val):
-                inst.height = max(scroll_container.height, inst.texture_size[1] + 80) 
-
-            self.about_label.bind(width=_update_label_height)
-            self.about_label.bind(texture_size=_set_texture_height)
+            # Metin boyutu değiştikçe yüksekliği korumalı hesaplıyoruz
+            def _update_label_height(instance, txt_size):
+                if isinstance(txt_size, (list, tuple)) and len(txt_size) >= 2:
+                    metin_yuksekligi = txt_size[1]
+                    instance.height = max(scroll_container.height, metin_yuksekligi + 80)
+            self.about_label.bind(texture_size=_update_label_height)
             
-            # Label'ı kaydırma kutusunun içine, kaydırma kutusunu da arayüze ekliyoruz
             scroll_container.add_widget(self.about_label)
             self.ui_layer.add_widget(scroll_container)
 
-            # --- GÜNCELLENEN ALAN: EFEKT KATMANI DA YENİ BOYUTA HİZALANDI ---
+            # --- 4. ADIM: PARTİKÜL KATMANI VE BUTONLAR ---
             if getattr(self, 'sparkle_layer', None) is not None and self.sparkle_layer in self.ui_layer.children:
                 self.ui_layer.remove_widget(self.sparkle_layer)
                 
-            self.sparkle_layer = Widget(size_hint=(0.86, 0.65), pos_hint={'x': 0.07, 'y': 0.20})
+            self.sparkle_layer = Widget(size_hint=(panel_w, panel_h), pos_hint={'x': panel_x, 'y': panel_y})
             self.ui_layer.add_widget(self.sparkle_layer)
-            
-            # Ana menü butonu (Kutu büyüdüğü için buton pozisyonu Y: 0.16'dan 0.06'ya çekildi)
-            self.ui_layer.add_widget(create_visual_button("Ana Menü", (0.13, 0.77, 0.36, 1), 0.06, lambda x: self.switch_view("main")))
+            self.ui_layer.add_widget(create_visual_button("Ana Menü", (0.13, 0.77, 0.36, 1), 0.16, lambda x: self.switch_view("main")))
 
     def switch_view(self, view_name):
         self.about_sparkles.clear()
@@ -1046,10 +958,10 @@ class CreatureOverlayApp(App):
     def _switch_tab_safe(self, tab_name):
         self.active_settings_tab = tab_name
         self.rebuild_ui()
+
     def update_stat_live(self, key, amount, min_v, max_v, label_obj, prefix, suffix="", btn_m=None, btn_p=None, target_type=1):
         filtered1 = self.get_filtered_folders_by_slot(1)
         filtered2 = self.get_filtered_folders_by_slot(2)
-        
         current_folder = filtered1[self.settings["animation_folder_idx"] % len(filtered1)]
         current_folder2 = filtered2[self.settings["animation_folder_idx2"] % len(filtered2)]
         
@@ -1092,7 +1004,6 @@ class CreatureOverlayApp(App):
                 if (target_type == 1 and spider.assigned_folder == current_folder) or (target_type == 2 and spider.assigned_folder == current_folder2):
                     spider.update_size(local[key])
         self.rebuild_ui()
-
     def _check_button_edge_colors_v2(self, key, min_v, max_v, btn_m, btn_p, local_dict):
         current_value = local_dict.get(key, min_v)
         if btn_m.canvas.before and btn_m.canvas.before.children:
@@ -1132,6 +1043,7 @@ class CreatureOverlayApp(App):
                 self.gold_orb_layer.canvas.clear()
             except: pass
         self.rebuild_ui()
+
     def change_habitat_class_step(self, direction, slot_type=1):
         idx = self.settings.get("current_hab_idx1", 0)
         new_idx = (idx + direction + len(self.habitats_list)) % len(self.habitats_list)
@@ -1141,17 +1053,7 @@ class CreatureOverlayApp(App):
         self.settings["animation_folder_idx"] = 0 
         self.settings["animation_folder_idx2"] = 0 
         self.clear_all_creatures_on_habitat_change()
-        
-        target_hab = self.habitats_list[new_idx]
-        all_filtered = [f for f in self.animation_folders if self.get_folder_habitat(f) == target_hab]
-        
-        if len(all_filtered) <= 1:
-            self.settings["type2_enabled"] = 0
-            for folder in all_filtered:
-                if folder not in self.settings["folder_settings"]:
-                    self.settings["folder_settings"][folder] = {}
-                self.settings["folder_settings"][folder]["type2_enabled"] = 0
-                
+            
         self.sync_active_folder_settings()
         self.save_settings()
         self.update_background_image()
@@ -1160,32 +1062,46 @@ class CreatureOverlayApp(App):
     def change_creature_type_step(self, direction, type_slot=1):
         filtered1 = self.get_filtered_folders_by_slot(1)
         filtered2 = self.get_filtered_folders_by_slot(2)
-        
+
         if type_slot == 1:
-            idx = self.settings.get("animation_folder_idx", 0)
-            self.settings["animation_folder_idx"] = (idx + direction + len(filtered1)) % len(filtered1)
+            idx1 = self.settings.get("animation_folder_idx", 0)
+            self.settings["animation_folder_idx"] = (idx1 + direction + len(filtered1)) % len(filtered1)
             self.clear_all_creatures_on_habitat_change()
             
-            if len(filtered1) <= 1:
-                self.settings["type2_enabled"] = 0
+            # --- 9 TÜR İÇİN MUTLAK ÇAKIŞMA ÖNLEYİCİ ---
+            # Eğer üstteki tür butonla değiştirildiğinde alttakiyle aynı indekse denk gelirse:
+            if len(filtered1) > 1 and self.settings["animation_folder_idx"] == self.settings["animation_folder_idx2"]:
+                # 2. türün indeksini güvenli mod (%) ile 1 ileri zıplat (Asla ayarı kapatmaz)
+                self.settings["animation_folder_idx2"] = (self.settings["animation_folder_idx2"] + 1) % len(filtered2)
         else:
             idx2 = self.settings.get("animation_folder_idx2", 0)
-            self.settings["animation_folder_idx2"] = (idx2 + direction + len(filtered2)) % len(filtered2)
+            new_idx2 = (idx2 + direction + len(filtered2)) % len(filtered2)
+            
+            # Kullanıcı elle 2. türü değiştirirken 1. türün üzerine gelirse bir adım daha zıpla
+            if len(filtered2) > 1 and new_idx2 == self.settings["animation_folder_idx"]:
+                new_idx2 = (new_idx2 + direction + len(filtered2)) % len(filtered2)
+                
+            self.settings["animation_folder_idx2"] = new_idx2
             
         self.sync_active_folder_settings()
         self.save_settings()
         self.update_background_image()
         self.rebuild_ui()
         
+        # Canlı yaratıkların dokularını yenileyen alt kısım
         current_folder = filtered1[self.settings["animation_folder_idx"] % len(filtered1)]
         current_folder2 = filtered2[self.settings["animation_folder_idx2"] % len(filtered2)]
+        is_type2_on = self.settings.get("type2_enabled", 1) == 1
         
         for i, spider in enumerate(list(self.spider_list)):
             try:
-                if spider.id % 2 == 1 and self.settings.get("type2_enabled", 1) == 1:
-                    spider.assigned_folder = current_folder2
-                else:
+                if not is_type2_on:
                     spider.assigned_folder = current_folder
+                else:
+                    if spider.id % 2 == 1:
+                        spider.assigned_folder = current_folder2
+                    else:
+                        spider.assigned_folder = current_folder
                     
                 local = self.settings["folder_settings"].get(spider.assigned_folder, self.settings)
                 spider.size = local.get("creature_size", 120)
@@ -1211,47 +1127,19 @@ class CreatureOverlayApp(App):
 
     def change_bg_image_step(self, direction):
         base_dir = os.path.dirname(os.path.abspath(__file__))
-        app = App.get_running_app()
-        if app and hasattr(app, 'directory') and app.directory:
-            base_dir = app.directory
-
         filtered1 = self.get_filtered_folders_by_slot(1)
         current_folder = filtered1[self.settings["animation_folder_idx"] % len(filtered1)]
+        theme_dir = os.path.join(base_dir, "anims") if current_folder == "default" else os.path.join(base_dir, "anims", current_folder)
         
-        json_path = os.path.join(base_dir, "anims_index.json")
         valid_bg_count = 1
-        
-        if "/" in current_folder and os.path.exists(json_path):
-            try:
-                with open(json_path, "r", encoding="utf-8") as f:
-                    structure = json.load(f)
-                hab, sf = current_folder.split("/")
-                
-                target_hab = next((k for k in structure.keys() if k.lower() == hab.lower()), None)
-                target_sf = next((sk for sk in structure[target_hab].keys() if sk.lower() == sf.lower()), None) if target_hab else None
-                
-                if target_hab and target_sf:
-                    all_files = structure[target_hab][target_sf]
-                    bg_files = [f for f in all_files if f.lower().startswith("bg") and ("_v" in f.lower() or "_h" in f.lower())]
-                    bg_indices = set()
-                    for bf in bg_files:
-                        clean_name = bf.lower().replace("bg", "")
-                        if "_" in clean_name:
-                            num_part = clean_name.split("_")[0]
-                            if num_part.isdigit():
-                                bg_indices.add(int(num_part))
-                    if bg_indices:
-                        valid_bg_count = max(bg_indices) + 1
-            except Exception as e:
-                print(f"Arka plan değişim JSON hatası: {e}")
+        for i in range(1, 10): 
+            if os.path.exists(os.path.join(theme_dir, f"bg{i}_v.png")) or os.path.exists(os.path.join(theme_dir, f"bg{i}_h.png")):
+                valid_bg_count += 1
                 
         current_idx = self.settings.get("bg_image_idx", 0)
         new_idx = (current_idx + direction + valid_bg_count) % valid_bg_count
         
         self.settings["bg_image_idx"] = new_idx
-        if current_folder not in self.settings["folder_settings"]:
-            self.sync_active_folder_settings()
-            
         if current_folder in self.settings["folder_settings"]:
             self.settings["folder_settings"][current_folder]["bg_image_idx"] = new_idx
             
@@ -1274,16 +1162,25 @@ class CreatureOverlayApp(App):
             if not wall or "rect" not in wall or len(wall["rect"]) < 4: continue
             r = wall["rect"]
             if r[0] <= touch.x <= r[0] + r[2] and r[1] <= touch.y <= r[1] + r[3]:
+                # --- KESİN ÇÖZÜM: EL YAPIMI DOKUNMALARDA OYNATICIYI RESETLEME ---
                 if wall.get("is_big", False):
+                    # Yörüngedeki yaratıkları serbest bırak
                     for s in self.spider_list:
                         if s.is_orbiting: 
                             s.is_orbiting = False
                             s.angle = random.uniform(0, 2 * math.pi)
+                    
+                    # Uygulama motoruna büyük duvarın bittiğini bildir ve zamanlayıcıyı sıfırla
+                    self.big_wall_active = False
+                    self.big_wall_pending_destroy = False
+                    self.big_wall_timer = 0.0
+
                 self.particle_emitter.spawn_shattered_wall(r, wall["color"])
                 self.walls.pop(i)
                 self.redraw_walls()
                 return True
         return False
+
     def spawn_random_wall(self):
         if len(self.walls) >= 2: return
         is_hz = random.choice([True, False])
@@ -1298,7 +1195,6 @@ class CreatureOverlayApp(App):
             if (x - 120 < r[0] + r[2] and x + w + 120 > r[0] and y - 120 < r[1] + r[3] and y + h + 120 > r[1]): return
         self.walls.append({"rect": [x, y, w, h], "color": (random.random(), random.random(), random.random(), 1.0), "life": 0.0, "is_big": False})
         self.redraw_walls()
-
     def spawn_gold_orb(self):
         w_size = 70
         x = random.randint(80, max(81, self.SCREEN_WIDTH - w_size - 80))
@@ -1323,30 +1219,40 @@ class CreatureOverlayApp(App):
                 Rectangle(pos=(wall["rect"][0], wall["rect"][1]), size=(wall["rect"][2], wall["rect"][3]))
 
     def update(self, dt):
+# --- YENİ / EKLENECEK KOD BLOĞU ---
         if self.spider_active:
             filtered1 = self.get_filtered_folders_by_slot(1)
             filtered2 = self.get_filtered_folders_by_slot(2)
             
-            current_folder = filtered1[self.settings["animation_folder_idx"] % len(filtered1)]
+            # Koruma: Listenin boş kalmamasını garanti altına alıyoruz
+            if not filtered1: filtered1 = ["default"]
+            if not filtered2: filtered2 = ["default"]
             
-            is_type2_on = self.settings.get("type2_enabled", 1) == 1 and len(filtered1) > 1
-            if is_type2_on:
-                current_folder2 = filtered2[self.settings["animation_folder_idx2"] % len(filtered2)]
-            else:
-                current_folder2 = current_folder
-
+            current_folder = filtered1[self.settings["animation_folder_idx"] % len(filtered1)]
+            current_folder2 = filtered2[self.settings["animation_folder_idx2"] % len(filtered2)]
+            
             local1 = self.settings["folder_settings"].get(current_folder, self.settings)
             local2 = self.settings["folder_settings"].get(current_folder2, self.settings)
             
+            # --- KESİN TAMİR: Geçiş anındaki anlık liste dalgalanmalarının type2'yi kapatmasını engelliyoruz ---
+            if len(filtered1) <= 1:
+                is_type2_on = False
+            else:
+                is_type2_on = self.settings.get("type2_enabled", 1) == 1
+                
             limit_type1 = local1.get("max_creatures", 6)
-            limit_type2 = local2.get("max_creatures2", 1) if is_type2_on else 0
-            
-            current_type1_count = sum(1 for s in self.spider_list if s.assigned_folder == current_folder)
-            current_type2_count = sum(1 for s in self.spider_list if s.assigned_folder == current_folder2) if is_type2_on else 0
+            limit_type2 = local2.get("max_creatures2", 6) if is_type2_on else 0
             
             if not is_type2_on:
+                current_type1_count = len(self.spider_list)
+                current_type2_count = 0
+            else:
+                current_type1_count = sum(1 for s in self.spider_list if s.assigned_folder == current_folder)
+                current_type2_count = sum(1 for s in self.spider_list if s.assigned_folder == current_folder2)
+            
+            if not is_type2_on and current_type2_count > 0:
                 for spider in list(self.spider_list):
-                    if spider.assigned_folder != current_folder:
+                    if spider.assigned_folder == current_folder2:
                         try:
                             spider.canvas_widget.canvas.clear()
                             self.creature_layer.remove_widget(spider.canvas_widget)
@@ -1355,32 +1261,30 @@ class CreatureOverlayApp(App):
                 current_type2_count = 0
 
             chosen_f = None
-            if is_type2_on:
+            if not is_type2_on:
+                if current_type1_count < limit_type1:
+                    chosen_f = current_folder
+            else:
                 if current_type1_count < limit_type1 and current_type2_count < limit_type2:
                     chosen_f = current_folder if current_type1_count <= current_type2_count else current_folder2
                 elif current_type1_count < limit_type1:
                     chosen_f = current_folder
                 elif current_type2_count < limit_type2:
                     chosen_f = current_folder2
-            else:
-                if current_type1_count < limit_type1:
-                    chosen_f = current_folder
-                
+                    
             if chosen_f:
                 new_spider = KivySpiderEntity(self.settings, self.SCREEN_WIDTH, self.SCREEN_HEIGHT, self.animation_folders, zorunlu_klasor=chosen_f)
                 self.spider_list.append(new_spider)
                 self.creature_layer.add_widget(new_spider.canvas_widget)
-                return  
 
             self.wall_timer += dt
             if self.wall_timer >= self.next_wall_time:
                 self.wall_timer = 0
                 self.next_wall_time = random.uniform(8.0, 15.0)
                 self.spawn_random_wall()
-            
+
             current_creature_count = len(self.spider_list)
-            any_super_creature = any(s.is_super for s in self.spider_list)
-            if current_creature_count >= 6 and not any_super_creature:
+            if current_creature_count >= 6:
                 if not self.gold_orb:
                     self.gold_orb_timer += dt
                     if self.gold_orb_timer >= self.gold_orb_spawn_time:
@@ -1399,21 +1303,19 @@ class CreatureOverlayApp(App):
             if not self.big_wall_active:
                 self.big_wall_timer += dt
                 if self.big_wall_timer >= self.big_wall_interval:
-                    if len(self.walls) == 0:
-                        w, h = 300, 300
-                        x = (self.SCREEN_WIDTH - w) / 2
-                        y = (self.SCREEN_HEIGHT - h) / 2
-                        self.walls.append({
-                            "rect": [x, y, w, h], 
-                            "color": (0.8, 0.2, 0.2, 1.0), 
-                            "life": 0.0, 
-                            "is_big": True
-                        })
-                        self.big_wall_active = True
-                        self.big_wall_timer = 0.0
+                    if len(self.walls) < 2:
+                        bw = random.randint(300, 360)
+                        bx = (self.SCREEN_WIDTH - bw) / 2
+                        by = (self.SCREEN_HEIGHT - bw) / 2
+                        self.walls.append({"rect": [bx, by, bw, bw], "color": (0.8, 0.2, 0.2, 1.0), "life": 0.0, "is_big": True})
                         self.redraw_walls()
+                        
+                        self.big_wall_active = True
+                        self.big_wall_pending_destroy = False
+                        self.big_wall_timer = 0.0  
+                        
                         for s in self.spider_list:
-                            s.start_orbiting(x, y, w, h)
+                            s.start_orbiting(bx, by, bw, bw)
             # --- YENİ: ORTA ENGEL AKTİFKEN YÖRÜNGEDE KİMSE YOKSA YAKINDAKİ YARATIĞI AL ---
             # --- ORTA ENGEL AKTİFKEN YÖRÜNGEDE KİMSE YOKSA SADECE 1 YARATIK AL ---
             if self.big_wall_active and not self.big_wall_pending_destroy:
@@ -1431,66 +1333,84 @@ class CreatureOverlayApp(App):
                                     s.start_orbiting(wx, wy, ww, wh)
                                     break # <--- KRİTİK: İlk yaratığı aldıktan sonra döngüden çık, diğerleri serbest gezsin!
 
+            else:
+                if self.big_wall_pending_destroy:
+                    self.big_wall_destroy_timer -= dt
+                    if self.big_wall_destroy_timer <= 0:
+                        self.big_wall_pending_destroy = False
+                        self.big_wall_active = False
+                        
+                        # --- SÜRE BİTTİĞİNDE DEVASA PATLAMA EFEKTİNİ TETİKLE ---
+                        if hasattr(self, 'particle_emitter'):
+                            for wall in self.walls:
+                                if wall.get("is_big", False):
+                                    # Orta engelin koordinatlarını alıp parçacık motoruna gönderiyoruz
+                                    r = wall["rect"]
+                                    # Büyük duvar olduğu için yaratık boyutunu (creature_size) 300 vererek patlamayı devasa yapıyoruz
+                                    self.particle_emitter.spawn_shattered_wall(r, wall["color"], creature_size=300)
+                        
+                        # Büyük engeli listeden temizle ve ekranı güncelle
+                        self.walls = [w for w in self.walls if not w.get("is_big", False)]
+                        self.redraw_walls()
+                        self.big_wall_timer = 0.0  
 
-            if self.big_wall_pending_destroy:
-                self.big_wall_destroy_timer -= dt
-                if self.big_wall_destroy_timer <= 0:
-                    self.big_wall_pending_destroy = False
-                    self.big_wall_active = False
-                    
-                    # --- SÜRE BİTTİĞİNDE PATLAMA EFEKTİNİ TETİKLE ---
-                    if hasattr(self, 'particle_emitter'):
-                        for wall in self.walls:
-                            if wall.get("is_big", False):
-                                # Orta engelin koordinatlarını alıp parçacık motoruna gönderiyoruz
-                                r = wall["rect"]
-                                # Büyük duvar olduğu için yaratık boyutunu (creature_size) 300 vererek patlamayı devasa yapıyoruz
-                                self.particle_emitter.spawn_shattered_wall(r, wall["color"], creature_size=300)
-                    
-                    # Büyük engeli listeden temizle ve ekranı güncelle
-                    self.walls = [w for w in self.walls if not w.get("is_big", False)]
-                    self.redraw_walls()
-
-            # --- EKSİK OLAN VE KRİTİK GÜNCELLEME DÖNGÜSÜ BURASI ---
-            # Listedeki her bir yaratığı hareket ettirir ve ekrandaki konumunu günceller.
             for spider in list(self.spider_list):
-                spider.update_entity(dt, self.SCREEN_WIDTH, self.SCREEN_HEIGHT, self.settings, self.walls, self.spider_list)
+                if spider in self.spider_list:
+                    spider.update_entity(dt, self.SCREEN_WIDTH, self.SCREEN_HEIGHT, self.settings, self.walls, self.spider_list)
 
-        # Parçacık efektlerinin (duvar kırılmaları vb.) her karede akmasını sağlar.
-        if hasattr(self, 'particle_emitter'):
-            self.particle_emitter.update_particles(dt)
+        self.particle_layer.canvas.clear()
+        self.particle_emitter.update_particles(dt)
+        # --- HAKKINDA SAYFASI PARILTI MOTORU GİRİNTİ DÜZENLEMESİ ---
+        if self.current_view == "about" and self.ui_visible and hasattr(self, 'sparkle_layer') and self.sparkle_layer:
+            self.sparkle_spawn_timer += dt
+            if self.sparkle_spawn_timer >= 0.25:
+                self.sparkle_spawn_timer = 0.0
+                if len(self.about_sparkles) < 15:
+                    sp_x = random.uniform(self.SCREEN_WIDTH * 0.1, self.SCREEN_WIDTH * 0.9)
+                    # Sizin yeni panel konumunuza göre alt ve üst sınır genişletildi (4 adet boşluk girintili)
+                    sp_y = random.uniform(self.SCREEN_HEIGHT * 0.27, self.SCREEN_HEIGHT * 0.85)
+                    base_color = random.choice([[1.0, 0.85, 0.2], [1.0, 1.0, 1.0]])
+                    sparkle_form = random.choice(["plus", "star"])
+                    
+                    self.about_sparkles.append({
+                        "x": sp_x, "y": sp_y, "size": random.uniform(12, 22),
+                        "base_color": base_color, "form": sparkle_form, 
+                        "state": "fade_in", "alpha": 0.0, "speed": random.uniform(1.5, 3.0)
+                    })
 
-            # Tam olarak buraya, aşağıdaki gibi yerleştirilecek:
-            if getattr(self, 'sparkle_layer', None) is not None:
-                self.sparkle_layer.canvas.clear()
-                with self.sparkle_layer.canvas:
-                    for sp in list(self.about_sparkles):
-                        if sp["state"] == "fade_in":
-                            sp["alpha"] += dt * sp["speed"]
-                            if sp["alpha"] >= 1.0:
-                                sp["alpha"] = 1.0
-                                sp["state"] = "fade_out"
-                        elif sp["state"] == "fade_out":
-                            sp["alpha"] -= dt * sp["speed"]
-                            if sp["alpha"] <= 0.0:
-                                self.about_sparkles.remove(sp)
-                                continue
-                        Color(*sp["base_color"], sp["alpha"])
-                        sz = sp["size"]
-                        thick = sz / 10  
-                        if sp["form"] == "plus":
-                            PushMatrix()
-                            Rotate(angle=45, origin=(sp["x"], sp["y"]), axis=(0, 0, 1))
-                            Rectangle(pos=(sp["x"] - sz/2, sp["y"] - thick/2), size=(sz, thick))
-                            Rectangle(pos=(sp["x"] - thick/2, sp["y"] - sz/2), size=(thick, sz))
-                            PopMatrix()
-                        elif sp["form"] == "star":
-                            Rectangle(pos=(sp["x"] - sz/2, sp["y"] - thick/2), size=(sz, thick))
-                            Rectangle(pos=(sp["x"] - thick/2, sp["y"] - sz/2), size=(thick, sz))
-                            PushMatrix()
-                            Rotate(angle=45, origin=(sp["x"], sp["y"]), axis=(0, 0, 1))
-                            Rectangle(pos=(sp["x"] - sz/2, sp["y"] - thick/2), size=(sz, thick))
-                            Rectangle(pos=(sp["x"] - thick/2, sp["y"] - sz/2), size=(thick, sz))
+            self.sparkle_layer.canvas.clear()
+            with self.sparkle_layer.canvas:
+                for sp in list(self.about_sparkles):
+                    if sp["state"] == "fade_in":
+                        sp["alpha"] += dt * sp["speed"]
+                        if sp["alpha"] >= 1.0:
+                            sp["alpha"] = 1.0
+                            sp["state"] = "fade_out"
+                    elif sp["state"] == "fade_out":
+                        sp["alpha"] -= dt * sp["speed"]
+                        if sp["alpha"] <= 0.0:
+                            self.about_sparkles.remove(sp)
+                            continue
+                    
+                    Color(*sp["base_color"], sp["alpha"])
+                    sz = sp["size"]
+                    thick = sz / 10
+                    
+                    if sp["form"] == "plus":
+                        PushMatrix()
+                        Rotate(angle=45, origin=(sp["x"], sp["y"]), axis=(0, 0, 1))
+                        Rectangle(pos=(sp["x"] - sz/2, sp["y"] - thick/2), size=(sz, thick))
+                        Rectangle(pos=(sp["x"] - thick/2, sp["y"] - sz/2), size=(thick, sz))
+                        PopMatrix()
+                    
+                    elif sp["form"] == "star":
+                        Rectangle(pos=(sp["x"] - sz/2, sp["y"] - thick/2), size=(sz, thick))
+                        Rectangle(pos=(sp["x"] - thick/2, sp["y"] - sz/2), size=(thick, sz))
+                        
+                        PushMatrix()
+                        Rotate(angle=45, origin=(sp["x"], sp["y"]), axis=(0, 0, 1))
+                        Rectangle(pos=(sp["x"] - sz/2, sp["y"] - thick/2), size=(sz, thick))
+                        Rectangle(pos=(sp["x"] - thick/2, sp["y"] - sz/2), size=(thick, sz))
                         PopMatrix()
 
 class KivySpiderEntity:
@@ -1498,21 +1418,33 @@ class KivySpiderEntity:
     def __init__(self, settings, sw, sh, animation_folders, zorunlu_klasor=None):
         KivySpiderEntity._id_counter += 1
         self.id = KivySpiderEntity._id_counter
+        
+        safe_settings = settings if (settings and isinstance(settings, dict)) else {}
         app = App.get_running_app()
         
-        if zorunlu_klasor:
+        # --- KESİN TAMİR: Eğer update motoru zorunlu bir klasör belirttiyse, başka hiçbir şart aramadan onu ata ---
+        if zorunlu_klasor is not None:
             self.assigned_folder = zorunlu_klasor
         else:
             filtered1 = app.get_filtered_folders_by_slot(1) if app else ["default"]
             filtered2 = app.get_filtered_folders_by_slot(2) if app else ["default"]
-            is_type2_on = settings.get("type2_enabled", 1) == 1 and len(filtered1) > 1
             
-            if is_type2_on and self.id % 2 == 1:
-                self.assigned_folder = filtered2[settings.get("animation_folder_idx2", 0) % len(filtered2)]
+            # Sınıftaki gerçek klasör sayısını doğrudan kontrol ediyoruz
+            if len(filtered1) <= 1 or safe_settings.get("type2_enabled", 1) == 0:
+                idx1 = safe_settings.get("animation_folder_idx", 0)
+                self.assigned_folder = filtered1[idx1 % len(filtered1)]
             else:
-                self.assigned_folder = filtered1[settings.get("animation_folder_idx", 0) % len(filtered1)]
-                
-        local = settings.get("folder_settings", {}).get(self.assigned_folder, settings)
+                if self.id % 2 == 1:
+                    idx2 = safe_settings.get("animation_folder_idx2", 0)
+                    self.assigned_folder = filtered2[idx2 % len(filtered2)]
+                else:
+                    idx1 = safe_settings.get("animation_folder_idx", 0)
+                    self.assigned_folder = filtered1[idx1 % len(filtered1)]
+            
+        local = safe_settings.get("folder_settings", {}).get(self.assigned_folder, {})
+        if not local:
+            local = safe_settings
+            
         self.size = local.get("creature_size", 120)
         self.canvas_widget = Widget(size_hint=(None, None), size=(self.size, self.size))
         
@@ -1540,11 +1472,12 @@ class KivySpiderEntity:
         self.last_touch_x = self.last_touch_y = 0.0
         self.current_frame = self.anim_time = 0
         self.is_orbiting = False
-        self.visual_offset = local.get("visual_offset", 15) 
+        self.visual_offset = local.get("visual_offset", 15)
         self.is_super = False
         self.super_timer = 0.0
         self.textures = {}
-        self.reload_textures(settings, animation_folders)
+        
+        self.reload_textures(safe_settings, animation_folders)
         self.is_flung = False
         self.touch_history = []  
         self.roll_angle = 0.0   
@@ -1578,74 +1511,64 @@ class KivySpiderEntity:
 
     def reload_textures(self, settings, animation_folders):
         base_dir = os.path.dirname(os.path.abspath(__file__))
-        app = App.get_running_app()
-        if app and hasattr(app, 'directory') and app.directory:
-            base_dir = app.directory
-
+        
+        if self.assigned_folder == "default":
+            self.anim_path_root = os.path.join(base_dir, "anims")
+        else:
+            self.anim_path_root = os.path.join(base_dir, "anims", self.assigned_folder)
+            
         self.total_frames = 0
         self.textures = {}
-        local = settings.get("folder_settings", {}).get(self.assigned_folder, settings)
+        safe_settings = settings if (settings and isinstance(settings, dict)) else {}
+        local = safe_settings.get("folder_settings", {}).get(self.assigned_folder, safe_settings)
         
-        # --- BÜYÜK/KÜÇÜK HARF UYUMLU KLASÖR BULMA MOTORU ---
-        target_dir = os.path.join(base_dir, "anims")
-        
-        if "/" in self.assigned_folder:
-            hab, sf = self.assigned_folder.split("/")
-            if os.path.exists(target_dir):
-                real_hab = next((d for d in os.listdir(target_dir) if d.lower() == hab.lower() and os.path.isdir(os.path.join(target_dir, d))), hab)
-                target_dir = os.path.join(target_dir, real_hab)
-                if os.path.exists(target_dir):
-                    real_sf = next((d for d in os.listdir(target_dir) if d.lower() == sf.lower() and os.path.isdir(os.path.join(target_dir, d))), sf)
-                    target_dir = os.path.join(target_dir, real_sf)
-        elif self.assigned_folder != "default":
-            if os.path.exists(target_dir):
-                real_folder = next((d for d in os.listdir(target_dir) if d.lower() == self.assigned_folder.lower() and os.path.isdir(os.path.join(target_dir, d))), self.assigned_folder)
-                target_dir = os.path.join(target_dir, real_folder)
-            
-        # --- DÜZELTİLEN ALAN: DOSYA ADI ANALİZ MOTORU ---
-        if os.path.exists(target_dir):
-            bg_v = f"bg{local.get('bg_image_idx', 0)}_v.png"
-            bg_h = f"bg{local.get('bg_image_idx', 0)}_h.png"
-            valid_files = []
-            
+        if os.path.exists(self.anim_path_root):
             try:
-                for f_name in os.listdir(target_dir):
-                    full_file_path = os.path.join(target_dir, f_name)
-                    if os.path.isfile(full_file_path) and '.' in f_name:
-                        # rsplit listesinin İLK elemanını (dosya adını) alıp sayısal mı diye bakıyoruz
-                        parts = f_name.rsplit('.', 1)
-                        name_part = parts[0]
-                        
-                        if name_part.isdigit() and f_name.lower() not in [bg_v.lower(), bg_h.lower(), 'bg.png']:
-                            valid_files.append((int(name_part), full_file_path))
-            except Exception as walk_e:
-                print(f"Klasör listeleme hatası: {walk_e}")
-            
-            # Kare numarasına göre (0, 1, 2...) sırala
-            valid_files.sort(key=lambda item: item[0])
-            for num, p in valid_files:
-                try:
-                    core_img = CoreImage(p)
-                    if core_img and core_img.texture:
+                matched_files = []
+                for f in os.listdir(self.anim_path_root):
+                    f_low = f.lower()
+                    if f_low.endswith('.png') and 'bg' not in f_low:
+                        # .png uzantısını güvenli string dilimleme ile kesip saf dosya adını alıyoruz
+                        pure_name = f_low[:-4]
+                        try:
+                            file_num = int(pure_name)
+                            matched_files.append((file_num, f))
+                        except ValueError:
+                            continue
+                                
+                matched_files.sort(key=lambda x: x[0])
+                self.total_frames = len(matched_files)
+                
+                for idx, (num, original_filename) in enumerate(matched_files):
+                    p = os.path.join(self.anim_path_root, original_filename)
+                    core_img = CoreImage(p, nocache=True)
+                    self.textures[idx] = core_img.texture
+            except Exception as e: 
+                print(f"Doku tarama hatası: {e}")
+                self.total_frames = 0
+                
+        # --- EMNİYET KEMERİ (FALLBACK) ---
+        if self.total_frames == 0:
+            try:
+                fallback_files = []
+                fallback_path = os.path.join(base_dir, "anims")
+                if os.path.exists(fallback_path):
+                    for f in os.listdir(fallback_path):
+                        f_low = f.lower()
+                        if f_low.endswith('.png') and 'bg' not in f_low:
+                            pure_name = f_low[:-4]
+                            try:
+                                file_num = int(pure_name)
+                                fallback_files.append((file_num, f))
+                            except ValueError: continue
+                    fallback_files.sort(key=lambda x: x[0])
+                    for idx, (num, original_filename) in enumerate(fallback_files):
+                        p = os.path.join(fallback_path, original_filename)
+                        core_img = CoreImage(p, nocache=True)
                         self.textures[self.total_frames] = core_img.texture
                         self.total_frames += 1
-                except Exception as img_e:
-                    print(f"Doku Yukleme Hatasi ({p}): {img_e}")
-
-        # Acil durum geri dönüşü
-        if self.total_frames == 0:
-            fallback_img = os.path.join(base_dir, "spider.png")
-            if not os.path.exists(fallback_img):
-                fallback_img = os.path.join(base_dir, "icon.png")
-                
-            if os.path.exists(fallback_img):
-                try:
-                    core_img = CoreImage(fallback_img)
-                    if core_img and core_img.texture:
-                        self.textures[0] = core_img.texture
-                        self.total_frames = 1
-                except: pass
-
+            except: pass
+                    
         self.current_frame = 0
         self.visual_offset = local.get("visual_offset", 15)
 
@@ -1674,7 +1597,7 @@ class KivySpiderEntity:
                     self.rect_h = self.size
                     self.rect_w = self.size * oran
             has_texture = True
-
+            
         with self.canvas_widget.canvas:
             PushMatrix()
             self.rot_transform = Rotate(angle=0, axis=(0, 0, 1), origin=self.canvas_widget.center)
@@ -1685,17 +1608,24 @@ class KivySpiderEntity:
                 glow_w = self.rect_w * glow_factor
                 glow_h = self.rect_h * glow_factor
                 Color(1.0, 0.84, 0.0, 0.25)
-                self.super_glow = Ellipse(pos=(self.x + (self.size - glow_w)/2, self.y + (self.size - glow_h)/2), size=(glow_w, glow_h))
-                
+                self.super_glow = Ellipse(
+                    pos=(self.x + (self.size - glow_w)/2, self.y + (self.size - glow_h)/2), 
+                    size=(glow_w, glow_h)
+                )
             if has_texture:
                 Color(1.0, 1.0, 1.0, 1.0)
-                self.rect_mesh = Rectangle(texture=self.textures[0], pos=(self.x + (self.size - self.rect_w)/2, self.y + (self.size - self.rect_h)/2), size=(self.rect_w, self.rect_h))
+                self.rect_mesh = Rectangle(
+                    texture=self.textures.get(self.current_frame), 
+                    pos=(self.x + (self.size - self.rect_w)/2, self.y + (self.size - self.rect_h)/2), 
+                    size=(self.rect_w, self.rect_h)
+                )
             else:
-                # GÖRSEL BULUNAMAZSA: Ekranda görünmesi için belirgin yeşil bir daire çiziyoruz
                 Color(0.2, 0.7, 0.3, 1.0)
-                self.rect_mesh = Ellipse(pos=(self.x + (self.size - self.rect_w)/2, self.y + (self.size - self.rect_h)/2), size=(self.rect_w, self.rect_h))
+                self.rect_mesh = Ellipse(
+                    pos=(self.x + (self.size - self.rect_w)/2, self.y + (self.size - self.rect_h)/2), 
+                    size=(self.rect_w, self.rect_h)
+                )
             PopMatrix()
-            
         self.canvas_widget.unbind(on_touch_down=self.on_touch_down, on_touch_move=self.on_touch_move, on_touch_up=self.on_touch_up)
         self.canvas_widget.bind(on_touch_down=self.on_touch_down, on_touch_move=self.on_touch_move, on_touch_up=self.on_touch_up)
 
@@ -1708,6 +1638,7 @@ class KivySpiderEntity:
         self.size = new_size
         self.canvas_widget.size = (self.size, self.size)
         self.setup_canvas()
+
     def on_touch_down(self, widget, touch):
         if widget.collide_point(*touch.pos):
             self.touch_history.clear()
@@ -1724,7 +1655,7 @@ class KivySpiderEntity:
             self.last_touch_y = touch.y
             return True
         return False
-
+        
     def on_touch_move(self, widget, touch):
         if self.is_grabbed:
             self.touch_history.append((time.time(), touch.x, touch.y))
@@ -1743,8 +1674,10 @@ class KivySpiderEntity:
                 t2, x2, y2 = self.touch_history[-1]
                 dt = t2 - t1
                 if dt > 0:
-                    self.vx = ((x2 - x1) / dt) * 1.5
-                    self.vy = ((y2 - y1) / dt) * 1.5
+                    self.vx = (x2 - x1) / dt
+                    self.vy = (y2 - y1) / dt
+                    self.vx *= 1.5
+                    self.vy *= 1.5
                     spd = math.sqrt(self.vx**2 + self.vy**2)
                     if spd > 4000.0:
                         self.vx = (self.vx / spd) * 4000.0
@@ -1759,19 +1692,21 @@ class KivySpiderEntity:
     def update_entity(self, dt, sw, sh, settings, walls, spider_list):
         if self.is_grabbed: return
         self.anim_time += dt
+        
         if abs(self.roll_speed) > 0.1:
             self.roll_angle += self.roll_speed * dt
             self.roll_speed *= 0.5
-        else:
-            self.roll_speed = 0.0
+        else: self.roll_speed = 0.0
 
         if self.is_super:
             self.super_timer -= dt
             if self.super_timer <= 0: 
                 self.is_super = False
                 self.setup_canvas()
+
         app = App.get_running_app()
         local = settings.get("folder_settings", {}).get(self.assigned_folder, settings)
+
         if self.is_super:
             mult = local.get("super_speed_mult", 3.0) 
             base_spd = local.get("move_speed", 4) * 30 * mult
@@ -1784,11 +1719,11 @@ class KivySpiderEntity:
                 self.vx *= 0.975
                 self.vy *= 0.975
                 self.angle = math.atan2(self.vy, self.vx) % (2 * math.pi)
-            else: 
-                self.is_flung = False
+            else: self.is_flung = False
         else:
             self.vx = math.cos(self.angle) * base_spd
             self.vy = math.sin(self.angle) * base_spd
+
         if self.is_orbiting:
             big_wall_exists = any(w.get("is_big", False) for w in walls)
             if not big_wall_exists:
@@ -1852,33 +1787,23 @@ class KivySpiderEntity:
             return
 
         n_x, n_y, r_sz = self.x + (self.vx * dt), self.y + (self.vy * dt), self.size - (self.visual_offset * 2)
+
         if walls:
             for i in range(len(walls) - 1, -1, -1):
                 r = walls[i]["rect"]
                 if (n_x + self.visual_offset < r[0] + r[2] and n_x + self.visual_offset + r_sz > r[0] and n_y + self.visual_offset < r[1] + r[3] and n_y + self.visual_offset + r_sz > r[1]):
-                    # --- SÜPER MODDA ENGELE ÇARPMA DURUMU ---
                     if self.is_super: 
-                        # Eğer çarptığımız engel ortadaki büyük engelse, ana uygulamadaki durumları sıfırla
-                        if walls[i].get("is_big", False) and app:
-                            app.big_wall_active = False
-                            app.big_wall_pending_destroy = False
-                            app.big_wall_timer = 0.0
-                            # Yörüngede dönen diğer yaratıkları serbest bırak
+                        if walls[i].get("is_big", False):
+                            if app:
+                                app.big_wall_active = False
+                                app.big_wall_pending_destroy = False
+                                app.big_wall_timer = 0.0
                             for s in spider_list:
-                                if s.is_orbiting: 
-                                    s.is_orbiting = False
-                                    s.angle = random.uniform(0, 2 * math.pi)
-                        
-                        # Parçacık efektini başlat ve duvarı listeden silerek patlat
-                        if app and hasattr(app, 'particle_emitter'):
-                            app.particle_emitter.spawn_shattered_wall(r, walls[i]["color"], self.size)
-                        
+                                if s.is_orbiting: s.is_orbiting = False; s.angle = random.uniform(0, 2 * math.pi)
+                        app.particle_emitter.spawn_shattered_wall(r, walls[i]["color"], self.size)
                         walls.pop(i)
-                        if app and hasattr(app, 'redraw_walls'):
-                            app.redraw_walls()
+                        app.redraw_walls()
                         continue
-                    
-                    # --- NORMAL MODDA ENGELE ÇARPMA (YANSIMA) DURUMU ---
                     if min(self.x + self.visual_offset + r_sz - r[0], r[0] + r[2] - (self.x + self.visual_offset)) < min(self.y + self.visual_offset + r_sz - r[1], r[1] + r[3] - (self.y + self.visual_offset)):
                         self.vx = -self.vx
                         n_x = r[0] - self.size + self.visual_offset - 2 if self.x + self.size/2 < r[0] + r[2]/2 else r[0] + r[2] - self.visual_offset + 2
@@ -1887,29 +1812,30 @@ class KivySpiderEntity:
                         n_y = r[1] - self.size + self.visual_offset - 2 if self.y + self.size/2 < r[1] + r[3]/2 else r[1] + r[3] - self.visual_offset + 2
                     self.angle = (math.atan2(self.vy, self.vx) + random.uniform(-0.1, 0.1)) % (2 * math.pi)
                     bounce_speed = max(base_spd, math.sqrt(self.vx**2 + self.vy**2) * 0.85) 
-                    self.vx = math.cos(self.angle) * bounce_speed
-                    self.vy = math.sin(self.angle) * bounce_speed
+                    self.vx, self.vy = math.cos(self.angle) * bounce_speed, math.sin(self.angle) * bounce_speed
                     self.x, self.y = n_x, n_y
                     self.finalize_transforms(settings)
                     return
-
+                    
         if self.is_super and app and hasattr(app, 'particle_emitter'):
             glow_sz = getattr(self, 'super_glow_size', self.size * 1.25)
             app.particle_emitter.spawn_super_trail(self.x, self.y, self.size, [1.0, 0.84, 0.0], glow_size=glow_sz)
 
         if app and app.gold_orb:
-            orb_dist = math.sqrt(((app.gold_orb["x"] + app.gold_orb["size"]/2) - (n_x + self.size/2))**2 + ((app.gold_orb["y"] + app.gold_orb["size"]/2) - (n_y + self.size/2))**2)
-            if orb_dist < ((self.size * 0.35) + (app.gold_orb["size"] / 2)):
+            self_center_x, self_center_y = n_x + self.size / 2, n_y + self.size / 2
+            orb_center_x, orb_center_y = app.gold_orb["x"] + app.gold_orb["size"] / 2, app.gold_orb["y"] + app.gold_orb["size"] / 2
+            if math.sqrt((orb_center_x - self_center_x)**2 + (orb_center_y - self_center_y)**2) < (self.size * 0.35) + (app.gold_orb["size"] / 2):
                 self.activate_super_power(15.0)  
-                app.gold_orb = None  
-                app.gold_orb_timer = 0.0
+                app.gold_orb = None; app.gold_orb_timer = 0.0
                 app.gold_orb_spawn_time = random.uniform(20.0, 40.0) 
                 app.gold_orb_layer.canvas.clear()  
+
         if spider_list:
             for other in list(spider_list):
                 if not other or other.id == self.id or other.is_orbiting or other.is_grabbed: continue
-                dx = (other.x + other.size/2) - (n_x + self.size/2)
-                dy = (other.y + other.size/2) - (n_y + self.size/2)
+                self_center_x, self_center_y = n_x + self.size / 2, n_y + self.size / 2
+                other_center_x, other_center_y = other.x + other.size / 2, other.y + other.size / 2
+                dx, dy = other_center_x - self_center_x, other_center_y - self_center_y
                 distance = math.sqrt(dx**2 + dy**2)
                 min_distance = (self.size * 0.35 + other.size * 0.35) - (self.visual_offset * 0.5 + other.visual_offset * 0.5)
                 
@@ -1920,41 +1846,35 @@ class KivySpiderEntity:
                     if self.is_super and not other.is_super:
                         try: 
                             if app and hasattr(app, 'particle_emitter'): app.particle_emitter.spawn_shattered_wall([other.x, other.y, other.size, other.size], [random.random(), random.random(), random.random(), 1.0], self.size)
-                            other.canvas_widget.canvas.clear()
-                            app.creature_layer.remove_widget(other.canvas_widget)
+                            other.canvas_widget.canvas.clear(); app.creature_layer.remove_widget(other.canvas_widget)
                             if other in spider_list: spider_list.remove(other)
                         except: pass
                         continue
                     elif not self.is_super and other.is_super:
                         try: 
                             if app and hasattr(app, 'particle_emitter'): app.particle_emitter.spawn_shattered_wall([self.x, self.y, self.size, self.size], [random.random(), random.random(), random.random(), 1.0], other.size)
-                            self.canvas_widget.canvas.clear()
-                            app.creature_layer.remove_widget(self.canvas_widget)
+                            self.canvas_widget.canvas.clear(); app.creature_layer.remove_widget(self.canvas_widget)
                             if self in spider_list: spider_list.remove(self)
                         except: pass
                         return
+                        
                     if other.id in self._active_passings or self.id in other._active_passings:
                         self.roll_speed = self.roll_angle = other.roll_speed = other.roll_angle = 0.0
                         continue
+
                     if random.random() < 0.50:
-                        self._active_passings.add(other.id)
-                        other._active_passings.add(self.id)
-                        if app and hasattr(app, 'creature_layer'):
-                            try: app.creature_layer.remove_widget(self.canvas_widget); app.creature_layer.add_widget(self.canvas_widget)
-                            except: pass
+                        self._active_passings.add(other.id); other._active_passings.add(self.id)
                         continue 
 
                     nx_vec, ny_vec = dx / distance, dy / distance
                     tx_vec, ty_vec = -ny_vec, nx_vec
-                    v1n = self.vx * nx_vec + self.vy * ny_vec
-                    v1t = self.vx * tx_vec + self.vy * ty_vec
-                    v2n = other.vx * nx_vec + other.vy * ny_vec
-                    v2t = other.vx * tx_vec + other.vy * ty_vec
+                    v1n, v1t = self.vx * nx_vec + self.vy * ny_vec, self.vx * tx_vec + self.vy * ty_vec
+                    v2n, v2t = other.vx * nx_vec + other.vy * ny_vec, other.vx * tx_vec + other.vy * ty_vec
                     
                     if self.is_flung: other.is_flung = True
                     elif other.is_flung: self.is_flung = True
                     
-                    self.vx, self.vy = v2n * nx_vec + v1t * tx_vec, v2n * ny_vec + v1t * ty_vec
+                    self.vx, self.vy = v2n * nx_vec + v1t * tx_vec, v2n * ny_vec + v1t * tx_vec
                     other.vx, other.vy = v1n * nx_vec + v2t * tx_vec, v1n * ny_vec + v2t * ty_vec
                     self.angle, other.angle = math.atan2(self.vy, self.vx) % (2 * math.pi), math.atan2(other.vy, other.vx) % (2 * math.pi)
                     
@@ -1964,16 +1884,15 @@ class KivySpiderEntity:
                     other.roll_speed = roll_intensity if rel_vel_n > 0 else -roll_intensity
                     
                     overlap = min_distance - distance
-                    n_x -= (overlap / 2) * nx_vec
-                    n_y -= (overlap / 2) * ny_vec
-                    other.x += (overlap / 2) * nx_vec
-                    other.y += (overlap / 2) * ny_vec
+                    n_x -= (overlap / 2) * nx_vec; n_y -= (overlap / 2) * ny_vec
+                    other.x += (overlap / 2) * nx_vec; other.y += (overlap / 2) * ny_vec
                     self.x, self.y = n_x, n_y
                     self.finalize_transforms(settings)
                     return
                 else:
                     if hasattr(self, '_active_passings') and other.id in self._active_passings: self._active_passings.remove(other.id)
                     if hasattr(other, '_active_passings') and self.id in other._active_passings: other._active_passings.remove(self.id)
+
         self.x, self.y = n_x, n_y
         sf_w, sf_h = (sw if sw > 100 else 1080), (sh if sh > 100 else 1920)
         if (self.x + self.size < -50 or self.x > sf_w + 50 or self.y + self.size < -50 or self.y > sf_h + 50): 
@@ -1984,6 +1903,7 @@ class KivySpiderEntity:
             elif edge == 3: self.x = random.randint(0, max(1, sf_w - self.size)); self.y = sf_h - 10
             self.angle = random.uniform(0, 2 * math.pi)
             self.vx, self.vy = math.cos(self.angle) * base_spd, math.sin(self.angle) * base_spd
+            
         if abs(self.roll_speed) > 1.0:
             self.roll_angle += self.roll_speed * dt
             self.roll_speed *= 0.5 
@@ -1992,7 +1912,6 @@ class KivySpiderEntity:
             if abs(self.roll_angle) > 0.1: self.roll_angle += (0.0 - self.roll_angle) * (dt * 8.0)
             else: self.roll_angle = 0.0
         self.finalize_transforms(settings)
-
     def finalize_transforms(self, settings=None):
         app = App.get_running_app()
         st = settings if (settings and isinstance(settings, dict)) else (app.settings if app else {})
@@ -2034,7 +1953,7 @@ class KivySpiderEntity:
                 
             # --- KRİTİK: TERS YÖNDE DÖNÜLÜYORSA AYNALAMA (FLIP) YAP ---
             if hasattr(self, 'orbit_direction') and self.orbit_direction == -1:
-                fx = -fx
+                fy = -fy
         else:
             if facing_mode == 0:    
                 t_ang = move_deg
