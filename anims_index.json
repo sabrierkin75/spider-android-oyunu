@@ -147,6 +147,15 @@
             "bg_h.png",
             "bg_v.png"
         ],
+        "HELIKOPTER2": [
+            "0.png",
+            "1.png",
+            "2.png",
+            "bg_h.png",
+            "bg_v.png",
+            "bg1_h.png",
+            "bg1_v.png"
+        ],
         "UCAK": [
             "0.png",
             "1.png",
