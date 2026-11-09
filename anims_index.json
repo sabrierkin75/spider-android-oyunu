@@ -482,13 +482,7 @@
             "6.png",
             "7.png",
             "8.png",
-            "9.png",
-            "bg1_h.png",
-            "bg1_v.png",
-            "bg2_h.png",
-            "bg2_v.png",
-            "bg_h.png",
-            "bg_v.png"
+            "9.png"
         ],
         "JUPITER": [
             "0.png",
@@ -690,13 +684,7 @@
             "6.png",
             "7.png",
             "8.png",
-            "9.png",
-            "bg1_h.png",
-            "bg1_v.png",
-            "bg2_h.png",
-            "bg2_v.png",
-            "bg_h.png",
-            "bg_v.png"
+            "9.png"
         ],
         "MERKUR": [
             "0.png",
@@ -1078,26 +1066,14 @@
             "1.png",
             "2.png",
             "3.png",
-            "4.png",
-            "bg1_h.png",
-            "bg1_v.png",
-            "bg2_h.png",
-            "bg2_v.png",
-            "bg3_h.png",
-            "bg3_v.png",
-            "bg_h.png",
-            "bg_v.png"
+            "4.png"
         ],
         "TERSROKET": [
             "0.png",
             "1.png",
             "2.png",
             "3.png",
-            "4.png",
-            "bg1_h.png",
-            "bg1_v.png",
-            "bg_h.png",
-            "bg_v.png"
+            "4.png"
         ],
         "UFO": [
             "0.png",
@@ -1500,7 +1476,16 @@
             "88.png",
             "89.png",
             "9.png"
-        ]
+        ],
+       "ORTAK_BG":
+           [ "bg1_h.png",
+            "bg1_v.png",
+            "bg2_h.png",
+            "bg2_v.png",
+            "bg3_h.png",
+            "bg3_v.png",
+            "bg_h.png",
+            "bg_v.png"]
     },
     "diger": {
         "ARI": [
