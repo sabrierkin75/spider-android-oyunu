@@ -1482,37 +1482,62 @@ class CreatureOverlayApp(App):
         if hasattr(self, 'particle_emitter'):
             self.particle_emitter.update_particles(dt)
 
-            # Tam olarak buraya, aşağıdaki gibi yerleştirilecek:
-            if getattr(self, 'sparkle_layer', None) is not None:
-                self.sparkle_layer.canvas.clear()
-                with self.sparkle_layer.canvas:
-                    for sp in list(self.about_sparkles):
-                        if sp["state"] == "fade_in":
-                            sp["alpha"] += dt * sp["speed"]
-                            if sp["alpha"] >= 1.0:
-                                sp["alpha"] = 1.0
-                                sp["state"] = "fade_out"
-                        elif sp["state"] == "fade_out":
-                            sp["alpha"] -= dt * sp["speed"]
-                            if sp["alpha"] <= 0.0:
-                                self.about_sparkles.remove(sp)
-                                continue
-                        Color(*sp["base_color"], sp["alpha"])
-                        sz = sp["size"]
-                        thick = sz / 10  
-                        if sp["form"] == "plus":
-                            PushMatrix()
-                            Rotate(angle=45, origin=(sp["x"], sp["y"]), axis=(0, 0, 1))
-                            Rectangle(pos=(sp["x"] - sz/2, sp["y"] - thick/2), size=(sz, thick))
-                            Rectangle(pos=(sp["x"] - thick/2, sp["y"] - sz/2), size=(thick, sz))
-                            PopMatrix()
-                        elif sp["form"] == "star":
-                            Rectangle(pos=(sp["x"] - sz/2, sp["y"] - thick/2), size=(sz, thick))
-                            Rectangle(pos=(sp["x"] - thick/2, sp["y"] - sz/2), size=(thick, sz))
-                            PushMatrix()
-                            Rotate(angle=45, origin=(sp["x"], sp["y"]), axis=(0, 0, 1))
-                            Rectangle(pos=(sp["x"] - sz/2, sp["y"] - thick/2), size=(sz, thick))
-                            Rectangle(pos=(sp["x"] - thick/2, sp["y"] - sz/2), size=(thick, sz))
+        # --- HAKKINDA SAYFASI IŞILTI (SPARKLE) ANİMASYONLARI ---
+        if self.current_view == "about" and getattr(self, 'sparkle_layer', None) is not None:
+            # 1. Yeni ışıltı üretme (Spawn)
+            self.sparkle_spawn_timer += dt
+            if self.sparkle_spawn_timer >= 0.15 and len(self.about_sparkles) < 35:
+                self.sparkle_spawn_timer = 0.0
+                sx = random.uniform(self.sparkle_layer.x + 15, self.sparkle_layer.right - 15)
+                sy = random.uniform(self.sparkle_layer.y + 15, self.sparkle_layer.top - 15)
+                self.about_sparkles.append({
+                    "x": sx,
+                    "y": sy,
+                    "size": random.uniform(14, 32),
+                    "alpha": 0.0,
+                    "state": "fade_in",
+                    "speed": random.uniform(1.2, 2.5),
+                    "form": random.choice(["plus", "star"]),
+                    "base_color": random.choice([
+                        (1.0, 0.9, 0.3),   # Altın sarısı
+                        (0.3, 0.9, 0.6),   # Zümrüt yeşili
+                        (0.4, 0.8, 1.0),   # Buz mavisi
+                        (1.0, 1.0, 1.0)    # Parlak beyaz
+                    ])
+                })
+
+            # 2. Mevcut ışıltıları güncelleme ve çizme
+            self.sparkle_layer.canvas.clear()
+            with self.sparkle_layer.canvas:
+                for sp in list(self.about_sparkles):
+                    if sp["state"] == "fade_in":
+                        sp["alpha"] += dt * sp["speed"]
+                        if sp["alpha"] >= 1.0:
+                            sp["alpha"] = 1.0
+                            sp["state"] = "fade_out"
+                    elif sp["state"] == "fade_out":
+                        sp["alpha"] -= dt * sp["speed"]
+                        if sp["alpha"] <= 0.0:
+                            self.about_sparkles.remove(sp)
+                            continue
+
+                    Color(*sp["base_color"], sp["alpha"])
+                    sz = sp["size"]
+                    thick = sz / 10.0
+
+                    if sp["form"] == "plus":
+                        PushMatrix()
+                        Rotate(angle=45, origin=(sp["x"], sp["y"]), axis=(0, 0, 1))
+                        Rectangle(pos=(sp["x"] - sz / 2, sp["y"] - thick / 2), size=(sz, thick))
+                        Rectangle(pos=(sp["x"] - thick / 2, sp["y"] - sz / 2), size=(thick, sz))
+                        PopMatrix()
+                    elif sp["form"] == "star":
+                        Rectangle(pos=(sp["x"] - sz / 2, sp["y"] - thick / 2), size=(sz, thick))
+                        Rectangle(pos=(sp["x"] - thick / 2, sp["y"] - sz / 2), size=(thick, sz))
+                        PushMatrix()
+                        Rotate(angle=45, origin=(sp["x"], sp["y"]), axis=(0, 0, 1))
+                        Rectangle(pos=(sp["x"] - sz / 2, sp["y"] - thick / 2), size=(sz, thick))
+                        Rectangle(pos=(sp["x"] - thick / 2, sp["y"] - sz / 2), size=(thick, sz))
                         PopMatrix()
 
 class KivySpiderEntity:
