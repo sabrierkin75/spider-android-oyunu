@@ -1,4 +1,4 @@
-name: Kivy Android APK Paketleyici
+name: Kivy Avcı APK Paketleyici
 
 on:
   workflow_dispatch:
