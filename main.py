@@ -620,6 +620,10 @@ class SpiderGame(Widget):
                     Line(points=[self.sprite_x + self.sprite_w/2, self.sprite_y + self.sprite_h/2, s.x, s.y], width=2)
                 Color(*s.renk)
                 Ellipse(pos=(s.x - s.boyut, s.y - s.boyut), size=(s.boyut * 2, s.boyut * 2))
+                
+                # Etraflarına beyaz çember çizimi
+                Color(1, 1, 1, 0.9)
+                Line(circle=(s.x, s.y, s.boyut + 3), width=1.5)
             kalan_p = []
             for p in self.parcaciklar:
                 p.guncelle(dt)
@@ -637,10 +641,22 @@ class SpiderGame(Widget):
                 elif mevcut_yon == 'SOL': sapma_acisi = 180
                 elif mevcut_yon == 'ASAGI': sapma_acisi = 90
 
+                # --- TEPE TAKLA ENGELLEME HESABI ---
+                cal_ang = (self.current_angle + sapma_acisi) % 360
+                if 90 < cal_ang < 270:
+                    fx = -1
+                    final_angle = cal_ang - 180
+                else:
+                    fx = 1
+                    final_angle = cal_ang
+
                 PushMatrix()
                 pivot_x = self.sprite_x + self.sprite_w / 2
                 pivot_y = self.sprite_y + self.sprite_h / 2
-                Rotate(angle=self.current_angle + sapma_acisi, origin=(pivot_x, pivot_y))
+                Rotate(angle=final_angle, origin=(pivot_x, pivot_y))
+                # Aynalama için Scale komutunu ekliyoruz (en üste Scale import edilmelidir)
+                from kivy.graphics.context_instructions import Scale
+                Scale(x=fx, y=1, origin=(pivot_x, pivot_y))
 
                 aktif_resim = self.base_frames[self.current_frame_index] if self.base_frames else "orumcek.png"
                 aktif_resim_yol = os.path.join(current_dir, aktif_resim)
@@ -648,10 +664,63 @@ class SpiderGame(Widget):
                     Color(1, 1, 1, 1)
                     Rectangle(source=aktif_resim_yol if os.path.exists(aktif_resim_yol) else aktif_resim, pos=(self.sprite_x, self.sprite_y), size=(self.sprite_w, self.sprite_h))
                 else:
+                    cx = self.sprite_x + self.sprite_w * 0.5
+                    cy = self.sprite_y + self.sprite_h * 0.5
+                    
+                    # Hareket ediyorsa bacak sallanma açısını hesapla
+                    hareket_halinde = (
+                        self.is_moving or 
+                        self.is_dragging or 
+                        math.hypot(self.inertia_vx, self.inertia_vy) > 0.2
+                    )
+                    adim_fazi = (current_time * (global_settings['speed'] * 3.5)) if hareket_halinde else 0.0
+
+                    # 1. SEKİZ ADET EKLEMLİ BACAK (4 Üst, 4 Alt)
+                    Color(0.85, 0.22, 0.18, 1)
+                    bacak_x_oranlari = [-0.22, -0.07, 0.08, 0.22]
+                    for i, x_oran in enumerate(bacak_x_oranlari):
+                        # Çapraz bacakların zıt yönde hareket etmesi için faz kaydırma
+                        sallanti = math.sin(adim_fazi + (i * math.pi)) * (self.sprite_w * 0.08) if hareket_halinde else 0.0
+                        
+                        kok_x = cx + self.sprite_w * x_oran
+                        diz_x = cx + self.sprite_w * (x_oran * 1.4) + sallanti
+                        uc_x = cx + self.sprite_w * (x_oran * 1.8) - (sallanti * 0.5)
+
+                        # Üst taraftaki 4 bacak
+                        Line(points=[
+                            kok_x, cy + self.sprite_h * 0.22,
+                            diz_x, cy + self.sprite_h * 0.46,
+                            uc_x,  cy + self.sprite_h * 0.56
+                        ], width=2.2)
+
+                        # Alt taraftaki 4 bacak
+                        Line(points=[
+                            kok_x, cy - self.sprite_h * 0.22,
+                            diz_x, cy - self.sprite_h * 0.46,
+                            uc_x,  cy - self.sprite_h * 0.56
+                        ], width=2.2)
+
+                    # 2. GÖVDE (Kafa ve Karın)
                     Color(231/255.0, 76/255.0, 60/255.0, 1)
-                    Ellipse(pos=(self.sprite_x, self.sprite_y), size=(self.sprite_w, self.sprite_h))
+                    # Arka gövde (Karın)
+                    Ellipse(
+                        pos=(self.sprite_x + self.sprite_w * 0.14, self.sprite_y + self.sprite_h * 0.22),
+                        size=(self.sprite_w * 0.48, self.sprite_h * 0.56)
+                    )
+                    # Ön gövde (Kafa)
+                    Ellipse(
+                        pos=(self.sprite_x + self.sprite_w * 0.52, self.sprite_y + self.sprite_h * 0.28),
+                        size=(self.sprite_w * 0.36, self.sprite_h * 0.44)
+                    )
+
+                    # 3. İKİ ADET GÖZ VE GÖZ BEBEKLERİ
                     Color(1, 1, 1, 1)
-                    Ellipse(pos=(self.sprite_x + self.sprite_w * 0.7, self.sprite_y + self.sprite_h * 0.4), size=(self.sprite_w * 0.2, self.sprite_h * 0.2))
+                    Ellipse(pos=(self.sprite_x + self.sprite_w * 0.72, self.sprite_y + self.sprite_h * 0.53), size=(self.sprite_w * 0.13, self.sprite_h * 0.13))
+                    Ellipse(pos=(self.sprite_x + self.sprite_w * 0.72, self.sprite_y + self.sprite_h * 0.34), size=(self.sprite_w * 0.13, self.sprite_h * 0.13))
+                    
+                    Color(0.1, 0.1, 0.1, 1)
+                    Ellipse(pos=(self.sprite_x + self.sprite_w * 0.78, self.sprite_y + self.sprite_h * 0.56), size=(self.sprite_w * 0.06, self.sprite_h * 0.06))
+                    Ellipse(pos=(self.sprite_x + self.sprite_w * 0.78, self.sprite_y + self.sprite_h * 0.37), size=(self.sprite_w * 0.06, self.sprite_h * 0.06))
                 PopMatrix()
 
             if self.ruh_aktif:
@@ -953,11 +1022,4 @@ class OrumcekOyunApp(App):
         self.oyun_ekrani.ui_panel_acik = not self.oyun_ekrani.ui_panel_acik
 
 if __name__ == '__main__':
-    try:
-        OrumcekOyunApp().run()
-    except Exception as e:
-        import traceback
-        hata_detayi = traceback.format_exc()
-        print(hata_detayi)
-        hata_yaz(f"KRİTİK ÇÖKME:\n{hata_detayi}")
-        input("Çıkmak için Enter tuşuna basın...")
+    OrumcekOyunApp().run()
