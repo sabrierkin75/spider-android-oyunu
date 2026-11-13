@@ -45,5 +45,5 @@ jobs:
     - name: Üretilen APK Dosyasını artifact Olarak Yükle
       uses: actions/upload-artifact@v4
       with:
-        name: Spider-Android-Uygulaması
+        name: Hunter-Spider-Uygulaması
         path: bin/*.apk
