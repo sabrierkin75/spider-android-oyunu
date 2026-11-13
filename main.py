@@ -869,7 +869,7 @@ class OrumcekOyunApp(App):
 
         for i, (txt, fn) in enumerate(buton_verileri):
             # İlk butonu 0.84 yerine 0.83'den başlatıp aralıkları 0.068 yapıyoruz
-            y_pos = 0.83 - (i * 0.068)
+            y_pos = 0.828 - (i * 0.068)
             btn = Button(
                 text=txt, font_size='14sp', bold=True,
                 size_hint=(None, 0.055), padding=(20, 0),
