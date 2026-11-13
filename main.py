@@ -1,2316 +1,963 @@
 # -*- coding: utf-8 -*-
-import os
-import sys
-import random
-import json
-import math
-import time
-
 from kivy.app import App
+from kivy.uix.widget import Widget
+from kivy.clock import Clock
+from kivy.core.window import Window
+from kivy.graphics import Color, Rectangle, Line, Ellipse
+from kivy.graphics.context_instructions import PushMatrix, PopMatrix, Rotate
 from kivy.uix.floatlayout import FloatLayout
 from kivy.uix.button import Button
 from kivy.uix.label import Label
-from kivy.uix.widget import Widget
-from kivy.uix.scrollview import ScrollView
-from kivy.clock import Clock
-from kivy.core.window import Window
-from kivy.core.image import Image as CoreImage
-from kivy.graphics import Color, Rectangle, PushMatrix, PopMatrix, Scale, Rotate, Mesh, RoundedRectangle, Ellipse
-from kivy.animation import Animation
-from kivy.config import Config
-# Ekran yönü filtresini kapatarak işletim sistemine (Android'e) bırakır
-Config.set('graphics', 'resizable', '1') 
+import random
+import math
+import time
+import os
+import json
 
-# Android telefonda OpenGL motorunun kilitlenmemesi için opak yapıyoruz.
-Window.clearcolor = (0.12, 0.12, 0.12, 1)
+current_dir = os.path.dirname(os.path.abspath(__file__))
 
-# --- ANDROID ARKA IŞIK VE TAM EKRAN (SYSTEMUI) KONTROL ALTYAPISI ---
+def hata_yaz(mesaj):
+    try:
+        with open(os.path.join(current_dir, "hata_kaydi.txt"), "a", encoding="utf-8") as f:
+            f.write(f"[{time.strftime('%H:%M:%S')}] {mesaj}\n")
+    except:
+        pass
+
+global_settings = {
+    'animation': 'spider',
+    'min_period': 1.0,
+    'max_period': 4.0,
+    'base_delay': 0.18,
+    'speed': 4,
+    'sprite_facing_direction': 'SAG',
+    'bg_image_name': 'arkaplan.png',
+    'scale_factor': 1.0
+}
+
+speed_level = 1.0
+
 try:
-    from jnius import autoclass
-    from android.runnable import run_on_ui_thread
-    activity = autoclass('org.kivy.android.PythonActivity').mActivity
-    WindowManager = autoclass('android.view.WindowManager$LayoutParams')
+    ayar_yolu = os.path.join(current_dir, "oyun_ayarlari.json")
+    if os.path.exists(ayar_yolu):
+        with open(ayar_yolu, "r", encoding="utf-8") as f:
+            tum_hafiza = json.load(f)
+            if 'aktif_animasyon' in tum_hafiza:
+                global_settings['animation'] = tum_hafiza['aktif_animasyon']
+            aktif_anim_adi = global_settings['animation']
+            if 'animasyonlar' in tum_hafiza and aktif_anim_adi in tum_hafiza['animasyonlar']:
+                global_settings.update(tum_hafiza['animasyonlar'][aktif_anim_adi])
+except Exception as e:
+    hata_yaz(f"JSON Yukleme Hatasi: {str(e)}")
+
+MIN_SPEED_LIMIT = 1
+MAX_SPEED_LIMIT = 25
+global_scale_factor = global_settings.get('scale_factor', 1.0)
+MIN_SCALE_LIMIT = 0.4
+MAX_SCALE_LIMIT = 2.5
+
+def get_available_animations():
+    anims_path = os.path.join(current_dir, "anims")
+    if not os.path.exists(anims_path):
+        return [global_settings['animation']]
+    try:
+        subdirs = [d for d in os.listdir(anims_path) if os.path.isdir(os.path.join(anims_path, d))]
+        return subdirs if subdirs else [global_settings['animation']]
+    except Exception as e:
+        hata_yaz(f'Animasyon listesi alınamadı: {str(e)}')
+        return [global_settings['animation']]
+
+available_anims = get_available_animations()
+current_anim_index = 0
+if global_settings['animation'] in available_anims:
+    current_anim_index = available_anims.index(global_settings['animation'])
+
+def load_masked_png_frames(anim_name):
+    frames = []
+    anim_path = os.path.join(current_dir, "anims", anim_name)
+    if not os.path.exists(anim_path):
+        return ["orumcek.png"]
+    try:
+        all_files = os.listdir(anim_path)
+    except:
+        return ["orumcek.png"]
     
-    # --- UYGULAMAYI TAM EKRANA ZORLAYAN SYSTEMUI AYARI ---
-    View = autoclass('android.view.View')
-    @run_on_ui_thread
-    def force_fullscreen():
-        window = activity.getWindow()
-        window.getDecorView().setSystemUiVisibility(
-            View.SYSTEM_UI_FLAG_LAYOUT_STABLE |
-            View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION |
-            View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN |
-            View.SYSTEM_UI_FLAG_HIDE_NAVIGATION |
-            View.SYSTEM_UI_FLAG_FULLSCREEN |
-            View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
-        )
-    ANDROID_AVAILABLE = True
-except ImportError:
-    ANDROID_AVAILABLE = False
+    color_files = sorted([f for f in all_files if f.endswith('.png') and not f.endswith('_m.png')])
+    for file_name in color_files:
+        frames.append(os.path.join("anims", anim_name, file_name))
+    
+    return frames if frames else ["orumcek.png"]
 
-class ParticleEmitter:
-    """Yok olan duvarların, süper mod efektlerinin ve yıldız parçacıklarının yöneticisi."""
-    def __init__(self, canvas):
-        self.canvas = canvas
-        self.particles = []
-
-    def spawn_shattered_wall(self, rect, color, creature_size=120):
-        x, y, w, h = rect
-        effect_type = random.choice([0, 1, 2])
-        num_particles = random.randint(30, 50)
-        size_factor = max(1.0, creature_size / 120.0)
-        
-        for _ in range(num_particles):
-            p_x = random.uniform(x, x + w)
-            p_y = random.uniform(y, y + h)
-            angle = random.uniform(0, 2 * math.pi)
-            speed = random.uniform(50, 250) * size_factor
-            vx = math.cos(angle) * speed
-            vy = math.sin(angle) * speed
+def ayari_animasyona_ozel_kaydet():
+    try:
+        ayar_yolu = os.path.join(current_dir, "oyun_ayarlari.json")
+        tum_json_hafiza = {}
+        if os.path.exists(ayar_yolu):
+            try:
+                with open(ayar_yolu, "r", encoding="utf-8") as f:
+                    tum_json_hafiza = json.load(f)
+            except:
+                tum_json_hafiza = {}
+        if 'animasyonlar' not in tum_json_hafiza:
+            tum_json_hafiza['animasyonlar'] = {}
             
-            life = 1.5  
-            decay = random.uniform(1.0, 2.0) 
-            size = random.uniform(8, 20) * (1.0 + (size_factor - 1.0) * 0.4)
-            
-            r = min(1.0, max(0.0, color[0] + random.uniform(-0.15, 0.15)))
-            g = min(1.0, max(0.0, color[1] + random.uniform(-0.15, 0.15)))
-            b = min(1.0, max(0.0, color[2] + random.uniform(-0.15, 0.15)))
-            p_color = [r, g, b, 1.0]
-            
-            p_data = {
-                "type": effect_type,
-                "x": p_x, "y": p_y,
-                "vx": vx, "vy": vy,
-                "size": size,
-                "color": p_color,
-                "life": life,
-                "decay": decay,
-                "rot": random.uniform(0, 360),
-                "rot_speed": random.uniform(-180, 180)
-            }
-            self.particles.append(p_data)
-
-    def spawn_super_trail(self, x, y, size, color, glow_size=150.0):
-        num_particles = random.randint(4, 7)  
-        cx = x + size / 2
-        cy = y + size / 2
-        for _ in range(num_particles):
-            p_x = cx + random.uniform(-glow_size / 2, glow_size / 2)
-            p_y = cy + random.uniform(-glow_size / 2, glow_size / 2)
-            
-            angle = random.uniform(0, 2 * math.pi)
-            speed = random.uniform(25, 60) 
-            vx = math.cos(angle) * speed
-            vy = math.sin(angle) * speed
-            
-            life = 0.95  
-            decay = random.uniform(1.2, 2.0)  
-            p_size = random.uniform(14, 26) * (size / 120.0) 
-            
-            # --- YENİLİK: HER PARÇACIK İÇİN TAMAMEN RASTGELE CANLI NEON RENKLERİ ---
-            # Siyah/koyu tonları elemek için RGB kanallarını yüksek taban değerlerinden (0.3 - 1.0) seçiyoruz
-            r_neon = random.uniform(0.3, 1.0)
-            g_neon = random.uniform(0.3, 1.0)
-            b_neon = random.uniform(0.3, 1.0)
-            
-            # Seçilen rengin çok sönük kalmaması için en az bir kanalı tam parlak yapıyoruz
-            max_channel = max(r_neon, g_neon, b_neon)
-            if max_channel > 0:
-                r_neon /= max_channel
-                g_neon /= max_channel
-                b_neon /= max_channel
-                
-            p_data = {
-                "type": 2,  
-                "sub_type": random.choice(["orb", "star"]), 
-                "x": p_x, "y": p_y,
-                "vx": vx, "vy": vy,
-                "size": p_size,
-                "glow_size": glow_size,
-                "life": life,
-                "decay": decay,
-                "neon_color": [r_neon, g_neon, b_neon], # Rastgele neon renk paleti eklendi
-                "rot": random.uniform(0, 360),
-                "rot_speed": random.uniform(-150, 150)
-            }
-            self.particles.append(p_data)
-
-    def update_particles(self, dt):
-        self.canvas.clear()  
-        
-        valid_particles = []
-        for p in self.particles:
-            if p and isinstance(p, dict) and "life" in p and "type" in p:
-                p["life"] -= dt * p.get("decay", 1.0)
-                if p["life"] > 0:
-                    valid_particles.append(p)
-        self.particles = valid_particles
-        
-        with self.canvas:
-            for p in self.particles:
-                alpha = min(1.0, max(0.0, p["life"]))
-                
-                # --- SÜPER RENGÂRENK NEON REYONLARI (TİP 2) ---
-                if p["type"] == 2:
-                    p["x"] += p["vx"] * dt
-                    p["y"] += p["vy"] * dt
-                    p["vx"] *= 0.92  
-                    p["vy"] *= 0.92
-                    p["size"] += dt * 9.0  
-                    p["rot"] += p["rot_speed"] * dt
-                    
-                    # Kaydedilen rastgele neon rengi al, yoksa varsayılan sarı yap
-                    nc = p.get("neon_color", [1.0, 0.9, 0.0])
-                    
-                    if p.get("sub_type", "orb") == "orb":
-                        # Katman 1: Dıştaki geniş parlayan neon çeper (Rastgele Renkli)
-                        Color(nc[0], nc[1], nc[2], alpha * 0.35)
-                        Ellipse(pos=(p["x"] - p["size"]/2, p["y"] - p["size"]/2), size=(p["size"], p["size"]))
-                        # Katman 2: Merkezdeki parlak çekirdek (Sabit Beyaz)
-                        Color(1.0, 1.0, 1.0, alpha * 0.85)
-                        Ellipse(pos=(p["x"] - p["size"]/4, p["y"] - p["size"]/4), size=(p["size"]/2, p["size"]/2))
-                    else:
-                        PushMatrix()
-                        Rotate(angle=p["rot"], origin=(p["x"], p["y"]), axis=(0, 0, 1))
-                        # Katman 1: Dıştaki parlayan neon hatlar (Rastgele Renkli)
-                        Color(nc[0], nc[1], nc[2], alpha * 0.4)
-                        Ellipse(pos=(p["x"] - p["size"]/2, p["y"] - p["size"]/6), size=(p["size"], p["size"]/3))
-                        Ellipse(pos=(p["x"] - p["size"]/6, p["y"] - p["size"]/2), size=(p["size"]/3, p["size"]))
-                        # Katman 2: İçteki keskin parlayan hatlar (Sabit Beyaz)
-                        Color(1.0, 1.0, 1.0, alpha * 0.85)
-                        Ellipse(pos=(p["x"] - p["size"]/2.5, p["y"] - p["size"]/12), size=(p["size"]/1.25, p["size"]/6))
-                        Ellipse(pos=(p["x"] - p["size"]/12, p["y"] - p["size"]/2.5), size=(p["size"]/6, p["size"]/1.25))
-                        PopMatrix()
-                        
-                # --- DUVAR PARÇALANMA DİKDÖRTGENLERİ (TİP 0) ---
-                elif p["type"] == 0:
-                    p["x"] += p["vx"] * dt
-                    p["y"] += p["vy"] * dt
-                    p["rot"] += p["rot_speed"] * dt
-                    
-                    if "color" in p and len(p["color"]) >= 4:
-                        Color(p["color"][0], p["color"][1], p["color"][2], alpha)
-                    else:
-                        Color(1, 1, 1, alpha)
-                        
-                    PushMatrix()
-                    Rotate(angle=p["rot"], origin=(p["x"], p["y"]), axis=(0, 0, 1))
-                    Rectangle(pos=(p["x"] - p["size"]/2, p["y"] - p["size"]/2), size=(p["size"], p["size"]))
-                    PopMatrix()
-                    
-                # --- DUVAR PARÇALANMA ÜÇGENLERİ (TİP 1) ---
-                elif p["type"] == 1:
-                    p["x"] += p["vx"] * dt
-                    p["y"] += p["vy"] * dt
-                    p["rot"] += p["rot_speed"] * dt
-                    
-                    if "color" in p and len(p["color"]) >= 4:
-                        Color(p["color"][0], p["color"][1], p["color"][2], alpha)
-                    else:
-                        Color(1, 1, 1, alpha)
-                        
-                    PushMatrix()
-                    Rotate(angle=p["rot"], origin=(p["x"], p["y"]), axis=(0, 0, 1))
-                    s = p["size"] / 2
-                    vertices1 = [
-                        p["x"], p["y"] + s, 0, 0,
-                        p["x"] - s, p["y"] - s/2, 0, 0,
-                        p["x"] + s, p["y"] - s/2, 0, 0
-                    ]
-                    vertices2 = [
-                        p["x"], p["y"] - s, 0, 0,
-                        p["x"] - s, p["y"] + s/2, 0, 0,
-                        p["x"] + s, p["y"] + s/2, 0, 0
-                    ]
-                    indices = [0, 1, 2]
-                    Mesh(vertices=vertices1, indices=indices, mode='triangles')
-                    Mesh(vertices=vertices2, indices=indices, mode='triangles')
-                    PopMatrix()
-
-class CreatureOverlayApp(App):
-    def build(self):
-        from kivy.config import Config
-        Config.set('graphics', 'max_fps', '60')
-        Config.set('graphics', 'vsync', '1')
-        
-        self.title = "Spider Android - Kivy Saf OpenGL Overlay"
-        
-        self.about_sparkles = []
-        self.sparkle_spawn_timer = 0.0
-        self.sparkle_layer = None
-        
-        self.SCREEN_WIDTH = Window.width if Window.width > 100 else 1080
-        self.SCREEN_HEIGHT = Window.height if Window.height > 100 else 1920
-        
-        self.layout = FloatLayout()
-        self.bg_layer = Widget()
-        self.wall_layer = FloatLayout() 
-        self.gold_orb_layer = Widget() 
-        self.particle_layer = Widget() 
-        self.creature_layer = FloatLayout()
-        self.ui_layer = FloatLayout()
-        self.toggle_layer = FloatLayout() 
-
-        self.layout.add_widget(self.bg_layer)
-        self.layout.add_widget(self.gold_orb_layer) 
-        self.layout.add_widget(self.wall_layer)
-        self.layout.add_widget(self.particle_layer) 
-        self.layout.add_widget(self.creature_layer)
-        self.layout.add_widget(self.ui_layer)
-        self.layout.add_widget(self.toggle_layer)
-        self.wall_layer.bind(on_touch_down=self.on_wall_touch)
-
-        self.particle_emitter = ParticleEmitter(self.particle_layer.canvas)
-
-        # --- GÜNCELLENEN ALAN: ANDROID UYUMLU GÜVENLİ DOSYA YOLU ---
-        # Eğer Android üzerindeyse yazma yetkisi olan özel 'user_data_dir' klasörünü kullanır,
-        # Bilgisayarda (Pydroid/PC) ise normal yerel klasörü kullanmaya devam eder.
-        if ANDROID_AVAILABLE:
-            self.CONFIG_FILE = os.path.join(self.user_data_dir, "settings_android.json")
-        else:
-            self.CONFIG_FILE = "settings_android.json"
-            
-        self.settings = {
-            "animation_folder_idx": 0, "animation_folder_idx2": 0, "start_program": 0, 
-            "creature_size": 120, "anim_speed": 80, "move_speed": 4, "max_creatures": 6,
-            "max_creatures2": 1, "type2_enabled": 1, "image_facing": 0, "visual_offset": 15, 
-            "screen_awake": 0, "folder_settings": {}, "super_speed_mult": 3.0,
-            "current_hab_idx1": 0,  
-            "current_hab_idx2": 0   
+        tum_json_hafiza['aktif_animasyon'] = global_settings['animation']
+        aktif_anim_adi = global_settings['animation']
+        tum_json_hafiza['animasyonlar'][aktif_anim_adi] = {
+            'base_delay': global_settings['base_delay'],
+            'speed': global_settings['speed'],
+            'sprite_facing_direction': global_settings['sprite_facing_direction'],
+            'scale_factor': global_settings['scale_factor']
         }
-        self.load_settings()
+        with open(ayar_yolu, "w", encoding="utf-8") as json_dosya:
+            json.dump(tum_json_hafiza, json_dosya, indent=4)
+    except Exception as e:
+        hata_yaz(f"Animasyona Ozel JSON Kayit Hatasi: {str(e)}")
 
-        self.habitats_list = ["KARA", "HAVA", "DENIZ", "UZAY", "DIGER"]
-        self.spider_list = []
-        self.walls = [] 
-        self.spider_active = True if self.settings["start_program"] == 1 else False
-        self.current_view = "main"
-        self.active_settings_tab = "visual"
-        self.ui_visible = True
-        
-        # --- DEMO MODU DEĞİŞKENLERİ ---
-        self.demo_active = False
-        self.demo_timer = 0.0
-        self.demo_hab_idx = 0
-        
-        self.gold_orb = None 
-        self.gold_orb_timer = 0.0
-        self.gold_orb_spawn_time = 20.0 
-
-        self.animation_folders = self.get_available_animation_folders()
-        
-        hab_idx = self.settings.get("current_hab_idx1", 0)
-        target_hab = self.habitats_list[hab_idx % len(self.habitats_list)]
-        initial_filtered = [f for f in self.animation_folders if self.get_folder_habitat(f) == target_hab]
-        
-        if len(initial_filtered) <= 1:
-            self.settings["type2_enabled"] = 0
-            current_folder = initial_filtered[self.settings["animation_folder_idx"] % len(initial_filtered)] if initial_filtered else "default"
-            if current_folder in self.settings["folder_settings"]:
-                self.settings["folder_settings"][current_folder]["type2_enabled"] = 0
-
-        self.sync_active_folder_settings()
-        
-        self.rebuild_toggle_button()
-        self.rebuild_ui()
-        self.update_background_image()
-        self.apply_screen_awake_status()
-        
-        Clock.schedule_interval(self.update, 1.0 / 60.0)
-        self.next_wall_time = random.uniform(6.0, 12.0)
-        self.big_wall_active = False       
-        self.big_wall_pending_destroy = False 
-        self.big_wall_destroy_timer = 0.0  
-        self.wall_timer = 0
-        self.big_wall_timer = 0
-        self.big_wall_interval = 120.0  
-     
-        Window.bind(on_resize=self.on_window_resize)
-        
-        if ANDROID_AVAILABLE:
-            try: force_fullscreen()
-            except: pass
-                
-        return self.layout
-
-    def sync_active_folder_settings(self):
-        filtered1 = self.get_filtered_folders_by_slot(1)
-        filtered2 = self.get_filtered_folders_by_slot(2)
-        current_folder = filtered1[self.settings["animation_folder_idx"] % len(filtered1)]
-        current_folder2 = filtered2[self.settings["animation_folder_idx2"] % len(filtered2)]
-        
-        is_single_folder = len(filtered1) <= 1
-        default_type2_status = 0 if is_single_folder else 1
-        
-        if is_single_folder:
-            self.settings["type2_enabled"] = 0
-
-        for folder in [current_folder, current_folder2]:
-            if folder not in self.settings["folder_settings"]:
-                self.settings["folder_settings"][folder] = {
-                    "move_speed": self.settings.get("move_speed", 4),
-                    "anim_speed": self.settings.get("anim_speed", 80),
-                    "max_creatures": self.settings.get("max_creatures", 6),
-                    "max_creatures2": self.settings.get("max_creatures2", 1),
-                    "type2_enabled": default_type2_status,
-                    "image_facing": self.settings.get("image_facing", 0),
-                    "visual_offset": self.settings.get("visual_offset", 15),
-                    "creature_size": self.settings.get("creature_size", 120),
-                    "bg_image_idx": self.settings.get("bg_image_idx", 0),
-                    "super_speed_mult": self.settings.get("super_speed_mult", 3.0)  
-                }
-            elif is_single_folder:
-                self.settings["folder_settings"][folder]["type2_enabled"] = 0
-        
-        local = self.settings["folder_settings"][current_folder]
-        for key in ["move_speed", "anim_speed", "max_creatures", "max_creatures2", "type2_enabled", "image_facing", "visual_offset", "creature_size", "bg_image_idx", "super_speed_mult"]:
-            if key in local:
-                self.settings[key] = local[key]
-
-    def get_folder_habitat(self, folder_name):
-        if folder_name == "default":
-            return "DIGER"
-        
-        # Klasör adını normalize edip parçalıyoruz (Örn: "DIGER/orumcek" -> ["DIGER", "orumcek"])
-        if "/" in folder_name:
-            prefix = folder_name.split("/")[0].upper()
-            if prefix in ["KARA", "HAVA", "DENIZ", "UZAY", "DIGER"]:
-                return prefix
-                
-        # Eğer alt kırılım yoksa eski tahmin mekanizmasını yedek olarak çalıştır, 
-        # ama "diger" kelimesini de kontrol et.
-        fn = folder_name.lower()
-        if fn.startswith("diger") or "diger" in fn:
-            return "DIGER"
-        elif fn.startswith("kara") or "orumcek" in fn or "bocek" in fn:
-            return "KARA"
-        elif fn.startswith("hava") or "kus" in fn or "ucak" in fn:
-            return "HAVA"
-        elif fn.startswith("deniz") or "balik" in fn or "gemisi" in fn:
-            return "DENIZ"
-        elif fn.startswith("uzay") or "ufo" in fn or "roket" in fn:
-            return "UZAY"
-        return "DIGER"
-
-    def get_filtered_folders_by_slot(self, slot_type=1):
-        hab_idx = self.settings.get("current_hab_idx1" if slot_type == 1 else "current_hab_idx2", 0)
-        target_hab = self.habitats_list[hab_idx % len(self.habitats_list)]
-        filtered = [f for f in self.animation_folders if self.get_folder_habitat(f) == target_hab]
-        
-        if not filtered:
-            return ["default"]
-
-        if slot_type == 2:
-            filtered1 = [f for f in self.animation_folders if self.get_folder_habitat(f) == target_hab]
-            if filtered1:
-                current_folder1 = filtered1[self.settings["animation_folder_idx"] % len(filtered1)]
-                if len(filtered) > 1 and current_folder1 in filtered:
-                    filtered.remove(current_folder1)
-                elif len(filtered) == 1 and current_folder1 in filtered:
-                    return ["default"]
-                    
-        return filtered
-
-    def get_filtered_folders_by_current_habitat(self):
-        return self.get_filtered_folders_by_slot(1)
-
-    def clear_all_creatures_on_habitat_change(self):
-        for spider in list(self.spider_list):
-            try:
-                spider.canvas_widget.canvas.clear()
-                self.creature_layer.remove_widget(spider.canvas_widget)
-            except: pass
-        self.spider_list.clear()
-
-    def apply_screen_awake_status(self):
-        if not ANDROID_AVAILABLE:
-            return
-        @run_on_ui_thread
-        def _set_flag():
-            if self.settings.get("screen_awake", 0) == 1:
-                activity.getWindow().addFlags(WindowManager.FLAG_KEEP_SCREEN_ON)
-            else:
-                activity.getWindow().clearFlags(WindowManager.FLAG_KEEP_SCREEN_ON)
-        try: _set_flag()
-        except: pass
-
-    def toggle_screen_awake(self, instance):
-        current = self.settings.get("screen_awake", 0)
-        self.settings["screen_awake"] = 1 if current == 0 else 0
-        self.save_settings()
-        self.apply_screen_awake_status()
-        self.rebuild_ui()
-
-    def load_settings(self):
-        if os.path.exists(self.CONFIG_FILE):
-            try:
-                with open(self.CONFIG_FILE, "r", encoding="utf-8") as f: 
-                    self.settings.update(json.load(f))
-            except: pass
-
-    def save_settings(self):
-        try:
-            with open(self.CONFIG_FILE, "w", encoding="utf-8") as f: 
-                json.dump(self.settings, f)
-        except Exception as e:
-            print(f"Ayarlar kaydedilirken hata oluştu: {e}")
-
-    def get_available_animation_folders(self):
-        base_dir = os.path.dirname(os.path.abspath(__file__))
-        if app := App.get_running_app():
-            if hasattr(app, 'directory') and app.directory:
-                base_dir = app.directory
-
-        folders = ["default"]
-        anims_path = os.path.join(base_dir, "anims")
-        
-        # --- DEĞİŞECEK ALAN BAŞLANGICI ---
-        # anims klasörünün altındaki tüm alt kırılımları otomatik olarak listeye ekler
-        if os.path.exists(anims_path):
-            for root, dirs, files in os.walk(anims_path):
-                # Eğer klasör içinde en az bir adet sayısal yaratık resmi varsa klasörü listeye dahil et
-                if any(f.rsplit('.', 1)[0].isdigit() for f in files if '.' in f):
-                    rel_path = os.path.relpath(root, anims_path)
-                    if rel_path != ".":
-                        # Windows ve Android yol ayracı uyumluluğu için '/' formatına çeviriyoruz
-                        normalized_path = rel_path.replace("\\", "/")
-                        if normalized_path not in folders:
-                            folders.append(normalized_path)
-        # --- DEĞİŞECEK ALAN BİTİŞİ ---
-        return folders
-
-    def update_background_image(self):
-        try:
-            self.bg_layer.canvas.clear()
-            base_dir = os.path.dirname(os.path.abspath(__file__))
-            app = App.get_running_app()
-            if app and hasattr(app, 'directory') and app.directory:
-                base_dir = app.directory
-
-            filtered1 = self.get_filtered_folders_by_slot(1)
-            chosen_folder = filtered1[self.settings["animation_folder_idx"] % len(filtered1)]
-            
-            anims_root = os.path.join(base_dir, "anims")
-            theme_dir = anims_root
-            target_hab, target_sf = None, None
-            
-            if chosen_folder != "default" and "/" in chosen_folder:
-                hab, sf = chosen_folder.split("/")
-                real_hab = next((d for d in os.listdir(anims_root) if d.lower() == hab.lower() and os.path.isdir(os.path.join(anims_root, d))), hab)
-                hab_path = os.path.join(anims_root, real_hab)
-                if os.path.exists(hab_path):
-                    real_sf = next((d for d in os.listdir(hab_path) if d.lower() == sf.lower() and os.path.isdir(os.path.join(hab_path, d))), sf)
-                    theme_dir = os.path.join(hab_path, real_sf)
-                    target_hab, target_sf = real_hab, real_sf
-            
-            # Uzay ve Deniz ortak arka plan kontrolü
-            is_shared_bg = target_hab and target_hab.lower() in ["uzay", "deniz"]
-            if is_shared_bg:
-                theme_dir = os.path.join(anims_root, target_hab)
-                target_sf = None 
-
-            is_portrait = Window.height >= Window.width
-            json_path = os.path.join(base_dir, "anims_index.json")
-            valid_bg_count = 1  
-            
-            if target_hab and os.path.exists(json_path):
-                try:
-                    with open(json_path, "r", encoding="utf-8") as f:
-                        structure = json.load(f)
-                    
-                    j_hab = next((k for k in structure.keys() if k.lower() == target_hab.lower()), None)
-                    if j_hab:
-                        # Uzay ise sadece "ORTAK_BG" listesindeki resimleri say
-                        if is_shared_bg:
-                            all_files = structure[j_hab].get("ORTAK_BG", [])
-                        else:
-                            j_sf = next((sk for sk in structure[j_hab].keys() if sk.lower() == target_sf.lower()), None) if target_sf else None
-                            all_files = structure[j_hab][j_sf] if j_sf else []
-
-                        bg_files = [f for f in all_files if f.lower().startswith("bg") and ("_v" in f.lower() or "_h" in f.lower())]
-                        bg_indices = set()
-                        for bf in bg_files:
-                            clean_name = bf.lower().replace("bg", "")
-                            if "_" in clean_name:
-                                num_part = clean_name.split("_")[0]
-                                if num_part.isdigit():
-                                    bg_indices.add(int(num_part))
-                        if bg_indices:
-                            valid_bg_count = max(bg_indices) + 1
-                except Exception as e:
-                    print(f"Arka plan JSON tarama hatası: {e}")
-
-            local = self.settings["folder_settings"].get(chosen_folder, self.settings)
-            bg_idx = local.get("bg_image_idx", 0) % valid_bg_count
-            suffix = "" if bg_idx == 0 else str(bg_idx)
-            
-            bg_path = os.path.join(theme_dir, f"bg{suffix}_v.png" if is_portrait else f"bg{suffix}_h.png")
-            if not os.path.exists(bg_path): bg_path = os.path.join(theme_dir, "bg.png")
-            if not os.path.exists(bg_path): bg_path = os.path.join(base_dir, "anims", "bg.png")
-            
-            if os.path.exists(bg_path):
-                bg_texture = CoreImage(bg_path).texture
-                bg_texture.wrap = 'repeat'
-                with self.bg_layer.canvas:
-                    Color(1, 1, 1, 1)
-                    Rectangle(pos=(0, 0), size=(Window.width, Window.height), texture=bg_texture)
-        except Exception as e:
-            print(f"Arka plan güncellenirken hata oluştu: {e}")
-
-    def on_window_resize(self, window, width, height):
-        self.SCREEN_WIDTH = width if width > 100 else 1080
-        self.SCREEN_HEIGHT = height if height > 100 else 1920
-        self.update_background_image()
-        if hasattr(self, 'ui_layer'): self.rebuild_ui()
-        if hasattr(self, 'toggle_layer'): self.rebuild_toggle_button()
-
-    def rebuild_toggle_button(self):
-        self.toggle_layer.clear_widgets()
-        self.toggle_btn = Button(
-            text="", size_hint=(0.15, 0.08), pos_hint={'x': 0.8, 'y': 0.90},
-            background_color=(0.2, 0.25, 0.33, 1), on_press=self.toggle_ui_visibility
-        )
-        icon_size = 120
-        with self.toggle_btn.canvas.after:
-            Color(1, 1, 1, 1)
-            icon_path = "eye.png" if self.ui_visible else "close.png"
-            if os.path.exists(icon_path):
-                self.toggle_btn.icon_rect = Rectangle(texture=CoreImage(icon_path).texture, size=(icon_size, icon_size), pos=(0, 0))
-                
-        def _update_toggle_icon(instance, value):
-            if hasattr(instance, 'icon_rect'):
-                instance.icon_rect.pos = (instance.x + (instance.width - icon_size) / 2, instance.y + (instance.height - icon_size) / 2)
-        self.toggle_btn.bind(pos=_update_toggle_icon, size=_update_toggle_icon)
-        self.toggle_layer.add_widget(self.toggle_btn)
-
-    def rebuild_ui(self):
-        self.ui_layer.clear_widgets()
-        if not self.ui_visible: return
-        btn_h = 0.052  
-
-        def create_visual_button(text, bg_color, y_pos, on_press_callback):
-            btn = Button(text=text, size_hint=(0.6, btn_h), pos_hint={'x': 0.2, 'y': y_pos}, font_size='15sp', background_color=(0, 0, 0, 0), markup=True)
-            with btn.canvas.before:
-                Color(*bg_color)
-                btn.bg_rect = RoundedRectangle(pos=btn.pos, size=btn.size, radius=[12])
-
-            def _update_rect(instance, value):
-                instance.bg_rect.pos = instance.pos
-                instance.bg_rect.size = instance.size
-            btn.bind(pos=_update_rect, size=_update_rect)
-            def _animate_press(instance):
-                anim = Animation(size_hint_y=btn_h * 0.88, duration=0.06, t='out_quad')
-                def _on_anim_complete(*args):
-                    anim_back = Animation(size_hint_y=btn_h, duration=0.06, t='in_quad')
-                    anim_back.bind(on_complete=lambda *x: on_press_callback(instance))
-                    anim_back.start(instance)
-                anim.bind(on_complete=_on_anim_complete)
-                anim.start(instance)
-            btn.bind(on_press=_animate_press)
-            return btn
-            
-        if self.current_view == "main":
-            # Sınıflara özel hex renk tablosu
-            hab_colors = {
-                "KARA": "45b870",   # Zümrüt Yeşili
-                "HAVA": "4dc3ff",   # Gökyüzü Mavisi
-                "DENIZ": "00e5ff",  # Turkuaz
-                "UZAY": "d580ff",   # Neon Mor
-                "DIGER": "ff9933"   # Turuncu
-            }
-
-            if self.demo_active:
-                current_demo_hab = self.habitats_list[self.demo_hab_idx % len(self.habitats_list)]
-                hab_hex = hab_colors.get(current_demo_hab, "ffffff")
-                kalan_sure = max(1, int(15 - self.demo_timer) + 1)
-                
-                title_text = f"DEMO: [color={hab_hex}][b]{current_demo_hab}[/b][/color] ({kalan_sure} sn)"
-                title_color = (0.95, 0.75, 0.15, 1)
-                
-                status_text = "Hareketi başlat (Demo Açık)"
-                status_color = (0.45, 0.45, 0.45, 1)  # Belirgin Gri
-            else:
-                title_text = "Yaratık yürüyor" if self.spider_active else "Yaratık duruyor"
-                title_color = (0.13, 0.77, 0.36, 1) if self.spider_active else (1, 1, 1, 1)
-                
-                status_text = "Hareketi durdur" if self.spider_active else "Hareketi başlat"
-                status_color = (0.93, 0.26, 0.26, 1) if self.spider_active else (0.13, 0.77, 0.36, 1)
-
-            self.title_label = Label(
-                text=title_text, 
-                size_hint=(0.8, 0.06), 
-                pos_hint={'x': 0.1, 'y': 0.8}, 
-                font_size='20sp', 
-                color=title_color, 
-                bold=True, 
-                markup=True
-            )
-
-            with self.title_label.canvas.before:
-                Color(0.05, 0.05, 0.05, 0.5)
-                self.title_bg = Rectangle(pos=self.title_label.pos, size=self.title_label.size)
-            def _update_title_bg(instance, value):
-                self.title_bg.pos = instance.pos
-                self.title_bg.size = instance.size
-            self.title_label.bind(pos=_update_title_bg, size=_update_title_bg)
-            
-            self.ui_layer.add_widget(self.title_label)
-            
-            self.status_btn = create_visual_button(status_text, status_color, 0.64, self.toggle_spider)
-            self.status_btn.disabled = self.demo_active
-            self.status_btn.disabled_color = (0.75, 0.75, 0.75, 1)  # Pasif yazı rengi açık gri
-            self.ui_layer.add_widget(self.status_btn)
-            
-            # Demo Modu Butonu
-            if self.spider_active:
-                demo_text = "Demo Modu (Hareket Açık)"
-                demo_color = (0.45, 0.45, 0.45, 1)  # Belirgin Gri
-            else:
-                demo_text = "Demoyu Durdur" if self.demo_active else "Demo Modu"
-                demo_color = (0.9, 0.5, 0.1, 1) if self.demo_active else (0.45, 0.35, 0.85, 1)
-                
-            self.demo_btn = create_visual_button(demo_text, demo_color, 0.55, self.toggle_demo_mode)
-            self.demo_btn.disabled = self.spider_active
-            self.demo_btn.disabled_color = (0.75, 0.75, 0.75, 1)  # Pasif yazı rengi açık gri
-            self.ui_layer.add_widget(self.demo_btn)
-            
-            self.ui_layer.add_widget(create_visual_button("Ayarlar", (0.2, 0.25, 0.33, 1), 0.46, lambda x: self.switch_view("settings")))
-            self.ui_layer.add_widget(create_visual_button("Hakkında", (0.2, 0.5, 0.6, 1), 0.37, lambda x: self.switch_view("about")))
-            self.ui_layer.add_widget(create_visual_button("Çıkış", (0.93, 0.26, 0.26, 1), 0.28, lambda x: sys.exit()))
-        elif self.current_view == "settings":
-            filtered1 = self.get_filtered_folders_by_slot(1)
-            filtered2 = self.get_filtered_folders_by_slot(2)
-            current_folder = filtered1[self.settings["animation_folder_idx"] % len(filtered1)]
-            current_folder2 = filtered2[self.settings["animation_folder_idx2"] % len(filtered2)]
-            
-            if self.active_settings_tab == "type2":
-                target_folder = current_folder2
-            else:
-                target_folder = current_folder
-                
-            local1 = self.settings["folder_settings"].setdefault(target_folder, {
-                "move_speed": 4, "anim_speed": 80, "max_creatures": 6, "max_creatures2": 1, "type2_enabled": 1,
-                "image_facing": 0, "visual_offset": 15, "creature_size": 120, "bg_image_idx": 0, "super_speed_mult": 3.0
-            })
-            is_type2_on = self.settings.get("type2_enabled", 1) == 1
-            
-            tab_y = 0.82
-            
-            btn_tab1 = Button(text="Genel/Çevre", size_hint=(0.26, 0.05), pos_hint={'x': 0.08, 'y': tab_y}, font_size='16sp', bold=True, background_color=(0, 0, 0, 0))
-            with btn_tab1.canvas.before:
-                Color(*(0.13, 0.77, 0.36, 1) if self.active_settings_tab == "visual" else (0.2, 0.25, 0.33, 1))
-                btn_tab1.bg_rect = RoundedRectangle(pos=btn_tab1.pos, size=btn_tab1.size, radius=[10])
-                
-            btn_tab2 = Button(text="1. Tür Ayar", size_hint=(0.26, 0.05), pos_hint={'x': 0.37, 'y': tab_y}, font_size='16sp', bold=True, background_color=(0, 0, 0, 0))
-            with btn_tab2.canvas.before:
-                Color(*(0.13, 0.77, 0.36, 1) if self.active_settings_tab == "type1" else (0.2, 0.25, 0.33, 1))
-                btn_tab2.bg_rect = RoundedRectangle(pos=btn_tab2.pos, size=btn_tab2.size, radius=[10])
-                
-            btn_tab3 = Button(text="2. Tür Ayar", size_hint=(0.26, 0.05), pos_hint={'x': 0.66, 'y': tab_y}, font_size='16sp', bold=True, background_color=(0, 0, 0, 0))
-            btn_tab3.disabled = not is_type2_on
-            
-            with btn_tab3.canvas.before:
-                if not is_type2_on:
-                    Color(0.15, 0.15, 0.15, 0.6)
-                else:
-                    Color(*(0.13, 0.77, 0.36, 1) if self.active_settings_tab == "type2" else (0.2, 0.25, 0.33, 1))
-                btn_tab3.bg_rect = RoundedRectangle(pos=btn_tab3.pos, size=btn_tab3.size, radius=[10])
-                
-            def _update_tab_rect(inst, val):
-                inst.bg_rect.pos = inst.pos
-                inst.bg_rect.size = inst.size
-            btn_tab1.bind(pos=_update_tab_rect, size=_update_tab_rect)
-            btn_tab2.bind(pos=_update_tab_rect, size=_update_tab_rect)
-            btn_tab3.bind(pos=_update_tab_rect, size=_update_tab_rect)
-            
-            btn_tab1.bind(on_press=lambda x: Clock.schedule_once(lambda dt: self._switch_tab_safe("visual")))
-            btn_tab2.bind(on_press=lambda x: Clock.schedule_once(lambda dt: self._switch_tab_safe("type1")))
-            btn_tab3.bind(on_press=lambda x: Clock.schedule_once(lambda dt: self._switch_tab_safe("type2")))
-            
-            self.ui_layer.add_widget(btn_tab1)
-            self.ui_layer.add_widget(btn_tab2)
-            self.ui_layer.add_widget(btn_tab3)
-            
-            def _setup_setting_row(label, btn_m, btn_p, y_pos, bg_m_color=(0.2, 0.25, 0.33, 1), bg_p_color=(0.2, 0.25, 0.33, 1)):
-                btn_m.size_hint = (0.12, btn_h)
-                btn_m.pos_hint = {'x': 0.65, 'y': y_pos}
-                btn_m.font_size = '18sp'
-                btn_m.background_color = (0, 0, 0, 0)
-                
-                btn_p.size_hint = (0.12, btn_h)
-                btn_p.pos_hint = {'x': 0.79, 'y': y_pos}
-                btn_p.font_size = '18sp'
-                btn_p.background_color = (0, 0, 0, 0)
-                
-                label.size_hint = (0.48, btn_h)
-                label.pos_hint = {'x': 0.12, 'y': y_pos}
-                label.font_size = '14sp'
-                label.halign = 'center'
-                label.valign = 'middle'
-                label.bind(size=lambda s, w: setattr(s, 'text_size', s.size))
-                
-                with label.canvas.before:
-                    Color(0.05, 0.05, 0.05, 0.75)
-                    label.bg_rect = RoundedRectangle(pos=label.pos, size=label.size, radius=[10])
-                with btn_m.canvas.before:
-                    Color(*bg_m_color)
-                    btn_m.bg_rect = RoundedRectangle(pos=btn_m.pos, size=btn_m.size, radius=[12])
-                with btn_p.canvas.before:
-                    Color(*bg_p_color)
-                    btn_p.bg_rect = RoundedRectangle(pos=btn_p.pos, size=btn_p.size, radius=[12])
-                    
-                def _update_bg(inst, val): 
-                    inst.bg_rect.pos = inst.pos
-                    inst.bg_rect.size = inst.size
-                    
-                label.bind(pos=_update_bg, size=_update_bg)
-                btn_m.bind(pos=_update_bg, size=_update_bg)
-                btn_p.bind(pos=_update_bg, size=_update_bg)
-
-            if self.active_settings_tab == "visual":
-                # --- Sınıf Seçim Satırı ---
-                hab_idx1 = self.settings.get("current_hab_idx1", 0) % len(self.habitats_list)
-                current_hab1 = self.habitats_list[hab_idx1]
-                self.hab1_label = Label(text=f"Seçili Sınıf: [color=45b870][b]{current_hab1}[/b][/color]", markup=True)
-                self.h1_m, self.h1_p = Button(text="<"), Button(text=">")
-                _setup_setting_row(self.hab1_label, self.h1_m, self.h1_p, 0.76)
-                self.h1_m.bind(on_press=lambda x: self.change_habitat_class_step(-1, 1))
-                self.h1_p.bind(on_press=lambda x: self.change_habitat_class_step(1, 1))
-                self.ui_layer.add_widget(self.hab1_label)
-                self.ui_layer.add_widget(self.h1_m)
-                self.ui_layer.add_widget(self.h1_p)
-
-                # --- 1. Alt Tür Seçim Satırı ---
-                self.type_label = Label(text=f"1. Alt Tür: [b]{current_folder.upper()}[/b]", markup=True)
-                self.t_minus, self.t_plus = Button(text="<"), Button(text=">")
-                _setup_setting_row(self.type_label, self.t_minus, self.t_plus, 0.70)
-                self.t_minus.bind(on_press=lambda x: self.change_creature_type_step(-1, 1))
-                self.t_plus.bind(on_press=lambda x: self.change_creature_type_step(1, 1))
-                self.ui_layer.add_widget(self.type_label)
-                self.ui_layer.add_widget(self.t_minus)
-                self.ui_layer.add_widget(self.t_plus)
-
-                # --- YENİLİK: TEK TÜR KONTROLÜ VE DİNAMİK ARAYÜZ KILITLEMESİ ---
-                is_single_folder = len(filtered1) <= 1
-                
-                if is_single_folder:
-                    # Tek klasör varsa: Durum metni değiştirilir, oklar 'X' yapılır ve butonlar işlevsizleştirilir
-                    t2_status_text = "[color=ed4242][b]YOK\n(TEK TÜR)[/b][/color]"
-                    self.t2_toggle_label = Label(text=f"2. Tür Durumu: {t2_status_text}", markup=True, halign='center')
-                    self.t2_left_btn, self.t2_right_btn = Button(text="X"), Button(text="X")
-                    self.t2_left_btn.disabled = True
-                    self.t2_right_btn.disabled = True
-                else:
-                    # Birden fazla klasör varsa: Normal çalışma düzeni korunur
-                    t2_status_text = "[color=13c444][b]AKTİF[/b][/color]" if is_type2_on else "[color=ed4242][b]PASİF[/b][/color]"
-                    self.t2_toggle_label = Label(text=f"2. Tür Durumu: {t2_status_text}", markup=True)
-                    self.t2_left_btn, self.t2_right_btn = Button(text="<"), Button(text=">")
-                
-                _setup_setting_row(self.t2_toggle_label, self.t2_left_btn, self.t2_right_btn, 0.62)
-                
-                def _toggle_type2_switch():
-                    filtered_check = self.get_filtered_folders_by_slot(1)
-                    if len(filtered_check) <= 1:
-                        self.settings["type2_enabled"] = 0
-                        self.save_settings()
-                        return
-
-                    current_status = 1 if self.settings.get("type2_enabled", 1) == 1 else 0
-                    new_status = 0 if current_status == 1 else 1
-                    local1["type2_enabled"] = new_status
-                    self.settings["type2_enabled"] = new_status
-                    self.save_settings()
-                    
-                    if new_status == 0:
-                        for spider in list(self.spider_list):
-                            if spider.assigned_folder == current_folder2:
-                                try:
-                                    spider.canvas_widget.canvas.clear()
-                                    self.creature_layer.remove_widget(spider.canvas_widget)
-                                    self.spider_list.remove(spider)
-                                except: pass
-                    self.rebuild_ui()
-
-                if not is_single_folder:
-                    self.t2_left_btn.bind(on_press=lambda x: _toggle_type2_switch())
-                    self.t2_right_btn.bind(on_press=lambda x: _toggle_type2_switch())
-                    
-                self.ui_layer.add_widget(self.t2_toggle_label)
-                self.ui_layer.add_widget(self.t2_left_btn)
-                self.ui_layer.add_widget(self.t2_right_btn)
-                
-                # --- 2. Alt Tür Seçim Satırı ---
-                if is_type2_on and not is_single_folder:
-                    filtered2 = self.get_filtered_folders_by_slot(2)
-                    current_folder2 = filtered2[self.settings["animation_folder_idx2"] % len(filtered2)]
-                    self.type2_label = Label(text=f"2. Alt Tür: [b]{current_folder2.upper()}[/b]", markup=True)
-                    self.t2_m, self.t2_p = Button(text="<"), Button(text=">")
-                    _setup_setting_row(self.type2_label, self.t2_m, self.t2_p, 0.54)
-                    self.t2_m.bind(on_press=lambda x: self.change_creature_type_step(-1, 2))
-                    self.t2_p.bind(on_press=lambda x: self.change_creature_type_step(1, 2))
-                    self.ui_layer.add_widget(self.type2_label)
-                    self.ui_layer.add_widget(self.t2_m)
-                    self.ui_layer.add_widget(self.t2_p)
-                    y_pos_bg = 0.46
-                elif is_single_folder:
-                    # Eğer tek klasör varsa, seçim satırını kilitli (X) olarak yine de gösteriyoruz
-                    self.type2_label = Label(text="2. Alt Tür: [color=ed4242][b]KİLİTLİ[/b][/color]", markup=True)
-                    self.t2_m, self.t2_p = Button(text="X"), Button(text="X")
-                    self.t2_m.disabled = True
-                    self.t2_p.disabled = True
-                    _setup_setting_row(self.type2_label, self.t2_m, self.t2_p, 0.54)
-                    self.ui_layer.add_widget(self.type2_label)
-                    self.ui_layer.add_widget(self.t2_m)
-                    self.ui_layer.add_widget(self.t2_p)
-                    y_pos_bg = 0.46
-                else:
-                    y_pos_bg = 0.54
-
-                # --- Arka Plan Seçim Satırı ---
-                bg_display_text = "Varsayılan (bg)" if self.settings.get("bg_image_idx", 0) == 0 else f"Tema {self.settings.get('bg_image_idx', 0)}"
-                self.bg_img_label = Label(text=f"Arka Plan: [color=e0a040][b]{bg_display_text}[/b][/color]", markup=True)
-                self.bg_minus, self.bg_plus = Button(text="<"), Button(text=">")
-                _setup_setting_row(self.bg_img_label, self.bg_minus, self.bg_plus, y_pos_bg, (0.7, 0.5, 0.2, 1), (0.7, 0.5, 0.2, 1))
-                self.bg_minus.bind(on_press=lambda x: self.change_bg_image_step(-1))
-                self.bg_plus.bind(on_press=lambda x: self.change_bg_image_step(1))
-                self.ui_layer.add_widget(self.bg_img_label)
-                self.ui_layer.add_widget(self.bg_minus)
-                self.ui_layer.add_widget(self.bg_plus)
-            elif self.active_settings_tab == "type1":
-                self.size_label = Label(text=f"1. Tür Boyut: {local1.get('creature_size', 120)} px")
-                self.sz_minus, self.sz_plus = Button(text="-"), Button(text="+")
-                _setup_setting_row(self.size_label, self.sz_minus, self.sz_plus, 0.72)
-                self._check_button_edge_colors_v2("creature_size", 40, 400, self.sz_minus, self.sz_plus, local1)
-                self.sz_minus.bind(on_press=lambda x: self.update_stat_live("creature_size", -10, 40, 400, self.size_label, "1. Tür Boyut: ", " px", self.sz_minus, self.sz_plus, target_type=1))
-                self.sz_plus.bind(on_press=lambda x: self.update_stat_live("creature_size", 10, 40, 400, self.size_label, "1. Tür Boyut: ", " px", self.sz_minus, self.sz_plus, target_type=1))
-                self.ui_layer.add_widget(self.size_label)
-                self.ui_layer.add_widget(self.sz_minus)
-                self.ui_layer.add_widget(self.sz_plus)
-
-                self.speed_label = Label(text=f"1. Tür Hız: {local1.get('move_speed', 4)}")
-                self.s_minus, self.s_plus = Button(text="-"), Button(text="+")
-                _setup_setting_row(self.speed_label, self.s_minus, self.s_plus, 0.64)
-                self._check_button_edge_colors_v2("move_speed", 1, 15, self.s_minus, self.s_plus, local1)
-                self.s_minus.bind(on_press=lambda x: self.update_stat_live("move_speed", -1, 1, 15, self.speed_label, "1. Tür Hız: ", "", self.s_minus, self.s_plus, target_type=1))
-                self.s_plus.bind(on_press=lambda x: self.update_stat_live("move_speed", 1, 1, 15, self.speed_label, "1. Tür Hız: ", "", self.s_minus, self.s_plus, target_type=1))
-                self.ui_layer.add_widget(self.speed_label)
-                self.ui_layer.add_widget(self.s_minus)
-                self.ui_layer.add_widget(self.s_plus)
-                self.anim_label = Label(text=f"1. Tür Anim Hızı: {local1.get('anim_speed', 80)} ms")
-                self.a_minus, self.a_plus = Button(text="-"), Button(text="+")
-                _setup_setting_row(self.anim_label, self.a_minus, self.a_plus, 0.56)
-                self._check_button_edge_colors_v2("anim_speed", 20, 300, self.a_minus, self.a_plus, local1)
-                self.a_minus.bind(on_press=lambda x: self.update_stat_live("anim_speed", -10, 20, 300, self.anim_label, "1. Tür Anim: ", " ms", self.a_minus, self.a_plus, target_type=1))
-                self.a_plus.bind(on_press=lambda x: self.update_stat_live("anim_speed", 10, 20, 300, self.anim_label, "1. Tür Anim: ", " ms", self.a_minus, self.a_plus, target_type=1))
-                self.ui_layer.add_widget(self.anim_label)
-                self.ui_layer.add_widget(self.a_minus)
-                self.ui_layer.add_widget(self.a_plus)
-                
-                self.count_label = Label(text=f"1. Tür Toplam Sayı: {local1.get('max_creatures', 6)}")
-                self.c_minus, self.c_plus = Button(text="-"), Button(text="+")
-                _setup_setting_row(self.count_label, self.c_minus, self.c_plus, 0.48)
-                self._check_button_edge_colors_v2("max_creatures", 1, 30, self.c_minus, self.c_plus, local1)
-                self.c_minus.bind(on_press=lambda x: self.update_stat_live("max_creatures", -1, 1, 30, self.count_label, "1. Tür Toplam Sayı: ", "", self.c_minus, self.c_plus, target_type=1))
-                self.c_plus.bind(on_press=lambda x: self.update_stat_live("max_creatures", 1, 1, 30, self.count_label, "1. Tür Toplam Sayı: ", "", self.c_minus, self.c_plus, target_type=1))
-                self.ui_layer.add_widget(self.count_label)
-                self.ui_layer.add_widget(self.c_minus)
-                self.ui_layer.add_widget(self.c_plus)
-                
-                self.offset1_label = Label(text=f"1. Tür Ofset: {local1.get('visual_offset', 15)} px")
-                self.o1_minus, self.o1_plus = Button(text="-"), Button(text="+")
-                _setup_setting_row(self.offset1_label, self.o1_minus, self.o1_plus, 0.40) 
-                self._check_button_edge_colors_v2("visual_offset", 0, 50, self.o1_minus, self.o1_plus, local1)
-                self.o1_minus.bind(on_press=lambda x: self.update_stat_live("visual_offset", -5, 0, 50, self.offset1_label, "1. Tür Ofset: ", " px", self.o1_minus, self.o1_plus, target_type=1))
-                self.o1_plus.bind(on_press=lambda x: self.update_stat_live("visual_offset", 5, 0, 50, self.offset1_label, "1. Tür Ofset: ", " px", self.o1_minus, self.o1_plus, target_type=1))
-                self.ui_layer.add_widget(self.offset1_label)
-                self.ui_layer.add_widget(self.o1_minus)
-                self.ui_layer.add_widget(self.o1_plus)
-
-                face1_deg = local1.get("image_facing", 0) * 90
-                self.face1_label = Label(text=f"1. Tür Görsel Açısı: {face1_deg}°")
-                self.f1_minus, self.f1_plus = Button(text="<"), Button(text=">")
-                _setup_setting_row(self.face1_label, self.f1_minus, self.f1_plus, 0.32)
-                self.f1_minus.bind(on_press=lambda x: [self.change_setting_face_step(-1), self.rebuild_ui()])
-                self.f1_plus.bind(on_press=lambda x: [self.change_setting_face_step(1), self.rebuild_ui()])
-                self.ui_layer.add_widget(self.face1_label)
-                self.ui_layer.add_widget(self.f1_minus)
-                self.ui_layer.add_widget(self.f1_plus)
-            elif self.active_settings_tab == "type2":
-                self.size2_label = Label(text=f"2. Tür Boyut: {local1.get('creature_size', 120)} px")
-                self.sz2_minus, self.sz2_plus = Button(text="-"), Button(text="+")
-                _setup_setting_row(self.size2_label, self.sz2_minus, self.sz2_plus, 0.72)
-                self._check_button_edge_colors_v2("creature_size", 40, 400, self.sz2_minus, self.sz2_plus, local1)
-                self.sz2_minus.bind(on_press=lambda x: self.update_stat_live("creature_size", -10, 40, 400, self.size2_label, "2. Tür Boyut: ", " px", self.sz2_minus, self.sz2_plus, target_type=2))
-                self.sz2_plus.bind(on_press=lambda x: self.update_stat_live("creature_size", 10, 40, 400, self.size2_label, "2. Tür Boyut: ", " px", self.sz2_minus, self.sz2_plus, target_type=2))
-                self.ui_layer.add_widget(self.size2_label)
-                self.ui_layer.add_widget(self.sz2_minus)
-                self.ui_layer.add_widget(self.sz2_plus)
-
-                self.speed2_label = Label(text=f"2. Tür Hız: {local1.get('move_speed', 4)}")
-                self.s2_minus, self.s2_plus = Button(text="-"), Button(text="+")
-                _setup_setting_row(self.speed2_label, self.s2_minus, self.s2_plus, 0.64)
-                self._check_button_edge_colors_v2("move_speed", 1, 15, self.s2_minus, self.s2_plus, local1)
-                self.s2_minus.bind(on_press=lambda x: self.update_stat_live("move_speed", -1, 1, 15, self.speed2_label, "2. Tür Hız: ", "", self.s2_minus, self.s2_plus, target_type=2))
-                self.s2_plus.bind(on_press=lambda x: self.update_stat_live("move_speed", 1, 1, 15, self.speed2_label, "2. Tür Hız: ", "", self.s2_minus, self.s2_plus, target_type=2))
-                self.ui_layer.add_widget(self.speed2_label)
-                self.ui_layer.add_widget(self.s2_minus)
-                self.ui_layer.add_widget(self.s2_plus)
-                self.anim2_label = Label(text=f"2. Tür Anim Hızı: {local1.get('anim_speed', 80)} ms")
-                self.a2_minus, self.a2_plus = Button(text="-"), Button(text="+")
-                _setup_setting_row(self.anim2_label, self.a2_minus, self.a2_plus, 0.56)
-                self._check_button_edge_colors_v2("anim_speed", 20, 300, self.a2_minus, self.a2_plus, local1)
-                self.a2_minus.bind(on_press=lambda x: self.update_stat_live("anim_speed", -10, 20, 300, self.anim2_label, "2. Tür Anim: ", " ms", self.a2_minus, self.a2_plus, target_type=2))
-                self.a2_plus.bind(on_press=lambda x: self.update_stat_live("anim_speed", 10, 20, 300, self.anim2_label, "2. Tür Anim: ", " ms", self.a2_minus, self.a2_plus, target_type=2))
-                self.ui_layer.add_widget(self.anim2_label)
-                self.ui_layer.add_widget(self.a2_minus)
-                self.ui_layer.add_widget(self.a2_plus)                
-                self.count2_label = Label(text=f"2. Tür Toplam Sayı: {local1.get('max_creatures2', 1)}")
-                self.c2_minus, self.c2_plus = Button(text="-"), Button(text="+")
-                _setup_setting_row(self.count2_label, self.c2_minus, self.c2_plus, 0.48)
-                self._check_button_edge_colors_v2("max_creatures2", 1, 30, self.c2_minus, self.c2_plus, local1)
-                self.c2_minus.bind(on_press=lambda x: self.update_stat_live("max_creatures2", -1, 1, 30, self.count2_label, "2. Tür Toplam Sayı: ", "", self.c2_minus, self.c2_plus, target_type=2))
-                self.c2_plus.bind(on_press=lambda x: self.update_stat_live("max_creatures2", 1, 1, 30, self.count2_label, "2. Tür Toplam Sayı: ", "", self.c2_minus, self.c2_plus, target_type=2))
-                self.ui_layer.add_widget(self.count2_label)
-                self.ui_layer.add_widget(self.c2_minus)
-                self.ui_layer.add_widget(self.c2_plus)
-                
-                self.offset2_label = Label(text=f"2. Tür Ofset: {local1.get('visual_offset', 15)} px")
-                self.o2_minus, self.o2_plus = Button(text="-"), Button(text="+")
-                _setup_setting_row(self.offset2_label, self.o2_minus, self.o2_plus, 0.40) 
-                self._check_button_edge_colors_v2("visual_offset", 0, 50, self.o2_minus, self.o2_plus, local1)
-                self.o2_minus.bind(on_press=lambda x: self.update_stat_live("visual_offset", -5, 0, 50, self.offset2_label, "2. Tür Ofset: ", " px", self.o2_minus, self.o2_plus, target_type=2))
-                self.o2_plus.bind(on_press=lambda x: self.update_stat_live("visual_offset", 5, 0, 50, self.offset2_label, "2. Tür Ofset: ", " px", self.o2_minus, self.o2_plus, target_type=2))
-                self.ui_layer.add_widget(self.offset2_label)
-                self.ui_layer.add_widget(self.o2_minus)
-                self.ui_layer.add_widget(self.o2_plus)
-
-                face2_deg = local1.get("image_facing", 0) * 90
-                self.face2_label = Label(text=f"2. Tür Görsel Açısı: {face2_deg}°")
-                self.f2_minus, self.f2_plus = Button(text="<"), Button(text=">")
-                _setup_setting_row(self.face2_label, self.f2_minus, self.f2_plus, 0.32)
-                
-                def _change_face2(direction):
-                    current_face = local1.get("image_facing", 0)
-                    local1["image_facing"] = (current_face + direction + 4) % 4
-                    self.save_settings()
-                    self.rebuild_ui()
-                    
-                self.f2_minus.bind(on_press=lambda x: _change_face2(-1))
-                self.f2_plus.bind(on_press=lambda x: _change_face2(1))
-                self.ui_layer.add_widget(self.face2_label)
-                self.ui_layer.add_widget(self.f2_minus)
-                self.ui_layer.add_widget(self.f2_plus)
-
-            is_awake = self.settings.get("screen_awake", 0) == 1
-            self.awake_btn = create_visual_button("", (0.18, 0.68, 0.38, 1) if is_awake else (0.7, 0.4, 0.2, 1), 0.12, self.toggle_screen_awake)
-            
-            metin_str = "Uyanık Tut" if is_awake else "Normal Uyku"
-            from kivy.uix.label import Label as CoreLabel
-            lbl_obj = CoreLabel(text=metin_str, font_size='15sp', markup=True, bold=True)
-            lbl_obj.texture_update()
-            
-            def _align_custom_elements(instance, value):
-                icon_x = instance.x + instance.width - 150
-                if hasattr(instance, 'icon_rect'):
-                    instance.icon_rect.pos = (icon_x, instance.y + (instance.height - 120) / 2)
-                
-                sol_bosluk_genislik = icon_x - instance.x
-                yazi_w, yazi_h = lbl_obj.texture.size
-                yazi_x = instance.x + (sol_bosluk_genislik - yazi_w) / 2
-                yazi_y = instance.y + (instance.height - yazi_h) / 2
-                
-                if hasattr(instance, 'text_rect'):
-                    instance.text_rect.pos = (yazi_x, yazi_y)
-                    instance.text_rect.size = (yazi_w, yazi_h)
-            
-            with self.awake_btn.canvas.after:
-                Color(1, 1, 1, 1)
-                self.awake_btn.text_rect = Rectangle(texture=lbl_obj.texture, pos=(0, 0), size=(1, 1))
-                
-                icon_path = "awake.png" if is_awake else "sleep.png"
-                if os.path.exists(icon_path):
-                    self.awake_btn.icon_rect = Rectangle(texture=CoreImage(icon_path).texture, size=(120, 120), pos=(0, 0))
-            
-            self.awake_btn.bind(pos=_align_custom_elements, size=_align_custom_elements)
-            self.ui_layer.add_widget(self.awake_btn)
-            self.ui_layer.add_widget(create_visual_button("Ana Menü", (0.13, 0.77, 0.36, 1), 0.04, lambda x: self.switch_view("main")))
-            
-        elif self.current_view == "about":
-            self.about_sparkles.clear()
-            self.sparkle_spawn_timer = 0.0
-            
-            # --- GÜNCELLENEN ALAN: YÜKSEKLİK ARTTIRILDI VE KONUM YUKARI KAYDIRILDI ---
-            # size_hint Y değeri 0.48'den 0.65'e yükseltildi, pos_hint Y değeri 0.32'den 0.20'ye çekildi
-            scroll_container = ScrollView(
-                size_hint=(0.86, 0.65), 
-                pos_hint={'x': 0.07, 'y': 0.20},
-                do_scroll_x=False,  
-                do_scroll_y=True    
-            )
-            
-            # Arka plan rengini ve oval köşeleri doğrudan ScrollView arkasına çiziyoruz
-            with scroll_container.canvas.before:
-                Color(0.05, 0.05, 0.05, 0.85) 
-                scroll_container.bg_rect = RoundedRectangle(pos=scroll_container.pos, size=scroll_container.size, radius=[15])
-            
-            def _update_scroll_bg(inst, val): 
-                inst.bg_rect.pos = inst.pos
-                inst.bg_rect.size = inst.size
-            scroll_container.bind(pos=_update_scroll_bg, size=_update_scroll_bg)
-
-            # Hakkında metnini içeren Label bileşeni (Boyutunu içeriğe göre dinamik büyüteceğiz)
-            self.about_label = Label(
-                text="[color=45b870][b]SPIDER ANDROID[/b][/color]\n\n"
-                     "[b]Sürüm:[/b] v1.4.0\n"
-                     "[b]Geliştiren:[/b] Sabri Erkin\n"
-                     "[b]Altyapı:[/b] Kivy Saf OpenGL\n\n"
-                     "Orijinali [b]Desperado[/b]'nun [b]Spider v0.9.5[/b] adlı symbian uygulamasıdır. Ben biraz geliştirmeye çalıştım ve androidde çalışacak hale getirdim.\n\n"
-                     "Bu uygulama, ekran üzerinde rastgele gezinen yaratıklar, parçalanabilir dinamik duvarlar ve özel güçler içeren interaktif bir simülasyondur.\n\n"
-                     "[b]Özellikler:[/b]\n"
-                     "• Altın küreleri toplayarak süper hıza ulaşın.\n"
-                     "• Süper modda engelleri ve rakip yaratıkları yok edin.\n"
-                     "• Ayarlar menüsünden tüm fiziksel sınırları canlı olarak yönetin.",
-                markup=True, font_size='15sp', halign='center', valign='top',
-                padding=(40, 40),
-                size_hint_y=None  
-            )
-            
-            # Metnin kutu genişliğine göre otomatik kırpılması ve yüksekliğin dinamik hesaplanması için bind işlemleri
-            def _update_label_height(inst, val):
-                inst.text_size = (inst.width, None)  
-            
-            def _set_texture_height(inst, val):
-                inst.height = max(scroll_container.height, inst.texture_size[1] + 80) 
-
-            self.about_label.bind(width=_update_label_height)
-            self.about_label.bind(texture_size=_set_texture_height)
-            
-            # Label'ı kaydırma kutusunun içine, kaydırma kutusunu da arayüze ekliyoruz
-            scroll_container.add_widget(self.about_label)
-            self.ui_layer.add_widget(scroll_container)
-
-            # --- GÜNCELLENEN ALAN: EFEKT KATMANI DA YENİ BOYUTA HİZALANDI ---
-            if getattr(self, 'sparkle_layer', None) is not None and self.sparkle_layer in self.ui_layer.children:
-                self.ui_layer.remove_widget(self.sparkle_layer)
-                
-            self.sparkle_layer = Widget(size_hint=(0.86, 0.65), pos_hint={'x': 0.07, 'y': 0.20})
-            self.ui_layer.add_widget(self.sparkle_layer)
-            
-            # Ana menü butonu (Kutu büyüdüğü için buton pozisyonu Y: 0.16'dan 0.06'ya çekildi)
-            self.ui_layer.add_widget(create_visual_button("Ana Menü", (0.13, 0.77, 0.36, 1), 0.06, lambda x: self.switch_view("main")))
-
-    def switch_view(self, view_name):
-        self.about_sparkles.clear()
-        self.sparkle_spawn_timer = 0.0
-        if getattr(self, 'sparkle_layer', None) is not None:
-            self.sparkle_layer.canvas.clear()
-        self.current_view = view_name
-        self.rebuild_ui()
-
-    def _switch_tab_safe(self, tab_name):
-        self.active_settings_tab = tab_name
-        self.rebuild_ui()
-    def update_stat_live(self, key, amount, min_v, max_v, label_obj, prefix, suffix="", btn_m=None, btn_p=None, target_type=1):
-        filtered1 = self.get_filtered_folders_by_slot(1)
-        filtered2 = self.get_filtered_folders_by_slot(2)
-        
-        current_folder = filtered1[self.settings["animation_folder_idx"] % len(filtered1)]
-        current_folder2 = filtered2[self.settings["animation_folder_idx2"] % len(filtered2)]
-        
-        chosen_folder = current_folder if target_type == 1 else current_folder2
-        local = self.settings["folder_settings"].setdefault(chosen_folder, {})
-        
-        local[key] = max(min_v, min(local.get(key, min_v) + amount, max_v))
-        self.save_settings()
-        
-        label_obj.text = f"{prefix}{local[key]}{suffix}"
-        if btn_m and btn_p: 
-            self._check_button_edge_colors_v2(key, min_v, max_v, btn_m, btn_p, local)
-        
-        if key == "max_creatures":
-            type1_spiders = [s for s in self.spider_list if s.assigned_folder == current_folder]
-            while len(type1_spiders) > local[key]:
-                rem = type1_spiders.pop()
-                if rem in self.spider_list: self.spider_list.remove(rem)
-                try:
-                    rem.canvas_widget.canvas.clear()
-                    self.creature_layer.remove_widget(rem.canvas_widget)
-                except: pass
-        elif key == "max_creatures2":
-            if self.settings.get("type2_enabled", 1) == 0: 
-                return
-            type2_spiders = [s for s in self.spider_list if s.assigned_folder == current_folder2]
-            while len(type2_spiders) > local[key]:
-                rem = type2_spiders.pop()
-                if rem in self.spider_list: self.spider_list.remove(rem)
-                try:
-                    rem.canvas_widget.canvas.clear()
-                    self.creature_layer.remove_widget(rem.canvas_widget)
-                except: pass
-        elif key == "visual_offset":
-            for spider in self.spider_list:
-                if (target_type == 1 and spider.assigned_folder == current_folder) or (target_type == 2 and spider.assigned_folder == current_folder2):
-                    spider.visual_offset = local[key]
-        elif key == "creature_size":
-            for spider in self.spider_list: 
-                if (target_type == 1 and spider.assigned_folder == current_folder) or (target_type == 2 and spider.assigned_folder == current_folder2):
-                    spider.update_size(local[key])
-        self.rebuild_ui()
-
-    def _check_button_edge_colors_v2(self, key, min_v, max_v, btn_m, btn_p, local_dict):
-        current_value = local_dict.get(key, min_v)
-        if btn_m.canvas.before and btn_m.canvas.before.children:
-            try:
-                if current_value <= min_v: 
-                    btn_m.canvas.before.children[0].rgba = (0.93, 0.26, 0.26, 1)  
-                else: 
-                    btn_m.canvas.before.children[0].rgba = (0.2, 0.25, 0.33, 1)   
-            except Exception: pass
-            
-        if btn_p.canvas.before and btn_p.canvas.before.children:
-            try:
-                if current_value >= max_v: 
-                    btn_p.canvas.before.children[0].rgba = (0.13, 0.77, 0.36, 1)  
-                else: 
-                    btn_p.canvas.before.children[0].rgba = (0.2, 0.25, 0.33, 1)
-            except Exception: pass
-
-    def toggle_ui_visibility(self, instance):
-        self.ui_visible = not self.ui_visible
-        self.rebuild_toggle_button()
-        self.rebuild_ui()
-
-    def toggle_spider(self, instance):
-        if self.demo_active:
-            return
-        self.spider_active = not self.spider_active
-        
-        # Başlatırken de durdururken de eski kalıntıları temizle
-        self.clear_all_creatures_on_habitat_change()
-        self.walls.clear()
-        self.gold_orb = None
-        try: 
-            self.wall_layer.canvas.clear()
-            self.gold_orb_layer.canvas.clear()
-        except: pass
-        
-        if self.spider_active:
-            self.update_background_image()
-            
-        self.rebuild_ui()
-
-    def toggle_demo_mode(self, instance):
-        if self.spider_active:
-            return
-        self.demo_active = not self.demo_active
-        if self.demo_active:
-            # Demo başlamadan önce kullanıcının mevcut ayarlarını yedekle
-            self._saved_hab_idx1 = self.settings.get("current_hab_idx1", 0)
-            self._saved_hab_idx2 = self.settings.get("current_hab_idx2", 0)
-            self._saved_folder_idx1 = self.settings.get("animation_folder_idx", 0)
-            self._saved_folder_idx2 = self.settings.get("animation_folder_idx2", 0)
-
-            self.spider_active = False  
-            self.demo_hab_idx = 0
-            self.demo_timer = 0.0
-            self._apply_demo_habitat(self.demo_hab_idx)
+class KivyParcacik:
+    def __init__(self, x, y, ozel_renk=None):
+        self.x = x
+        self.y = y
+        acisal = random.uniform(0, math.pi * 2)
+        hiz = random.uniform(2, 6) if not ozel_renk else random.uniform(3, 9)
+        self.vx = math.cos(acisal) * hiz
+        self.vy = math.sin(acisal) * hiz
+        self.omur = 1.0
+        if ozel_renk:
+            self.renk = ozel_renk
         else:
-            # Demo bittiğinde kullanıcının orijinal ayarlarını geri yükle
-            if hasattr(self, '_saved_hab_idx1'):
-                self.settings["current_hab_idx1"] = self._saved_hab_idx1
-                self.settings["current_hab_idx2"] = self._saved_hab_idx2
-                self.settings["animation_folder_idx"] = self._saved_folder_idx1
-                self.settings["animation_folder_idx2"] = self._saved_folder_idx2
+            self.renk = random.choice([
+                (231/255.0, 76/255.0, 60/255.0, 1),
+                (241/255.0, 196/255.0, 15/255.0, 1),
+                (142/255.0, 68/255.0, 173/255.0, 1)
+            ])
 
-            self.clear_all_creatures_on_habitat_change()
-            self.walls.clear()
-            self.gold_orb = None
-            try: 
-                self.wall_layer.canvas.clear()
-                self.gold_orb_layer.canvas.clear()
-            except: pass
-            self.update_background_image()
-        self.rebuild_ui()
+    def guncelle(self, dt):
+        self.x += self.vx * (dt * 60)
+        self.y += self.vy * (dt * 60)
+        self.omur -= 0.03 * (dt * 60)
 
-    def _apply_demo_habitat(self, hab_idx):
-        self.clear_all_creatures_on_habitat_change()
-        self.settings["current_hab_idx1"] = hab_idx % len(self.habitats_list)
-        self.settings["animation_folder_idx"] = 0
-        self.update_background_image()
-        if self.current_view == "main" and self.ui_visible:
-            self.rebuild_ui()
-
-    def change_habitat_class_step(self, direction, slot_type=1):
-        idx = self.settings.get("current_hab_idx1", 0)
-        new_idx = (idx + direction + len(self.habitats_list)) % len(self.habitats_list)
+class KivyAv:
+    def __init__(self, tur="sinek", sidebar_duvarlar=None):
+        self.tur = tur
+        self.is_caught = False
+        self.kanat_sayaci = random.uniform(0, 10)
+        self.duvarlar = sidebar_duvarlar if sidebar_duvarlar is not None else []
         
-        self.settings["current_hab_idx1"] = new_idx
-        self.settings["current_hab_idx2"] = new_idx
-        self.settings["animation_folder_idx"] = 0 
-        self.settings["animation_folder_idx2"] = 0 
-        self.clear_all_creatures_on_habitat_change()
-        
-        target_hab = self.habitats_list[new_idx]
-        all_filtered = [f for f in self.animation_folders if self.get_folder_habitat(f) == target_hab]
-        
-        if len(all_filtered) <= 1:
-            self.settings["type2_enabled"] = 0
-            for folder in all_filtered:
-                if folder not in self.settings["folder_settings"]:
-                    self.settings["folder_settings"][folder] = {}
-                self.settings["folder_settings"][folder]["type2_enabled"] = 0
-                
-        self.sync_active_folder_settings()
-        self.save_settings()
-        self.update_background_image()
-        self.rebuild_ui()
-
-    def change_creature_type_step(self, direction, type_slot=1):
-        filtered1 = self.get_filtered_folders_by_slot(1)
-        filtered2 = self.get_filtered_folders_by_slot(2)
-        
-        if type_slot == 1:
-            idx = self.settings.get("animation_folder_idx", 0)
-            self.settings["animation_folder_idx"] = (idx + direction + len(filtered1)) % len(filtered1)
-            self.clear_all_creatures_on_habitat_change()
-            
-            if len(filtered1) <= 1:
-                self.settings["type2_enabled"] = 0
+        if self.tur == "ari":
+            self.boyut = random.randint(12, 16)
+            self.renk = (241/255.0, 196/255.0, 15/255.0, 1)
+            self.puan = 3
         else:
-            idx2 = self.settings.get("animation_folder_idx2", 0)
-            self.settings["animation_folder_idx2"] = (idx2 + direction + len(filtered2)) % len(filtered2)
+            self.boyut = random.randint(6, 11)
+            self.renk = (40/255.0, 40/255.0, 40/255.0, 1)
+            self.puan = 1
             
-        self.sync_active_folder_settings()
-        self.save_settings()
-        self.update_background_image()
-        self.rebuild_ui()
-        
-        current_folder = filtered1[self.settings["animation_folder_idx"] % len(filtered1)]
-        current_folder2 = filtered2[self.settings["animation_folder_idx2"] % len(filtered2)]
-        
-        for i, spider in enumerate(list(self.spider_list)):
-            try:
-                if spider.id % 2 == 1 and self.settings.get("type2_enabled", 1) == 1:
-                    spider.assigned_folder = current_folder2
-                else:
-                    spider.assigned_folder = current_folder
-                    
-                local = self.settings["folder_settings"].get(spider.assigned_folder, self.settings)
-                spider.size = local.get("creature_size", 120)
-                spider.canvas_widget.size = (spider.size, spider.size)
-                
-                spider.reload_textures(self.settings, self.animation_folders)
-                spider.setup_canvas()
-                spider.finalize_transforms(self.settings)
-            except Exception as e:
-                print(f"Doku yenileme hatası: {e}")
+        self.guvenli_konumlandir()
 
-    def change_setting_face_step(self, direction):
-        filtered1 = self.get_filtered_folders_by_slot(1)
-        current_folder = filtered1[self.settings["animation_folder_idx"] % len(filtered1)]
-        if current_folder not in self.settings["folder_settings"]: 
-            self.sync_active_folder_settings()
-        current_face = self.settings["folder_settings"][current_folder].get("image_facing", 0)
-        new_face = (current_face + direction + 4) % 4
-        self.settings["folder_settings"][current_folder]["image_facing"] = new_face
-        self.settings["image_facing"] = new_face
-        self.save_settings()
-        self.rebuild_ui()
-
-    def change_bg_image_step(self, direction):
-        base_dir = os.path.dirname(os.path.abspath(__file__))
-        app = App.get_running_app()
-        if app and hasattr(app, 'directory') and app.directory:
-            base_dir = app.directory
-
-        filtered1 = self.get_filtered_folders_by_slot(1)
-        current_folder = filtered1[self.settings["animation_folder_idx"] % len(filtered1)]
+    def guvenli_konumlandir(self):
+        # Güncel pencere boyutunu alıyoruz
+        min_x = 50
+        max_x = max(51, int(Window.width - 50))
+        min_y = 50
+        max_y = max(51, int(Window.height - 50))
         
-        json_path = os.path.join(base_dir, "anims_index.json")
-        valid_bg_count = 1
-        
-        if "/" in current_folder and os.path.exists(json_path):
-            try:
-                with open(json_path, "r", encoding="utf-8") as f:
-                    structure = json.load(f)
-                hab, sf = current_folder.split("/")
+        for _ in range(50):
+            self.x = random.randint(min_x, max_x)
+            self.y = random.randint(min_y, max_y)
+            if not self.duvara_carpiyor_mu(self.x, self.y):
+                break
                 
-                target_hab = next((k for k in structure.keys() if k.lower() == hab.lower()), None)
-                is_shared_bg = target_hab and target_hab.lower() in ["uzay", "deniz"]
-                
-                if target_hab:
-                    if is_shared_bg:
-                        all_files = structure[target_hab].get("ORTAK_BG", [])
-                    else:
-                        target_sf = next((sk for sk in structure[target_hab].keys() if sk.lower() == sf.lower()), None)
-                        all_files = structure[target_hab][target_sf] if target_sf else []
-
-                    bg_files = [f for f in all_files if f.lower().startswith("bg") and ("_v" in f.lower() or "_h" in f.lower())]
-                    bg_indices = set()
-                    for bf in bg_files:
-                        clean_name = bf.lower().replace("bg", "")
-                        if "_" in clean_name:
-                            num_part = clean_name.split("_")[0]
-                            if num_part.isdigit():
-                                bg_indices.add(int(num_part))
-                    if bg_indices:
-                        valid_bg_count = max(bg_indices) + 1
-            except Exception as e:
-                print(f"Arka plan değişim JSON hatası: {e}")
-                
-        current_idx = self.settings.get("bg_image_idx", 0)
-        new_idx = (current_idx + direction + valid_bg_count) % valid_bg_count
-        
-        self.settings["bg_image_idx"] = new_idx
-        if current_folder not in self.settings["folder_settings"]:
-            self.sync_active_folder_settings()
+        hiz_carpan = random.uniform(0.8, 1.5) * speed_level
+        if self.tur == "ari":
+            hiz_carpan *= 1.6
             
-        if current_folder in self.settings["folder_settings"]:
-            self.settings["folder_settings"][current_folder]["bg_image_idx"] = new_idx
-            
-        self.save_settings()
-        self.update_background_image()
-        self.rebuild_ui()
-    def on_start(self):
-        self.SCREEN_WIDTH = Window.width if (Window.width and Window.width > 100) else 1080
-        self.SCREEN_HEIGHT = Window.height if (Window.height and Window.height > 100) else 1920
+        self.vx = random.choice([-3, 3]) * hiz_carpan
+        self.vy = random.choice([-3, 3]) * hiz_carpan
 
-    def on_wall_touch(self, widget, touch):
-        if self.ui_visible and touch.y < self.SCREEN_HEIGHT * 0.90:
-            if touch.x > self.SCREEN_WIDTH * 0.1 and touch.x < self.SCREEN_WIDTH * 0.9:
-                if self.current_view == "main" and touch.y > self.SCREEN_HEIGHT * 0.30: return 
-                if self.current_view == "settings" and touch.y > self.SCREEN_HEIGHT * 0.02: return
-                if self.current_view == "about" and touch.y > self.SCREEN_HEIGHT * 0.15: return 
-
-        for i, wall in enumerate(list(self.walls)):
-            if not wall or "rect" not in wall or len(wall["rect"]) < 4: continue
-            r = wall["rect"]
-            if r[0] <= touch.x <= r[0] + r[2] and r[1] <= touch.y <= r[1] + r[3]:
-                # --- KESİN ÇÖZÜM: EL YAPIMI DOKUNMALARDA OYNATICIYI RESETLEME ---
-                if wall.get("is_big", False):
-                    # Yörüngedeki yaratıkları serbest bırak
-                    for s in self.spider_list:
-                        if s.is_orbiting: 
-                            s.is_orbiting = False
-                            s.angle = random.uniform(0, 2 * math.pi)
-                    
-                    # Uygulama motoruna büyük duvarın bittiğini bildir ve zamanlayıcıyı sıfırla
-                    self.big_wall_active = False
-                    self.big_wall_pending_destroy = False
-                    self.big_wall_timer = 0.0
-
-                self.particle_emitter.spawn_shattered_wall(r, wall["color"])
-                self.walls.pop(i)
-                self.redraw_walls()
+    def duvara_carpiyor_mu(self, test_x, test_y):
+        b = self.boyut
+        for d in self.duvarlar:
+            dx, dy = d['pos']
+            dw, dh = d['size']
+            if (test_x - b < dx + dw and test_x + b > dx and 
+                test_y - b < dy + dh and test_y + b > dy):
                 return True
         return False
-    def spawn_random_wall(self):
-        if len(self.walls) >= 2: return
-        is_hz = random.choice([True, False])
-        w = random.randint(200, 450) if is_hz else random.randint(40, 90)
-        h = random.randint(40, 90) if is_hz else random.randint(200, 450)
-        x = random.randint(50, max(51, self.SCREEN_WIDTH - w - 50))
-        y = random.randint(120, max(121, self.SCREEN_HEIGHT - h - 120))
+
+    def guncelle(self, spider_cx, spider_cy, dt):
+        self.kanat_sayaci += dt * 3
         
-        for wall in list(self.walls):
-            if not wall or "rect" not in wall: continue
-            r = wall["rect"]
-            if (x - 120 < r[0] + r[2] and x + w + 120 > r[0] and y - 120 < r[1] + r[3] and y + h + 120 > r[1]): return
-        self.walls.append({"rect": [x, y, w, h], "color": (random.random(), random.random(), random.random(), 1.0), "life": 0.0, "is_big": False})
-        self.redraw_walls()
-
-    def spawn_gold_orb(self):
-        w_size = 70
-        x = random.randint(80, max(81, self.SCREEN_WIDTH - w_size - 80))
-        y = random.randint(150, max(151, self.SCREEN_HEIGHT - w_size - 150))
-        self.gold_orb = {"x": x, "y": y, "size": w_size, "pulse": 0.0}
-        self.redraw_gold_orb()
-
-    def redraw_gold_orb(self):
-        self.gold_orb_layer.canvas.clear()
-        if not self.gold_orb: return
-        with self.gold_orb_layer.canvas:
-            Color(1, 0.84, 0, 1)
-            p_size = self.gold_orb["size"] + math.sin(self.gold_orb["pulse"]) * 8
-            offset = (p_size - self.gold_orb["size"]) / 2
-            Ellipse(pos=(self.gold_orb["x"] - offset, self.gold_orb["y"] - offset), size=(p_size, p_size))
-
-    def redraw_walls(self):
-        self.wall_layer.canvas.clear()
-        with self.wall_layer.canvas:
-            for wall in self.walls:
-                Color(*wall["color"])
-                Rectangle(pos=(wall["rect"][0], wall["rect"][1]), size=(wall["rect"][2], wall["rect"][3]))
-
-    def update(self, dt):
-        if self.spider_active or self.demo_active:
-            # --- 1. YARATIK ÜRETİM BLOĞU (DEMO VE NORMAL MOD AYRIMI) ---
-            if self.demo_active:
-                prev_sec = int(self.demo_timer)
-                self.demo_timer += dt
-
-                # Ana menü açıksa kalan saniyeyi ve renkli sınıf adını canlı güncelle
-                if int(self.demo_timer) != prev_sec and self.current_view == "main" and self.ui_visible:
-                    hab_colors = {
-                        "KARA": "45b870",
-                        "HAVA": "4dc3ff",
-                        "DENIZ": "00e5ff",
-                        "UZAY": "d580ff",
-                        "DIGER": "ff9933"
-                    }
-                    current_demo_hab = self.habitats_list[self.demo_hab_idx % len(self.habitats_list)]
-                    hab_hex = hab_colors.get(current_demo_hab, "ffffff")
-                    kalan_sure = max(1, int(15 - self.demo_timer) + 1)
-                    if hasattr(self, 'title_label'):
-                        self.title_label.text = f"DEMO: [color={hab_hex}][b]{current_demo_hab}[/b][/color] ({kalan_sure} sn)"
-
-                # 15 saniye dolduğunda bir sonraki sınıfa geç
-                if self.demo_timer >= 15.0:
-                    self.demo_timer = 0.0
-                    self.demo_hab_idx = (self.demo_hab_idx + 1) % len(self.habitats_list)
-                    self._apply_demo_habitat(self.demo_hab_idx)
-
-                # Sadece aktif demo sınıfındaki klasörlerden en fazla 6 yaratık üret
-                if len(self.spider_list) < 6:
-                    target_hab = self.habitats_list[self.demo_hab_idx % len(self.habitats_list)]
-                    hab_folders = [f for f in self.animation_folders if self.get_folder_habitat(f) == target_hab]
-                    if not hab_folders:
-                        hab_folders = ["default"]
-                    
-                    chosen_f = hab_folders[len(self.spider_list) % len(hab_folders)]
-                    new_spider = KivySpiderEntity(self.settings, self.SCREEN_WIDTH, self.SCREEN_HEIGHT, self.animation_folders, zorunlu_klasor=chosen_f)
-                    self.spider_list.append(new_spider)
-                    self.creature_layer.add_widget(new_spider.canvas_widget)
-
-            else:
-                # --- NORMAL MOD YARATIK ÜRETİMİ (DEMO KAPALIYKEN ÇALIŞIR) ---
-                filtered1 = self.get_filtered_folders_by_slot(1)
-                filtered2 = self.get_filtered_folders_by_slot(2)
-                
-                current_folder = filtered1[self.settings["animation_folder_idx"] % len(filtered1)]
-                
-                is_type2_on = self.settings.get("type2_enabled", 1) == 1 and len(filtered1) > 1
-                if is_type2_on:
-                    current_folder2 = filtered2[self.settings["animation_folder_idx2"] % len(filtered2)]
-                else:
-                    current_folder2 = current_folder
-
-                local1 = self.settings["folder_settings"].get(current_folder, self.settings)
-                local2 = self.settings["folder_settings"].get(current_folder2, self.settings)
-                
-                limit_type1 = local1.get("max_creatures", 6)
-                limit_type2 = local2.get("max_creatures2", 1) if is_type2_on else 0
-                
-                # ---> BURADAKİ ESKİ "if not is_type2_on:" BLOĞUNU SİLİP BUNU YAZIN <---
-                allowed_folders = [current_folder]
-                if is_type2_on:
-                    allowed_folders.append(current_folder2)
-                    
-                for spider in list(self.spider_list):
-                    if spider.assigned_folder not in allowed_folders:
-                        try:
-                            spider.canvas_widget.canvas.clear()
-                            self.creature_layer.remove_widget(spider.canvas_widget)
-                            self.spider_list.remove(spider)
-                        except: pass
-                # ---> YENİ KODUN BİTİŞİ <---
-
-                current_type1_count = sum(1 for s in self.spider_list if s.assigned_folder == current_folder)
-                current_type2_count = sum(1 for s in self.spider_list if s.assigned_folder == current_folder2) if is_type2_on else 0
-
-                chosen_f = None
-                if is_type2_on:
-
-                    if current_type1_count < limit_type1 and current_type2_count < limit_type2:
-                        chosen_f = current_folder if current_type1_count <= current_type2_count else current_folder2
-                    elif current_type1_count < limit_type1:
-                        chosen_f = current_folder
-                    elif current_type2_count < limit_type2:
-                        chosen_f = current_folder2
-                else:
-                    if current_type1_count < limit_type1:
-                        chosen_f = current_folder
-                    
-                if chosen_f:
-                    new_spider = KivySpiderEntity(self.settings, self.SCREEN_WIDTH, self.SCREEN_HEIGHT, self.animation_folders, zorunlu_klasor=chosen_f)
-                    self.spider_list.append(new_spider)
-                    self.creature_layer.add_widget(new_spider.canvas_widget)
-                    return  
-
-            # --- 2. ORTAK DUVAR, ALTIN KÜRE VE HAREKET DÖNGÜSÜ ---
-            self.wall_timer += dt
-            if self.wall_timer >= self.next_wall_time:
-                self.wall_timer = 0
-                self.next_wall_time = random.uniform(8.0, 15.0)
-                self.spawn_random_wall()
-            
-            # ... (Kalan duvar, altın küre ve hareket kodlarınız buradan itibaren aynı şekilde devam edecek)
-
-            current_creature_count = len(self.spider_list)
-            any_super_creature = any(s.is_super for s in self.spider_list)
-            if current_creature_count >= 6 and not any_super_creature:
-                if not self.gold_orb:
-                    self.gold_orb_timer += dt
-                    if self.gold_orb_timer >= self.gold_orb_spawn_time:
-                        self.gold_orb_timer = 0.0
-                        self.spawn_gold_orb()
-                else:
-                    self.gold_orb_timer = 0.0  
-                    self.gold_orb["pulse"] += dt * 4.0
-                    self.redraw_gold_orb()
-            else:
-                self.gold_orb_timer = 0.0  
-                if self.gold_orb:
-                    self.gold_orb = None  
-                    self.gold_orb_layer.canvas.clear()
-
-            if not self.big_wall_active:
-                self.big_wall_timer += dt
-                if self.big_wall_timer >= self.big_wall_interval:
-                    if len(self.walls) == 0:
-                        w, h = 300, 300
-                        x = (self.SCREEN_WIDTH - w) / 2
-                        y = (self.SCREEN_HEIGHT - h) / 2
-                        self.walls.append({
-                            "rect": [x, y, w, h], 
-                            "color": (0.8, 0.2, 0.2, 1.0), 
-                            "life": 0.0, 
-                            "is_big": True
-                        })
-                        self.big_wall_active = True
-                        self.big_wall_timer = 0.0
-                        self.redraw_walls()
-                        for s in self.spider_list:
-                            s.start_orbiting(x, y, w, h)
-            # --- YENİ: ORTA ENGEL AKTİFKEN YÖRÜNGEDE KİMSE YOKSA YAKINDAKİ YARATIĞI AL ---
-            # --- ORTA ENGEL AKTİFKEN YÖRÜNGEDE KİMSE YOKSA SADECE 1 YARATIK AL ---
-            if self.big_wall_active and not self.big_wall_pending_destroy:
-                # Şu an yörüngede AKTİF dönen biri var mı kontrol et
-                any_orbiting = any(s.is_orbiting for s in self.spider_list)
-                if not any_orbiting:
-                    # Büyük engelin koordinatlarını bul
-                    for wall in self.walls:
-                        if wall.get("is_big", False):
-                            wx, wy, ww, wh = wall["rect"]
-                            
-                            # Uygun bir yaratık bul ve döngüyü hemen kır!
-                            for s in self.spider_list:
-                                if not s.is_grabbed and not s.is_flung and not s.is_orbiting:
-                                    s.start_orbiting(wx, wy, ww, wh)
-                                    break # <--- KRİTİK: İlk yaratığı aldıktan sonra döngüden çık, diğerleri serbest gezsin!
-
-
-            if self.big_wall_pending_destroy:
-                self.big_wall_destroy_timer -= dt
-                if self.big_wall_destroy_timer <= 0:
-                    self.big_wall_pending_destroy = False
-                    self.big_wall_active = False
-                    
-                    # --- SÜRE BİTTİĞİNDE PATLAMA EFEKTİNİ TETİKLE ---
-                    if hasattr(self, 'particle_emitter'):
-                        for wall in self.walls:
-                            if wall.get("is_big", False):
-                                # Orta engelin koordinatlarını alıp parçacık motoruna gönderiyoruz
-                                r = wall["rect"]
-                                # Büyük duvar olduğu için yaratık boyutunu (creature_size) 300 vererek patlamayı devasa yapıyoruz
-                                self.particle_emitter.spawn_shattered_wall(r, wall["color"], creature_size=300)
-                    
-                    # Büyük engeli listeden temizle ve ekranı güncelle
-                    self.walls = [w for w in self.walls if not w.get("is_big", False)]
-                    self.redraw_walls()
-
-            # --- EKSİK OLAN VE KRİTİK GÜNCELLEME DÖNGÜSÜ BURASI ---
-            # Listedeki her bir yaratığı hareket ettirir ve ekrandaki konumunu günceller.
-            for spider in list(self.spider_list):
-                spider.update_entity(dt, self.SCREEN_WIDTH, self.SCREEN_HEIGHT, self.settings, self.walls, self.spider_list)
-
-        # Parçacık efektlerinin (duvar kırılmaları vb.) her karede akmasını sağlar.
-        if hasattr(self, 'particle_emitter'):
-            self.particle_emitter.update_particles(dt)
-
-        # --- HAKKINDA SAYFASI IŞILTI ANİMASYONLARI ---
-        if self.current_view == "about" and getattr(self, 'sparkle_layer', None) is not None:
-            # 1. Yeni ışıltı üretme
-            self.sparkle_spawn_timer += dt
-            if self.sparkle_spawn_timer >= 0.15 and len(self.about_sparkles) < 35:
-                self.sparkle_spawn_timer = 0.0
-                sx = random.uniform(self.sparkle_layer.x + 15, self.sparkle_layer.right - 15)
-                sy = random.uniform(self.sparkle_layer.y + 15, self.sparkle_layer.top - 15)
-                self.about_sparkles.append({
-                    "x": sx,
-                    "y": sy,
-                    "size": random.uniform(14, 32),
-                    "alpha": 0.0,
-                    "state": "fade_in",
-                    "speed": random.uniform(1.2, 2.5),
-                    "form": random.choice(["plus", "star"]),
-                    "base_color": random.choice([
-                        (1.0, 0.9, 0.3),
-                        (0.3, 0.9, 0.6),
-                        (0.4, 0.8, 1.0),
-                        (1.0, 1.0, 1.0)
-                    ])
-                })
-
-            # 2. Mevcut ışıltıları güncelleme ve çizme
-            self.sparkle_layer.canvas.clear()
-            with self.sparkle_layer.canvas:
-                for sp in list(self.about_sparkles):
-                    if sp["state"] == "fade_in":
-                        sp["alpha"] += dt * sp["speed"]
-                        if sp["alpha"] >= 1.0:
-                            sp["alpha"] = 1.0
-                            sp["state"] = "fade_out"
-                    elif sp["state"] == "fade_out":
-                        sp["alpha"] -= dt * sp["speed"]
-                        if sp["alpha"] <= 0.0:
-                            self.about_sparkles.remove(sp)
-                            continue
-
-                    Color(*sp["base_color"], sp["alpha"])
-                    sz = sp["size"]
-                    thick = sz / 10.0
-
-                    if sp["form"] == "plus":
-                        PushMatrix()
-                        Rotate(angle=45, origin=(sp["x"], sp["y"]), axis=(0, 0, 1))
-                        Rectangle(pos=(sp["x"] - sz/2, sp["y"] - thick/2), size=(sz, thick))
-                        Rectangle(pos=(sp["x"] - thick/2, sp["y"] - sz/2), size=(thick, sz))
-                        PopMatrix()
-                    elif sp["form"] == "star":
-                        Rectangle(pos=(sp["x"] - sz/2, sp["y"] - thick/2), size=(sz, thick))
-                        Rectangle(pos=(sp["x"] - thick/2, sp["y"] - sz/2), size=(thick, sz))
-                        PushMatrix()
-                        Rotate(angle=45, origin=(sp["x"], sp["y"]), axis=(0, 0, 1))
-                        Rectangle(pos=(sp["x"] - sz/2, sp["y"] - thick/2), size=(sz, thick))
-                        Rectangle(pos=(sp["x"] - thick/2, sp["y"] - sz/2), size=(thick, sz))
-                        PopMatrix()
-
-class KivySpiderEntity:
-    _id_counter = 0
-    def __init__(self, settings, sw, sh, animation_folders, zorunlu_klasor=None):
-        KivySpiderEntity._id_counter += 1
-        self.id = KivySpiderEntity._id_counter
-        app = App.get_running_app()
-        
-        if zorunlu_klasor:
-            self.assigned_folder = zorunlu_klasor
+        if self.is_caught:
+            dx = spider_cx - self.x
+            dy = spider_cy - self.y
+            dist = math.hypot(dx, dy)
+            if dist > 5:
+                jitter_x = random.uniform(-3, 3)
+                jitter_y = random.uniform(-3, 3)
+                self.x += ((dx / dist) * 14 + jitter_x) * (dt * 60)
+                self.y += ((dy / dist) * 14 + jitter_y) * (dt * 60)
         else:
-            filtered1 = app.get_filtered_folders_by_slot(1) if app else ["default"]
-            filtered2 = app.get_filtered_folders_by_slot(2) if app else ["default"]
-            is_type2_on = settings.get("type2_enabled", 1) == 1 and len(filtered1) > 1
+            dx_spider = self.x - spider_cx
+            dy_spider = self.y - spider_cy
+            mesafe_spider = math.hypot(dx_spider, dy_spider)
             
-            if is_type2_on and self.id % 2 == 1:
-                self.assigned_folder = filtered2[settings.get("animation_folder_idx2", 0) % len(filtered2)]
-            else:
-                self.assigned_folder = filtered1[settings.get("animation_folder_idx", 0) % len(filtered1)]
+            if self.tur == "ari" and mesafe_spider < 250 and mesafe_spider > 0:
+                self.vx = (dx_spider / mesafe_spider) * random.uniform(5, 7) * speed_level
+                self.vy = (dy_spider / mesafe_spider) * random.uniform(5, 7) * speed_level
                 
-        local = settings.get("folder_settings", {}).get(self.assigned_folder, settings)
-        self.size = local.get("creature_size", 120)
-        self.canvas_widget = Widget(size_hint=(None, None), size=(self.size, self.size))
-        
-        spawn_edge = random.randint(0, 3)
-        if spawn_edge == 0:    
-            self.x = -self.size - 20
-            self.y = random.randint(0, max(1, sh - self.size))
-            self.angle = random.uniform(-math.pi/4, math.pi/4) % (2 * math.pi)
-        elif spawn_edge == 1:  
-            self.x = sw + 20
-            self.y = random.randint(0, max(1, sh - self.size))
-            self.angle = random.uniform(3 * math.pi / 4, 5 * math.pi / 4) % (2 * math.pi)
-        elif spawn_edge == 2:  
-            self.x = random.randint(0, max(1, sw - self.size))
-            self.y = -self.size - 20
-            self.angle = random.uniform(math.pi / 4, 3 * math.pi / 4) % (2 * math.pi)
-        elif spawn_edge == 3:  
-            self.x = random.randint(0, max(1, sw - self.size))
-            self.y = sh + 20
-            self.angle = random.uniform(5 * math.pi / 4, 7 * math.pi / 4) % (2 * math.pi)
-        
-        self.canvas_widget.pos = (self.x, self.y)
-        self.vx = self.vy = 0.0  
-        self.is_grabbed = False
-        self.grab_timer = 0.0
-        self.grab_start_pos = (0.0, 0.0)
-
-        self.last_touch_x = self.last_touch_y = 0.0
-        self.current_frame = self.anim_time = 0
-        self.is_orbiting = False
-        self.visual_offset = local.get("visual_offset", 15) 
-        self.is_super = False
-        self.super_timer = 0.0
-        self.textures = {}
-        self.reload_textures(settings, animation_folders)
-        self.is_flung = False
-        self.touch_history = []  
-        self.roll_angle = 0.0   
-        self.roll_speed = 0.0   
-        self.setup_canvas()
-    def start_orbiting(self, wx, wy, ww, wh):
-        if self.is_grabbed or self.is_orbiting: return
-        
-        app = App.get_running_app()
-        if app and hasattr(app, 'spider_list'):
-            if any(s.is_orbiting for s in app.spider_list if s.id != self.id):
-                return
+            eski_x, eski_y = self.x, self.y
+            
+            self.x += self.vx * (dt * 60)
+            self.y += self.vy * (dt * 60)
                 
-        self.is_orbiting = True
-        self.orbit_wx, self.orbit_wy, self.orbit_ww, self.orbit_wh = wx, wy, ww, wh
-        
-        # --- YENİ: RASTGELE DÖNÜŞ YÖNÜ SEÇİMİ (1: Saat yönü tersi, -1: Saat yönü) ---
-        self.orbit_direction = random.choice([1, -1])
-        
-        self.orbit_phase = random.randint(0, 3)
-        self.orbit_start_phase = self.orbit_phase
-        self.orbit_counter = 0  
-        
-        x_m, x_mx = self.orbit_wx - self.size + 15 + self.visual_offset, self.orbit_wx + self.orbit_ww - 15 - self.visual_offset
-        y_m, y_mx = self.orbit_wy - self.size + 15 + self.visual_offset, self.orbit_wy + self.orbit_wh - 15 - self.visual_offset
-        
-        if self.orbit_phase == 0: self.x, self.y = x_mx, y_m  
-        elif self.orbit_phase == 1: self.x, self.y = x_m, y_m   
-        elif self.orbit_phase == 2: self.x, self.y = x_m, y_mx  
-        elif self.orbit_phase == 3: self.x, self.y = x_mx, y_mx
-
-    def reload_textures(self, settings, animation_folders):
-        base_dir = os.path.dirname(os.path.abspath(__file__))
-        app = App.get_running_app()
-        if app and hasattr(app, 'directory') and app.directory:
-            base_dir = app.directory
-
-        self.total_frames = 0
-        self.textures = {}
-        local = settings.get("folder_settings", {}).get(self.assigned_folder, settings)
-        
-        # --- KESİN ÇÖZÜM: HEDEF KLASÖRÜNÜ TAM OLARAK İZOLE EDİYORUZ ---
-        target_dir = os.path.join(base_dir, "anims")
-        if "/" in self.assigned_folder:
-            hab, sf = self.assigned_folder.split("/")
-            target_dir = os.path.join(target_dir, hab, sf)
-        elif self.assigned_folder != "default":
-            target_dir = os.path.join(target_dir, self.assigned_folder)
+            if self.x <= 10 or self.x >= Window.width - 10: 
+                self.vx *= -1
+                self.x = max(10, min(self.x, Window.width - 10))
+            if self.y <= 10 or self.y >= Window.height - 10: 
+                self.vy *= -1
+                self.y = max(10, min(self.y, Window.height - 10))
             
-        if os.path.exists(target_dir):
-            bg_v = f"bg{local.get('bg_image_idx', 0)}_v.png"
-            bg_h = f"bg{local.get('bg_image_idx', 0)}_h.png"
-            valid_files = []
-            
-            # os.walk yerine sadece o klasörün içini (root) listeliyoruz. 
-            # Böylece alt veya yan klasörlerdeki diğer yaratık türleri listeye karışamaz.
-            try:
-                for f_name in os.listdir(target_dir):
-                    full_file_path = os.path.join(target_dir, f_name)
-                    if os.path.isfile(full_file_path) and '.' in f_name:
-                        name_part = f_name.rsplit('.', 1)[0]
-                        # Sadece sayısal isme sahip ve arka plan olmayan yaratık karelerini alıyoruz
-                        if name_part.isdigit() and f_name.lower() not in [bg_v.lower(), bg_h.lower(), 'bg.png']:
-                            valid_files.append((int(name_part), full_file_path))
-            except Exception as walk_e:
-                print(f"Klasör listeleme hatası: {walk_e}")
-            
-            valid_files.sort(key=lambda item: item[0])
-            for num, p in valid_files:
-                try:
-                    core_img = CoreImage(p)
-                    if core_img and core_img.texture:
-                        self.textures[self.total_frames] = core_img.texture
-                        self.total_frames += 1
-                except Exception as img_e:
-                    print(f"Doku Yukleme Hatasi ({p}): {img_e}")
+            if self.duvara_carpiyor_mu(self.x, self.y):
+                self.x, self.y = eski_x, eski_y
+                if random.random() < 0.5: self.vx *= -1
+                else: self.vy *= -1
 
-        # Eğer klasör boşsa veya bulunamadıysa varsayılan (default) klasörüne güvenli geri dönüş
-        if self.total_frames == 0:
-            anims_dir = os.path.join(base_dir, "anims")
-            if os.path.exists(anims_dir):
-                try:
-                    available_files = os.listdir(anims_dir)
-                    valid_idx = []
-                    for f_name in available_files:
-                        full_file_path = os.path.join(anims_dir, f_name)
-                        if os.path.isfile(full_file_path) and f_name.lower().endswith('.png'):
-                            name_part = f_name.rsplit('.', 1)[0]
-                            if name_part.isdigit():
-                                valid_idx.append(int(name_part))
-                    
-                    valid_idx.sort()
-                    for num in valid_idx:
-                        p = os.path.join(anims_dir, f"{num}.png")
-                        if os.path.exists(p):
-                            try:
-                                core_img = CoreImage(p)
-                                if core_img and core_img.texture:
-                                    self.textures[self.total_frames] = core_img.texture
-                                    self.total_frames += 1
-                            except Exception as img_e:
-                                print(f"Varsayılan Doku Yükleme Hatası ({p}): {img_e}")
-                except Exception as e:
-                    print(f"Anims klasörü taranırken hata oluştu: {e}")
-
-        self.current_frame = 0
-        self.visual_offset = local.get("visual_offset", 15)
-
-    def setup_canvas(self):
-        self.canvas_widget.canvas.clear()
-        self.rect_w = self.size
-        self.rect_h = self.size
+class SpiderGame(Widget):
+    def __init__(self, **kwargs):
+        super(SpiderGame, self).__init__(**kwargs)
         
-        has_texture = False
-        if self.textures and self.textures.get(self.current_frame):
-            tex = self.textures.get(self.current_frame)
-            oran = tex.width / tex.height
+        self.skor = 0
+        self.toplam_tebrik_sayisi = 0
+        self.kalan_sure = 300
+        self.game_over = False
+        self.ui_panel_acik = False
+        self.tebrik_tetiklendi = False
+        self.son_ayar_zamani = time.time()
+        
+        self.geri_sayim_aktif = True
+        self.geri_sayim_baslangic = time.time()
+        self.geri_sayim_deger = 3
+        
+        self.base_frames = load_masked_png_frames(global_settings['animation'])
+        self.current_frame_index = 0
+        self.last_frame_update = time.time()
+        
+        self.global_scale_factor = global_settings.get('scale_factor', 1.0)
+        self.sprite_w = int(130 * self.global_scale_factor)
+        self.sprite_h = int(130 * self.global_scale_factor)
+        self.sprite_x = Window.width / 2
+        self.sprite_y = Window.height / 2
+        self.target_x, self.target_y = self.sprite_x, self.sprite_y
+        
+        self.inertia_vx = 0.0
+        self.inertia_vy = 0.0
+        self.friction = 0.97
+        self.last_touch_x = 0
+        self.last_touch_y = 0
+        self.touch_velocity_x = 0
+        self.touch_velocity_y = 0
+        
+        self.is_moving = False
+        self.is_dragging = False
+        self.skor_pop_efekti = 1.0
+        self.current_angle = 0.0
+        
+        self.tebrik_gosteriliyor = False
+        self.tebrik_baslangic_zamani = 0.0
+        self.olum_efekti_patladi = False
+        self.ruh_aktif = False
+        self.ruh_x = self.sprite_x
+        self.ruh_y = self.sprite_y
+        self.ruh_alfa = 200
+        
+        self.duvarlar = []
+        self.avlar = []
+        self.parcaciklar = []
+        self.spider_web_trail = []
+        
+        self.wait_start_time = time.time()
+        self.wait_duration = 1.0
+        self.rastgele_duvarlari_olustur()
+        self.orumcek_guvenli_konumlandir()
+        self.avları_olustur()
+        
+        Clock.schedule_interval(self.ana_guncelleme, 1.0 / 60.0)
+        Clock.schedule_interval(self.zaman_sayici, 1.0)
+
+    def rastgele_duvarlari_olustur(self):
+        self.duvarlar.clear()
+        r = random.randint(70, 200) / 255.0
+        g = random.randint(70, 200) / 255.0
+        b = random.randint(70, 200) / 255.0
+        self.duvar_govde_renk = (r, g, b, 1)
+        self.duvar_kenar_renk = (max(0, r - 0.15), max(0, g - 0.15), max(0, b - 0.15), 1)
+
+        for _ in range(6):
+            yon = random.choice(['YATAY', 'DIKEY'])
+            w, h = (random.randint(140, 250), 24) if yon == 'YATAY' else (24, random.randint(140, 250))
             
-            # --- ASPEKT ORANI KORUMALI KÜTLE MOTORU ---
-            if oran > 1.3:
-                self.rect_h = self.size
-                self.rect_w = self.size * oran
-            elif oran < 0.7:
-                self.rect_w = self.size
-                self.rect_h = self.size / oran
-            else:
-                if oran > 1:
-                    self.rect_w = self.size
-                    self.rect_h = self.size / oran
-                else:
-                    self.rect_h = self.size
-                    self.rect_w = self.size * oran
-            has_texture = True
-
-        with self.canvas_widget.canvas:
-            PushMatrix()
-            self.rot_transform = Rotate(angle=0, axis=(0, 0, 1), origin=self.canvas_widget.center)
-            self.scale_transform = Scale(1, 1, 1, origin=self.canvas_widget.center)
+            min_x = 100
+            max_x = max(101, int(Window.width - w - 100))
+            min_y = 150
+            max_y = max(151, int(Window.height - h - 150))
             
-            if self.is_super:
-                glow_factor = 1.25 if self.size <= 150 else (1.1 + 22.5 / self.size)
-                glow_w = self.rect_w * glow_factor
-                glow_h = self.rect_h * glow_factor
-                Color(1.0, 0.84, 0.0, 0.25)
-                self.super_glow = Ellipse(pos=(self.x + (self.size - glow_w)/2, self.y + (self.size - glow_h)/2), size=(glow_w, glow_h))
-                
-            if has_texture:
-                self.body_color = Color(1.0, 1.0, 1.0, 1.0)
-                self.rect_mesh = Rectangle(texture=self.textures[0], pos=(self.x + (self.size - self.rect_w)/2, self.y + (self.size - self.rect_h)/2), size=(self.rect_w, self.rect_h))
-            else:
-                self.body_color = Color(0.2, 0.7, 0.3, 1.0)
-                self.rect_mesh = Ellipse(pos=(self.x + (self.size - self.rect_w)/2, self.y + (self.size - self.rect_h)/2), size=(self.rect_w, self.rect_h))
-            PopMatrix()
-            
-        self.canvas_widget.unbind(on_touch_down=self.on_touch_down, on_touch_move=self.on_touch_move, on_touch_up=self.on_touch_up)
-        self.canvas_widget.bind(on_touch_down=self.on_touch_down, on_touch_move=self.on_touch_move, on_touch_up=self.on_touch_up)
+            x = random.randint(min_x, max_x)
+            y = random.randint(min_y, max_y)
 
-    def activate_super_power(self, duration=15.0):
-        self.is_super = True
-        self.super_timer = duration
-        self.setup_canvas()
+            yeni_duvar = {'pos': (x, y), 'size': (w, h)}
+            akraba_var_mi = False
+            for d in self.duvarlar:
+                dx, dy = d['pos']
+                dw, dh = d['size']
+                if (x < dx + dw and x + w > dx and y < dy + dh and y + h > dy):
+                    akraba_var_mi = True
+                    break
+            if not akraba_var_mi:
+                self.duvarlar.append(yeni_duvar)
 
-    def update_size(self, new_size):
-        self.size = new_size
-        self.canvas_widget.size = (self.size, self.size)
-        self.setup_canvas()
+    def avları_olustur(self):
+        self.avlar = [KivyAv("sinek", self.duvarlar) for _ in range(3)] + [KivyAv("ari", self.duvarlar)]
 
-    def on_touch_down(self, widget, touch):
-        app = App.get_running_app()
-        if app and app.ui_visible and touch.y > app.SCREEN_HEIGHT * 0.10 and touch.y < app.SCREEN_HEIGHT * 0.85 and touch.x > app.SCREEN_WIDTH * 0.15 and touch.x < app.SCREEN_WIDTH * 0.85:
+    def orumcek_guvenli_konumlandir(self):
+        hit_w, hit_h = self.sprite_w * 0.75, self.sprite_h * 0.75
+        
+        min_x = 50
+        max_x = max(51, int(Window.width - self.sprite_w - 50))
+        min_y = 50
+        max_y = max(51, int(Window.height - self.sprite_h - 50))
+
+        for _ in range(100):
+            tx = random.randint(min_x, max_x)
+            ty = random.randint(min_y, max_y)
+
+            carpisma = False
+            for d in self.duvarlar:
+                dx, dy = d['pos']
+                dw, dh = d['size']
+                if (tx < dx + dw and tx + hit_w > dx and ty < dy + dh and ty + hit_h > dy):
+                    carpisma = True
+                    break
+            if not carpisma:
+                self.sprite_x, self.sprite_y = tx, ty
+                self.target_x, self.target_y = tx, ty
+                break
+
+    def on_touch_down(self, touch):
+        if self.game_over or self.geri_sayim_aktif: return False
+        if touch.x > Window.width * 0.80 and touch.y > Window.height * 0.88:
             return False
-        if widget.collide_point(*touch.pos):
-            self.touch_history.clear()
-            self.is_grabbed = True
-            self.grab_timer = 0.0
-            self.grab_start_pos = (touch.x, touch.y)
-            
-            if self.is_orbiting:
-                self.is_orbiting = False
-                if hasattr(self, 'orbit_counter'):
-                    self.orbit_counter = 0
-            
-            self.vx = self.vy = 0
-            self.last_touch_x = touch.x
-            self.last_touch_y = touch.y
-            return True
-        return False
+        if self.ui_panel_acik and touch.x > Window.width * 0.80:
+            return False
 
-    def on_touch_move(self, widget, touch):
-        if self.is_grabbed:
-            # Eğer kullanıcı yaratığı 35 pikselden fazla sürüklerse basılı tutma sayacını ve kızarmayı sıfırla
-            dist_moved = math.hypot(touch.x - self.grab_start_pos[0], touch.y - self.grab_start_pos[1])
-            if dist_moved > 35:
-                self.grab_timer = 0.0
-                self.grab_start_pos = (touch.x, touch.y)
-                if hasattr(self, 'body_color'):
-                    self.body_color.rgba = (1.0, 1.0, 1.0, 1.0)
-
-            self.touch_history.append((time.time(), touch.x, touch.y))
-            if len(self.touch_history) > 4: self.touch_history.pop(0)
-            self.x, self.y = touch.x - self.size / 2, touch.y - self.size / 2
+        if (self.sprite_x <= touch.x <= self.sprite_x + self.sprite_w and
+            self.sprite_y <= touch.y <= self.sprite_y + self.sprite_h):
+            self.is_dragging = True
+            self.is_moving = False
+            self.inertia_vx = 0.0
+            self.inertia_vy = 0.0
             self.last_touch_x, self.last_touch_y = touch.x, touch.y
-            self.finalize_transforms(None)
             return True
-        return False
-
-    def on_touch_up(self, widget, touch):
-        if self.is_grabbed:
-            self.is_grabbed = False
-            self.grab_timer = 0.0
-            if hasattr(self, 'body_color'):
-                self.body_color.rgba = (1.0, 1.0, 1.0, 1.0)  # Normal rengine dön
-            self.finalize_transforms(None)  # Normal boyutuna dön
-            if len(self.touch_history) >= 2:
-                t1, x1, y1 = self.touch_history[0]
-                t2, x2, y2 = self.touch_history[-1]
-                dt = t2 - t1
-                if dt > 0:
-                    self.vx = ((x2 - x1) / dt) * 1.5
-                    self.vy = ((y2 - y1) / dt) * 1.5
-                    spd = math.sqrt(self.vx**2 + self.vy**2)
-                    if spd > 4000.0:
-                        self.vx = (self.vx / spd) * 4000.0
-                        self.vy = (self.vy / spd) * 4000.0
-                    if spd > 100:  
-                        self.angle = math.atan2(self.vy, self.vx) % (2 * math.pi)
-                        self.is_flung = True
-            self.touch_history.clear()
+        else:
+            self.target_x = touch.x - self.sprite_w / 2
+            self.target_y = touch.y - self.sprite_h / 2
+            self.is_moving = True
+            self.is_dragging = False
+            self.inertia_vx = 0.0
+            self.inertia_vy = 0.0
             return True
-        return False
 
-    def update_entity(self, dt, sw, sh, settings, walls, spider_list):
-        if self.is_grabbed:
-            self.grab_timer += dt
-            oran = min(1.0, self.grab_timer / 3.0)  # 0.0'dan 1.0'a (3 saniyeye) doğru ilerler
-            
-            # 1. ŞİŞME EFEKTİ: Boyutu kademeli olarak %50 büyüt
-            scale_mult = 1.0 + (oran * 0.5)
-            if hasattr(self, 'scale_transform'):
-                fx = -1 if self.scale_transform.x < 0 else 1
-                fy = -1 if self.scale_transform.y < 0 else 1
-                self.scale_transform.origin = self.canvas_widget.center
-                self.scale_transform.x = fx * scale_mult
-                self.scale_transform.y = fy * scale_mult
+    def on_touch_move(self, touch):
+        if self.is_dragging and not self.game_over:
+            self.touch_velocity_x = touch.x - self.last_touch_x
+            self.touch_velocity_y = touch.y - self.last_touch_y
+            self.last_touch_x, self.last_touch_y = touch.x, touch.y
 
-            # 2. KIZARMA EFEKTİ: Yeşil ve Mavi kanalları kısarak kıpkırmızı yap
-            if hasattr(self, 'body_color'):
-                self.body_color.rgba = (1.0, 1.0 - (oran * 0.85), 1.0 - (oran * 0.85), 1.0)
+            nx = max(0, min(touch.x - self.sprite_w / 2, Window.width - self.sprite_w))
+            ny = max(0, min(touch.y - self.sprite_h / 2, Window.height - self.sprite_h))
 
-            # 3 saniye dolduğunda patlat!
-            if self.grab_timer >= 3.0:
-                app = App.get_running_app()
-                if app and hasattr(app, 'particle_emitter'):
-                    # Patlama parçacıkları da kırmızı tonlarında olsun
-                    kirmizi_ton = [1.0, random.uniform(0.0, 0.3), random.uniform(0.0, 0.2), 1.0]
-                    app.particle_emitter.spawn_shattered_wall(
-                        [self.x, self.y, self.size, self.size],
-                        kirmizi_ton,
-                        self.size * 1.5
-                    )
-                try:
-                    self.canvas_widget.canvas.clear()
-                    if app and hasattr(app, 'creature_layer'):
-                        app.creature_layer.remove_widget(self.canvas_widget)
-                    if self in spider_list:
-                        spider_list.remove(self)
-                except Exception:
-                    pass
-            return
+            hit_w, hit_h = self.sprite_w * 0.75, self.sprite_h * 0.75
+            carpisma = False
+            for d in self.duvarlar:
+                dx, dy = d['pos']
+                dw, dh = d['size']
+                if (nx < dx + dw and nx + hit_w > dx and ny < dy + dh and ny + hit_h > dy):
+                    carpisma = True
+                    break
+            if not carpisma:
+                dx_ang = nx - self.sprite_x
+                dy_ang = ny - self.sprite_y
+                if math.hypot(dx_ang, dy_ang) > 1:
+                    self.current_angle = math.degrees(math.atan2(dy_ang, dx_ang)) % 360
+                self.sprite_x, self.sprite_y = nx, ny
+                self.spider_web_trail.append({"pos": (self.sprite_x + self.sprite_w/2, self.sprite_y + self.sprite_h/2), "time": time.time()})
 
-        self.anim_time += dt
-        if abs(self.roll_speed) > 0.1:
-            self.roll_angle += self.roll_speed * dt
-            self.roll_speed *= 0.5
-        else:
-            self.roll_speed = 0.0
+    def on_touch_up(self, touch):
+        if self.is_dragging:
+            self.is_dragging = False
+            if math.hypot(self.touch_velocity_x, self.touch_velocity_y) > 3:
+                self.inertia_vx = self.touch_velocity_x * 0.7
+                self.inertia_vy = self.touch_velocity_y * 0.7
 
-        if self.is_super:
-            self.super_timer -= dt
-            if self.super_timer <= 0: 
-                self.is_super = False
-                self.setup_canvas()
-        app = App.get_running_app()
-        local = settings.get("folder_settings", {}).get(self.assigned_folder, settings)
-        if self.is_super:
-            mult = local.get("super_speed_mult", 3.0) 
-            base_spd = local.get("move_speed", 4) * 30 * mult
-        else: 
-            base_spd = local.get("move_speed", 4) * 30        
-
-        if self.is_flung:
-            current_speed = math.sqrt(self.vx**2 + self.vy**2)
-            if current_speed > base_spd:
-                self.vx *= 0.975
-                self.vy *= 0.975
-                self.angle = math.atan2(self.vy, self.vx) % (2 * math.pi)
-            else: 
-                self.is_flung = False
-        else:
-            self.vx = math.cos(self.angle) * base_spd
-            self.vy = math.sin(self.angle) * base_spd
-        if self.is_orbiting:
-            big_wall_exists = any(w.get("is_big", False) for w in walls)
-            if not big_wall_exists:
-                self.is_orbiting = False
-                self.angle = random.uniform(0, 2 * math.pi)
-                
-            x_m, x_mx = self.orbit_wx - self.size + 15 + self.visual_offset, self.orbit_wx + self.orbit_ww - 15 - self.visual_offset
-            y_m, y_mx = self.orbit_wy - self.size + 15 + self.visual_offset, self.orbit_wy + self.orbit_wh - 15 - self.visual_offset
-            
-            # Dönüş yönüne göre hedef bakış açısını esnetiyoruz
-            d_mult = 1.0 if self.orbit_direction == 1 else -1.0
-            t_ang = math.pi if self.orbit_phase == 0 else (math.pi*0.5 if self.orbit_phase == 1 else (0.0 if self.orbit_phase == 2 else math.pi*1.5))
-            if self.orbit_direction == -1:
-                t_ang = (t_ang + math.pi) % (2 * math.pi) # Ters yönde bakış açısını çevir
-                
-            c_spd = base_spd
-            
-            # --- DİNAMİK YÖNLÜ FAZ GEÇİŞLERİ ---
-            if self.orbit_phase == 0:
-                self.y = y_m
-                self.x -= c_spd * dt * d_mult
-                if self.orbit_direction == 1 and self.x <= x_m:
-                    self.x = x_m; self.orbit_phase = 1; self.orbit_counter += 1
-                elif self.orbit_direction == -1 and self.x >= x_mx:
-                    self.x = x_mx; self.orbit_phase = 3; self.orbit_counter += 1
-            elif self.orbit_phase == 1:
-                self.x = x_m
-                self.y += c_spd * dt * d_mult
-                if self.orbit_direction == 1 and self.y >= y_mx:
-                    self.y = y_mx; self.orbit_phase = 2; self.orbit_counter += 1
-                elif self.orbit_direction == -1 and self.y <= y_m:
-                    self.y = y_m; self.orbit_phase = 0; self.orbit_counter += 1
-            elif self.orbit_phase == 2:
-                self.y = y_mx
-                self.x += c_spd * dt * d_mult
-                if self.orbit_direction == 1 and self.x >= x_mx:
-                    self.x = x_mx; self.orbit_phase = 3; self.orbit_counter += 1
-                elif self.orbit_direction == -1 and self.x <= x_m:
-                    self.x = x_m; self.orbit_phase = 1; self.orbit_counter += 1
-            elif self.orbit_phase == 3:
-                self.x = x_mx
-                self.y -= c_spd * dt * d_mult
-                if self.orbit_direction == 1 and self.y <= y_m:
-                    self.y = y_m; self.orbit_phase = 0; self.orbit_counter += 1
-                elif self.orbit_direction == -1 and self.y >= y_mx:
-                    self.y = y_mx; self.orbit_phase = 2; self.orbit_counter += 1
-
-            if hasattr(self, 'orbit_counter') and self.orbit_counter >= 4 and self.orbit_phase == self.orbit_start_phase:
-                self.is_orbiting = False
-                self.angle = random.uniform(0, 2 * math.pi)
-                self.vx, self.vy = math.cos(self.angle) * base_spd, math.sin(self.angle) * base_spd
-                if app and app.big_wall_active and not app.big_wall_pending_destroy:
-                    app.big_wall_pending_destroy = True
-                    app.big_wall_destroy_timer = 5.0
-                self.finalize_transforms(settings)
-                return
-                
-            self.angle = (self.angle + ((t_ang - self.angle + math.pi) % (2 * math.pi) - math.pi) * (dt * 12.0)) % (2 * math.pi)
-            self.vx, self.vy = math.cos(self.angle) * c_spd, math.sin(self.angle) * c_spd
-            self.finalize_transforms(settings)
-            return
-
-        n_x, n_y, r_sz = self.x + (self.vx * dt), self.y + (self.vy * dt), self.size - (self.visual_offset * 2)
-        if walls:
-            for i in range(len(walls) - 1, -1, -1):
-                r = walls[i]["rect"]
-                if (n_x + self.visual_offset < r[0] + r[2] and n_x + self.visual_offset + r_sz > r[0] and n_y + self.visual_offset < r[1] + r[3] and n_y + self.visual_offset + r_sz > r[1]):
-                    # --- SÜPER MODDA ENGELE ÇARPMA DURUMU ---
-                    if self.is_super: 
-                        # Eğer çarptığımız engel ortadaki büyük engelse, ana uygulamadaki durumları sıfırla
-                        if walls[i].get("is_big", False) and app:
-                            app.big_wall_active = False
-                            app.big_wall_pending_destroy = False
-                            app.big_wall_timer = 0.0
-                            # Yörüngede dönen diğer yaratıkları serbest bırak
-                            for s in spider_list:
-                                if s.is_orbiting: 
-                                    s.is_orbiting = False
-                                    s.angle = random.uniform(0, 2 * math.pi)
-                        
-                        # Parçacık efektini başlat ve duvarı listeden silerek patlat
-                        if app and hasattr(app, 'particle_emitter'):
-                            app.particle_emitter.spawn_shattered_wall(r, walls[i]["color"], self.size)
-                        
-                        walls.pop(i)
-                        if app and hasattr(app, 'redraw_walls'):
-                            app.redraw_walls()
-                        continue
-                    
-                    # --- NORMAL MODDA ENGELE ÇARPMA (YANSIMA) DURUMU ---
-                    if min(self.x + self.visual_offset + r_sz - r[0], r[0] + r[2] - (self.x + self.visual_offset)) < min(self.y + self.visual_offset + r_sz - r[1], r[1] + r[3] - (self.y + self.visual_offset)):
-                        self.vx = -self.vx
-                        n_x = r[0] - self.size + self.visual_offset - 2 if self.x + self.size/2 < r[0] + r[2]/2 else r[0] + r[2] - self.visual_offset + 2
-                    else:
-                        self.vy = -self.vy
-                        n_y = r[1] - self.size + self.visual_offset - 2 if self.y + self.size/2 < r[1] + r[3]/2 else r[1] + r[3] - self.visual_offset + 2
-                    self.angle = (math.atan2(self.vy, self.vx) + random.uniform(-0.1, 0.1)) % (2 * math.pi)
-                    bounce_speed = max(base_spd, math.sqrt(self.vx**2 + self.vy**2) * 0.85) 
-                    self.vx = math.cos(self.angle) * bounce_speed
-                    self.vy = math.sin(self.angle) * bounce_speed
-                    self.x, self.y = n_x, n_y
-                    self.finalize_transforms(settings)
-                    return
-
-        if self.is_super and app and hasattr(app, 'particle_emitter'):
-            glow_sz = getattr(self, 'super_glow_size', self.size * 1.25)
-            app.particle_emitter.spawn_super_trail(self.x, self.y, self.size, [1.0, 0.84, 0.0], glow_size=glow_sz)
-
-        if app and app.gold_orb:
-            orb_dist = math.sqrt(((app.gold_orb["x"] + app.gold_orb["size"]/2) - (n_x + self.size/2))**2 + ((app.gold_orb["y"] + app.gold_orb["size"]/2) - (n_y + self.size/2))**2)
-            if orb_dist < ((self.size * 0.35) + (app.gold_orb["size"] / 2)):
-                self.activate_super_power(15.0)  
-                app.gold_orb = None  
-                app.gold_orb_timer = 0.0
-                app.gold_orb_spawn_time = random.uniform(20.0, 40.0) 
-                app.gold_orb_layer.canvas.clear()  
-        if spider_list:
-            for other in list(spider_list):
-                if not other or other.id == self.id or other.is_orbiting or other.is_grabbed: continue
-                dx = (other.x + other.size/2) - (n_x + self.size/2)
-                dy = (other.y + other.size/2) - (n_y + self.size/2)
-                distance = math.sqrt(dx**2 + dy**2)
-                min_distance = (self.size * 0.35 + other.size * 0.35) - (self.visual_offset * 0.5 + other.visual_offset * 0.5)
-                
-                if not hasattr(self, '_active_passings'): self._active_passings = set()
-                if not hasattr(other, '_active_passings'): other._active_passings = set()
-
-                if distance < min_distance and distance > 0:
-                    if self.is_super and not other.is_super:
-                        try: 
-                            if app and hasattr(app, 'particle_emitter'): app.particle_emitter.spawn_shattered_wall([other.x, other.y, other.size, other.size], [random.random(), random.random(), random.random(), 1.0], self.size)
-                            other.canvas_widget.canvas.clear()
-                            app.creature_layer.remove_widget(other.canvas_widget)
-                            if other in spider_list: spider_list.remove(other)
-                        except: pass
-                        continue
-                    elif not self.is_super and other.is_super:
-                        try: 
-                            if app and hasattr(app, 'particle_emitter'): app.particle_emitter.spawn_shattered_wall([self.x, self.y, self.size, self.size], [random.random(), random.random(), random.random(), 1.0], other.size)
-                            self.canvas_widget.canvas.clear()
-                            app.creature_layer.remove_widget(self.canvas_widget)
-                            if self in spider_list: spider_list.remove(self)
-                        except: pass
-                        return
-                    if other.id in self._active_passings or self.id in other._active_passings:
-                        self.roll_speed = self.roll_angle = other.roll_speed = other.roll_angle = 0.0
-                        continue
-                    if random.random() < 0.50:
-                        self._active_passings.add(other.id)
-                        other._active_passings.add(self.id)
-                        if app and hasattr(app, 'creature_layer'):
-                            try: app.creature_layer.remove_widget(self.canvas_widget); app.creature_layer.add_widget(self.canvas_widget)
-                            except: pass
-                        continue 
-
-                    nx_vec, ny_vec = dx / distance, dy / distance
-                    tx_vec, ty_vec = -ny_vec, nx_vec
-                    v1n = self.vx * nx_vec + self.vy * ny_vec
-                    v1t = self.vx * tx_vec + self.vy * ty_vec
-                    v2n = other.vx * nx_vec + other.vy * ny_vec
-                    v2t = other.vx * tx_vec + other.vy * ty_vec
-                    
-                    if self.is_flung: other.is_flung = True
-                    elif other.is_flung: self.is_flung = True
-                    
-                    self.vx, self.vy = v2n * nx_vec + v1t * tx_vec, v2n * ny_vec + v1t * ty_vec
-                    other.vx, other.vy = v1n * nx_vec + v2t * tx_vec, v1n * ny_vec + v2t * ty_vec
-                    self.angle, other.angle = math.atan2(self.vy, self.vx) % (2 * math.pi), math.atan2(other.vy, other.vx) % (2 * math.pi)
-                    
-                    rel_vel_n = v1n - v2n
-                    roll_intensity = max(20.0, abs(rel_vel_n) * 3.0) 
-                    self.roll_speed = -roll_intensity if rel_vel_n > 0 else roll_intensity
-                    other.roll_speed = roll_intensity if rel_vel_n > 0 else -roll_intensity
-                    
-                    overlap = min_distance - distance
-                    n_x -= (overlap / 2) * nx_vec
-                    n_y -= (overlap / 2) * ny_vec
-                    other.x += (overlap / 2) * nx_vec
-                    other.y += (overlap / 2) * ny_vec
-                    self.x, self.y = n_x, n_y
-                    self.finalize_transforms(settings)
-                    return
-                else:
-                    if hasattr(self, '_active_passings') and other.id in self._active_passings: self._active_passings.remove(other.id)
-                    if hasattr(other, '_active_passings') and self.id in other._active_passings: other._active_passings.remove(self.id)
-        self.x, self.y = n_x, n_y
-        sf_w, sf_h = (sw if sw > 100 else 1080), (sh if sh > 100 else 1920)
-        if (self.x + self.size < -50 or self.x > sf_w + 50 or self.y + self.size < -50 or self.y > sf_h + 50): 
-            edge = random.randint(0, 3)
-            if edge == 0: self.x = -self.size + 10; self.y = random.randint(0, max(1, sf_h - self.size))
-            elif edge == 1: self.x = sf_w - 10; self.y = random.randint(0, max(1, sf_h - self.size))
-            elif edge == 2: self.x = random.randint(0, max(1, sf_w - self.size)); self.y = -self.size + 10
-            elif edge == 3: self.x = random.randint(0, max(1, sf_w - self.size)); self.y = sf_h - 10
-            self.angle = random.uniform(0, 2 * math.pi)
-            self.vx, self.vy = math.cos(self.angle) * base_spd, math.sin(self.angle) * base_spd
-        if abs(self.roll_speed) > 1.0:
-            self.roll_angle += self.roll_speed * dt
-            self.roll_speed *= 0.5 
-        else:
-            self.roll_speed = 0.0
-            if abs(self.roll_angle) > 0.1: self.roll_angle += (0.0 - self.roll_angle) * (dt * 8.0)
-            else: self.roll_angle = 0.0
-        self.finalize_transforms(settings)
-
-    def finalize_transforms(self, settings=None):
-        app = App.get_running_app()
-        st = settings if (settings and isinstance(settings, dict)) else (app.settings if app else {})
-        local = st.get("folder_settings", {}).get(self.assigned_folder, st)
-        self.canvas_widget.pos = (self.x, self.y)
-        
-        if hasattr(self, 'rect_mesh') and hasattr(self, 'rect_w'): 
-            self.rect_mesh.pos = (self.x + (self.size - self.rect_w)/2, self.y + (self.size - self.rect_h)/2)
-        if hasattr(self, 'super_glow') and hasattr(self, 'rect_w'): 
-            glow_factor = 1.25 if self.size <= 150 else (1.1 + 22.5 / self.size)
-            glow_w, glow_h = self.rect_w * glow_factor, self.rect_h * glow_factor
-            self.super_glow.pos = (self.x + (self.size - glow_w)/2, self.y + (self.size - glow_h)/2)
-            
-        self.rot_transform.origin = self.scale_transform.origin = self.canvas_widget.center
-        move_deg = math.degrees(self.angle) % 360
-        facing_mode = local.get("image_facing", 0) % 4
-        fx, fy = 1, 1
-        
-        if self.is_orbiting:
-            base_offset = facing_mode * 90
-            if facing_mode == 1:
-                if self.orbit_phase == 0: t_ang = 90
-                elif self.orbit_phase == 1: t_ang = 0
-                elif self.orbit_phase == 2: t_ang = 270
-                elif self.orbit_phase == 3: t_ang = 180
-            elif facing_mode == 2:
-                if self.orbit_phase == 0: t_ang = 180; fx, fy = -1, 1
-                elif self.orbit_phase == 1: t_ang = 270; fx, fy = 1, -1
-                elif self.orbit_phase == 2: t_ang = 0; fx, fy = -1, 1
-                elif self.orbit_phase == 3: t_ang = 90; fx, fy = 1, -1
-            elif facing_mode == 3:
-                if self.orbit_phase == 0: t_ang = 270
-                elif self.orbit_phase == 1: t_ang = 180
-                elif self.orbit_phase == 2: t_ang = 90
-                elif self.orbit_phase == 3: t_ang = 0
+    def zaman_sayici(self, dt):
+        if self.geri_sayim_aktif:
+            gecen = time.time() - self.geri_sayim_baslangic
+            if gecen < 1.0: self.geri_sayim_deger = 3
+            elif gecen < 2.0: self.geri_sayim_deger = 2
+            elif gecen < 3.0: self.geri_sayim_deger = 1
+            elif gecen < 4.0: self.geri_sayim_deger = 0
             else:
-                deg = 180 if self.orbit_phase == 0 else (90 if self.orbit_phase == 1 else (0 if self.orbit_phase == 2 else 270))
-                t_ang = deg - base_offset
-                
-            # --- KRİTİK: TERS YÖNDE DÖNÜLÜYORSA AYNALAMA (FLIP) YAP ---
-            if hasattr(self, 'orbit_direction') and self.orbit_direction == -1:
-                fx = -fx
-        else:
-            if facing_mode == 0:    
-                t_ang = move_deg
-                if 90 < (t_ang % 360) <= 270: t_ang = t_ang - 180; fx = -1  
-            elif facing_mode == 1:  
-                t_ang = move_deg - 90
-                if 90 < (move_deg % 360) <= 270: fx = -1 
-            elif facing_mode == 2:  
-                t_ang = move_deg - 180
-                if not (90 < (move_deg % 360) <= 270): t_ang = t_ang - 180; fx = -1  
-            elif facing_mode == 3:  
-                t_ang = move_deg - 270
-                if 90 < (move_deg % 360) <= 270: fx = -1
+                self.geri_sayim_aktif = False
+                self.wait_start_time = time.time()
+                self.wait_duration = random.uniform(global_settings['min_period'], global_settings['max_period'])
+            return
 
-        self.rot_transform.angle = t_ang + (self.roll_angle * fx)
-        self.scale_transform.x, self.scale_transform.y = fx, fy
-        
-        if self.textures and self.anim_time > (local.get("anim_speed", 80) / 1000.0) and self.total_frames > 0:
-            if self.is_grabbed or math.sqrt(self.vx**2 + self.vy**2) > 5:
-                self.current_frame = (self.current_frame + 1) % self.total_frames
-                if hasattr(self, 'rect_mesh') and self.textures.get(self.current_frame): 
-                    self.rect_mesh.texture = self.textures.get(self.current_frame)
-                self.anim_time = 0
+        if not self.game_over and not self.geri_sayim_aktif:
+            self.kalan_sure -= 1
+            if self.kalan_sure <= 0 and self.toplam_tebrik_sayisi < 3:
+                self.game_over = True
+                if not self.olum_efekti_patladi:
+                    sp_cx = self.sprite_x + self.sprite_w/2
+                    sp_cy = self.sprite_y + self.sprite_h/2
+                    for _ in range(50):
+                        klor = random.choice([(46/255.0, 204/255.0, 113/255.0, 1), (155/255.0, 89/255.0, 182/255.0, 1)])
+                        self.parcaciklar.append(KivyParcacik(sp_cx, sp_cy, klor))
+                    self.ruh_x = sp_cx
+                    self.ruh_y = sp_cy
+                    self.ruh_alfa = 200
+                    self.ruh_aktif = True
+                    self.olum_efekti_patladi = True
+
+    def ana_guncelleme(self, dt):
+        global speed_level
+        current_time = time.time()
+
+        if self.ui_panel_acik and (time.time() - self.son_ayar_zamani >= 5.0):
+            self.ui_panel_acik = False
+
+        if self.skor_pop_efekti > 1.0:
+            self.skor_pop_efekti -= 0.05 * (dt * 60)
+        else:
+            self.skor_pop_efekti = 1.0
+
+        if self.game_over or self.geri_sayim_aktif:
+            self.kivy_canvas_ciz(dt)
+            return
+
+        hit_w, hit_h = self.sprite_w * 0.75, self.sprite_h * 0.75
+        sp_cx = self.sprite_x + (self.sprite_w / 2)
+        sp_cy = self.sprite_y + (self.sprite_h / 2)
+
+        if math.hypot(self.inertia_vx, self.inertia_vy) > 0.6:
+            eski_x, eski_y = self.sprite_x, self.sprite_y
+            self.sprite_x += self.inertia_vx * (dt * 60)
+            for d in self.duvarlar:
+                dx, dy = d['pos']
+                dw, dh = d['size']
+                if (self.sprite_x < dx + dw and self.sprite_x + hit_w > dx and eski_y < dy + dh and eski_y + hit_h > dy):
+                    self.sprite_x = eski_x
+                    self.inertia_vx *= -0.85
+
+            self.sprite_y += self.inertia_vy * (dt * 60)
+            for d in self.duvarlar:
+                dx, dy = d['pos']
+                dw, dh = d['size']
+                if (self.sprite_x < dx + dw and self.sprite_x + hit_w > dx and self.sprite_y < dy + dh and self.sprite_y + hit_h > dy):
+                    self.sprite_y = eski_y
+                    self.inertia_vy *= -0.85
+
+            self.spider_web_trail.append({"pos": (sp_cx, sp_cy), "time": current_time})
+            if math.hypot(self.inertia_vx, self.inertia_vy) > 0.1:
+                self.current_angle = math.degrees(math.atan2(self.inertia_vy, self.inertia_vx)) % 360
+
+            if self.sprite_x <= 0 or self.sprite_x >= Window.width - self.sprite_w: self.inertia_vx *= -0.8
+            if self.sprite_y <= 0 or self.sprite_y >= Window.height - self.sprite_h: self.inertia_vy *= -0.8
+            self.sprite_x = max(0, min(self.sprite_x, Window.width - self.sprite_w))
+            self.sprite_y = max(0, min(self.sprite_y, Window.height - self.sprite_h))
+            self.inertia_vx *= self.friction
+            self.inertia_vy *= self.friction
+        else:
+            if not self.is_moving and not self.is_dragging:
+                if current_time - self.wait_start_time >= self.wait_duration:
+                    min_x = 50
+                    max_x = max(51, int(Window.width - self.sprite_w - 50))
+                    min_y = 50
+                    max_y = max(51, int(Window.height - self.sprite_h - 50))
+                    
+                    for _ in range(50):
+                        tx = random.randint(min_x, max_x)
+                        ty = random.randint(min_y, max_y)
+                        t_rect_carpisma = False
+                        for d in self.duvarlar:
+                            dx, dy = d['pos']
+                            dw, dh = d['size']
+                            if (tx < dx + dw and tx + hit_w > dx and ty < dy + dh and ty + hit_h > dy):
+                                t_rect_carpisma = True
+                                break
+                        if not t_rect_carpisma:
+                            self.target_x, self.target_y = tx, ty
+                            self.is_moving = True
+                            break
+                    if not self.is_moving:
+                        self.wait_start_time = current_time
+                        self.wait_duration = 0.2
+
+            elif self.is_moving:
+                dx = self.target_x - self.sprite_x
+                dy = self.target_y - self.sprite_y
+                dist = math.hypot(dx, dy)
+                hiz_adimi = (global_settings['speed'] + 1) * (dt * 60)
+
+                if dist > max(5.0, hiz_adimi):
+                    eski_x, eski_y = self.sprite_x, self.sprite_y
+                    self.sprite_x += (dx / dist) * hiz_adimi
+                    self.sprite_y += (dy / dist) * hiz_adimi
+
+                    carpiyor = False
+                    for d in self.duvarlar:
+                        dx_d, dy_d = d['pos']
+                        dw, dh = d['size']
+                        if (self.sprite_x < dx_d + dw and self.sprite_x + hit_w > dx_d and self.sprite_y < dy_d + dh and self.sprite_y + hit_h > dy_d):
+                            carpiyor = True
+                            break
+                    if carpiyor:
+                        self.sprite_x, self.sprite_y = eski_x, eski_y
+                        self.is_moving = False
+                        self.wait_start_time = current_time
+                        self.wait_duration = 0.3
+                    else:
+                        self.spider_web_trail.append({"pos": (self.sprite_x + self.sprite_w/2, self.sprite_y + self.sprite_h/2), "time": current_time})
+                        self.current_angle = math.degrees(math.atan2(dy, dx)) % 360
+                else:
+                    self.sprite_x, self.sprite_y = self.target_x, self.target_y
+                    self.is_moving = False
+                    self.wait_start_time = current_time
+                    self.wait_duration = random.uniform(global_settings['min_period'], global_settings['max_period'])
+
+        active_speed = global_settings['speed']
+        if self.is_dragging: active_speed = math.hypot(self.touch_velocity_x, self.touch_velocity_y)
+        elif math.hypot(self.inertia_vx, self.inertia_vy) > 0.2: active_speed = math.hypot(self.inertia_vx, self.inertia_vy)
+        dynamic_delay = max(0.01, global_settings['base_delay'] / (active_speed * 0.4 + 0.6))
+
+        if self.is_moving or self.is_dragging or math.hypot(self.inertia_vx, self.inertia_vy) > 0.2:
+            if current_time - self.last_frame_update >= dynamic_delay:
+                self.current_frame_index = (self.current_frame_index + 1) % len(self.base_frames)
+                self.last_frame_update = current_time
+        else:
+            self.current_frame_index = 0
+
+        for s in self.avlar:
+            s.guncelle(sp_cx, sp_cy, dt)
+            dist_av = math.hypot(s.x - sp_cx, s.y - sp_cy)
+
+            if dist_av < (max(self.sprite_w, self.sprite_h) // 2 + 10):
+                if s.is_caught:
+                    self.skor += s.puan
+                    self.skor_pop_efekti = 1.5
+                    patlama_rengi = (241/255.0, 196/255.0, 15/255.0, 1) if s.tur == "ari" else None
+                    for _ in range(15):
+                        self.parcaciklar.append(KivyParcacik(s.x, s.y, patlama_rengi))
+
+                    if self.skor >= 5 and not self.tebrik_tetiklendi:
+                        self.tebrik_gosteriliyor = True
+                        self.tebrik_baslangic_zamani = time.time()
+                        self.toplam_tebrik_sayisi += 1
+                        self.tebrik_tetiklendi = True
+                        self.skor = 0
+                    s.guvenli_konumlandir()
+                    s.is_caught = False
+            elif dist_av < 200 and not s.is_caught:
+                s.is_caught = True
+
+        if self.tebrik_gosteriliyor and time.time() - self.tebrik_baslangic_zamani >= 3.0:
+            self.tebrik_gosteriliyor = False
+            self.tebrik_tetiklendi = False
+            if self.toplam_tebrik_sayisi >= 3:
+                self.toplam_tebrik_sayisi = 0
+                self.kalan_sure = 300
+                speed_level *= 1.15
+                self.rastgele_duvarlari_olustur()
+                self.orumcek_guvenli_konumlandir()
+                self.avları_olustur()
+
+        self.kivy_canvas_ciz(dt)
+
+    def kivy_canvas_ciz(self, dt):
+        self.canvas.clear()
+        current_time = time.time()
+
+        with self.canvas:
+            bg_name = global_settings['bg_image_name']
+            bg_path = os.path.join(current_dir, bg_name)
+            if os.path.exists(bg_path):
+                Color(1, 1, 1, 1)
+                Rectangle(source=bg_path, pos=(0, 0), size=(Window.width, Window.height))
+            else:
+                Color(0.17, 0.17, 0.17, 1)
+                Rectangle(pos=(0, 0), size=(Window.width, Window.height))
+                Color(0.23, 0.23, 0.23, 0.4)
+                for x in range(0, int(Window.width), 60):
+                    Line(points=[x, 0, x, Window.height], width=1)
+                for y in range(0, int(Window.height), 60):
+                    Line(points=[0, y, Window.width, y], width=1)
+
+            self.spider_web_trail = [line for line in self.spider_web_trail if current_time - line["time"] < 4.0]
+            if len(self.spider_web_trail) > 1:
+                for i in range(len(self.spider_web_trail) - 1):
+                    fade = min(1.0, (current_time - self.spider_web_trail[i]["time"]) / 4.0)
+                    renk_val = 0.82 + (0.18 * fade)
+                    Color(renk_val, renk_val, renk_val, 1.0 - fade)
+                    p1 = self.spider_web_trail[i]["pos"]
+                    p2 = self.spider_web_trail[i+1]["pos"]
+                    Line(points=[p1[0], p1[1], p2[0], p2[1]], width=2)
+
+            for d in self.duvarlar:
+                Color(*self.duvar_govde_renk)
+                Rectangle(pos=d['pos'], size=d['size'])
+
+            for s in self.avlar:
+                if s.is_caught:
+                    Color(160/255.0, 165/255.0, 170/255.0, 0.9)
+                    Line(points=[self.sprite_x + self.sprite_w/2, self.sprite_y + self.sprite_h/2, s.x, s.y], width=2)
+                Color(*s.renk)
+                Ellipse(pos=(s.x - s.boyut, s.y - s.boyut), size=(s.boyut * 2, s.boyut * 2))
+            kalan_p = []
+            for p in self.parcaciklar:
+                p.guncelle(dt)
+                if p.omur > 0:
+                    Color(*p.renk)
+                    p_yaricap = max(3, int(14 * p.omur))
+                    Ellipse(pos=(p.x - p_yaricap, p.y - p_yaricap), size=(p_yaricap * 2, p_yaricap * 2))
+                    kalan_p.append(p)
+            self.parcaciklar = kalan_p
+
+            if not self.olum_efekti_patladi:
+                sapma_acisi = 0
+                mevcut_yon = global_settings['sprite_facing_direction'].upper()
+                if mevcut_yon == 'YUKARI': sapma_acisi = -90
+                elif mevcut_yon == 'SOL': sapma_acisi = 180
+                elif mevcut_yon == 'ASAGI': sapma_acisi = 90
+
+                PushMatrix()
+                pivot_x = self.sprite_x + self.sprite_w / 2
+                pivot_y = self.sprite_y + self.sprite_h / 2
+                Rotate(angle=self.current_angle + sapma_acisi, origin=(pivot_x, pivot_y))
+
+                aktif_resim = self.base_frames[self.current_frame_index] if self.base_frames else "orumcek.png"
+                aktif_resim_yol = os.path.join(current_dir, aktif_resim)
+                if os.path.exists(aktif_resim_yol) or os.path.exists(aktif_resim):
+                    Color(1, 1, 1, 1)
+                    Rectangle(source=aktif_resim_yol if os.path.exists(aktif_resim_yol) else aktif_resim, pos=(self.sprite_x, self.sprite_y), size=(self.sprite_w, self.sprite_h))
+                else:
+                    Color(231/255.0, 76/255.0, 60/255.0, 1)
+                    Ellipse(pos=(self.sprite_x, self.sprite_y), size=(self.sprite_w, self.sprite_h))
+                    Color(1, 1, 1, 1)
+                    Ellipse(pos=(self.sprite_x + self.sprite_w * 0.7, self.sprite_y + self.sprite_h * 0.4), size=(self.sprite_w * 0.2, self.sprite_h * 0.2))
+                PopMatrix()
+
+            if self.ruh_aktif:
+                self.ruh_y += 0.6 * (dt * 60)
+                self.ruh_alfa -= 0.5 * (dt * 60)
+                if self.ruh_alfa <= 0:
+                    self.ruh_aktif = False
+                else:
+                    Color(1, 1, 1, max(0, min(1, self.ruh_alfa / 255.0)))
+                    resim_ruh = self.base_frames[0] if (self.base_frames and isinstance(self.base_frames, list)) else "orumcek.png"
+                    resim_ruh_yol = os.path.join(current_dir, resim_ruh)
+                    if os.path.exists(resim_ruh_yol) or os.path.exists(resim_ruh):
+                        Rectangle(source=resim_ruh_yol if os.path.exists(resim_ruh_yol) else resim_ruh, pos=(self.ruh_x - self.sprite_w/2, self.ruh_y - self.sprite_h/2), size=(self.sprite_w, self.sprite_h))
+                    else:
+                        Ellipse(pos=(self.ruh_x - self.sprite_w/2, self.ruh_y - self.sprite_h/2), size=(self.sprite_w, self.sprite_h))
+
+    def ayar_degistir(self, aksiyon):
+        global current_anim_index
+        self.son_ayar_zamani = time.time()
+        if aksiyon == 'hiz_arti':
+            global_settings['speed'] = min(25, global_settings['speed'] + 1)
+        elif aksiyon == 'hiz_eksi':
+            global_settings['speed'] = max(1, global_settings['speed'] - 1)
+        elif aksiyon == 'boyut_arti':
+            if self.global_scale_factor < 2.5:
+                self.global_scale_factor += 0.1
+                global_settings['scale_factor'] = self.global_scale_factor
+                self.sprite_w = int(130 * self.global_scale_factor)
+                self.sprite_h = int(130 * self.global_scale_factor)
+        elif aksiyon == 'boyut_eksi':
+            if self.global_scale_factor > 0.4:
+                self.global_scale_factor -= 0.1
+                global_settings['scale_factor'] = self.global_scale_factor
+                self.sprite_w = int(130 * self.global_scale_factor)
+                self.sprite_h = int(130 * self.global_scale_factor)
+        elif aksiyon == 'anim_degis':
+            if len(available_anims) > 1:
+                current_anim_index = (current_anim_index + 1) % len(available_anims)
+                yeni_anim_adi = available_anims[current_anim_index]
+                global_settings['animation'] = yeni_anim_adi
+
+                try:
+                    ayar_yolu = os.path.join(current_dir, "oyun_ayarlari.json")
+                    if os.path.exists(ayar_yolu):
+                        with open(ayar_yolu, "r", encoding="utf-8") as f:
+                            tum_hafiza = json.load(f)
+                            if 'animasyonlar' in tum_hafiza and yeni_anim_adi in tum_hafiza['animasyonlar']:
+                                global_settings.update(tum_hafiza['animasyonlar'][yeni_anim_adi])
+                            else:
+                                global_settings['sprite_facing_direction'] = 'SAG'
+                                global_settings['speed'] = 4
+                                global_settings['base_delay'] = 0.18
+                                global_settings['scale_factor'] = 1.0
+                except:
+                    pass
+
+                self.global_scale_factor = global_settings.get('scale_factor', 1.0)
+                self.sprite_w = int(130 * self.global_scale_factor)
+                self.sprite_h = int(130 * self.global_scale_factor)
+                self.base_frames = load_masked_png_frames(global_settings['animation'])
+                self.current_frame_index = 0
+        elif aksiyon == 'yon_sec':
+            yonler = ['SAG', 'ASAGI', 'SOL', 'YUKARI']
+            mevcut = global_settings['sprite_facing_direction'].upper()
+            if mevcut in yonler:
+                global_settings['sprite_facing_direction'] = yonler[(yonler.index(mevcut) + 1) % 4]
+        elif aksiyon == 'fps_arti':
+            global_settings['base_delay'] = max(0.02, global_settings['base_delay'] - 0.02)
+        elif aksiyon == 'fps_eksi':
+            global_settings['base_delay'] = min(1.5, global_settings['base_delay'] + 0.02)
+
+        ayari_animasyona_ozel_kaydet()
+
+    def oyunu_sifirla(self):
+        global speed_level
+        self.skor = 0
+        self.toplam_tebrik_sayisi = 0
+        self.kalan_sure = 300
+        self.game_over = False
+        self.olum_efekti_patladi = False
+        self.ruh_aktif = False
+        self.tebrik_tetiklendi = False
+        self.geri_sayim_aktif = True
+        self.geri_sayim_baslangic = time.time()
+        speed_level = 1.0
+        self.rastgele_duvarlari_olustur()
+        self.orumcek_guvenli_konumlandir()
+        self.avları_olustur()
+
+class OrumcekOyunApp(App):
+    def build(self):
+        self.main_layout = FloatLayout()
+        self.oyun_ekrani = SpiderGame()
+        self.main_layout.add_widget(self.oyun_ekrani)
+
+        self.root = FloatLayout()
+        self.main_layout.add_widget(self.root)
+
+        self.btn_ayarlar = Button(
+            text="Ayarlar", font_size='16sp', bold=True, size_hint=(0.14, 0.06),
+            pos_hint={'x': 0.83, 'y': 0.92}, background_color=(0.16, 0.50, 0.72, 1),
+            background_normal='', color=(1, 1, 1, 1)
+        )
+        self.btn_ayarlar.bind(on_press=self.ayarlar_tetikle)
+        self.root.add_widget(self.btn_ayarlar)
+
+        self.menu_butonlari = []
+        buton_verileri = [
+            ("Hız +", lambda x: self.oyun_ekrani.ayar_degistir('hiz_arti')),
+            ("Hız -", lambda x: self.oyun_ekrani.ayar_degistir('hiz_eksi')),
+            ("Boyut +", lambda x: self.oyun_ekrani.ayar_degistir('boyut_arti')),
+            ("Boyut -", lambda x: self.oyun_ekrani.ayar_degistir('boyut_eksi')),
+            ("Animasyon", lambda x: self.oyun_ekrani.ayar_degistir('anim_degis')),
+            ("Yön Seç", lambda x: self.oyun_ekrani.ayar_degistir('yon_sec')),
+            ("Kare Hızı +", lambda x: self.oyun_ekrani.ayar_degistir('fps_arti')),
+            ("Kare Hızı -", lambda x: self.oyun_ekrani.ayar_degistir('fps_eksi'))
+        ]
+
+        for i, (txt, fn) in enumerate(buton_verileri):
+            y_pos = 0.84 - (i * 0.075)
+            btn = Button(
+                text=txt, font_size='14sp', bold=True,
+                size_hint=(None, 0.06), padding=(20, 0),
+                background_color=(0.92, 0.92, 0.92, 1), background_normal='',
+                color=(0.1, 0.1, 0.1, 1)
+            )
+            def hizala_ve_konumlandir(instance, value, sabit_y=y_pos, hedef_btn=btn):
+                hedef_btn.pos = (Window.width - hedef_btn.width - 20, Window.height * sabit_y)
+            btn.bind(texture_size=lambda instance, value, b=btn: setattr(b, 'width', value[0] + 40))
+            btn.bind(width=hizala_ve_konumlandir)
+            btn.bind(on_press=fn)
+            self.menu_butonlari.append(btn)
+
+        self.sabit_etiketler = {}
+        ui_y_oranlari = [0.85, 0.78, 0.71, 0.64, 0.57, 0.50]
+        for i, y_orani in enumerate(ui_y_oranlari):
+            lbl = Label(
+                font_size='15sp', bold=True, size_hint=(None, None),
+                pos_hint={'x': 0.02, 'y': y_orani}, padding=(15, 10)
+            )
+            with lbl.canvas.before:
+                Color(0.08, 0.08, 0.08, 0.60)
+                rect = Rectangle()
+            lbl.bind(texture_size=lambda instance, value, l=lbl: setattr(l, 'size', value))
+            lbl.bind(pos=lambda instance, value, r=rect: setattr(r, 'pos', instance.pos))
+            lbl.bind(size=lambda instance, value, r=rect: setattr(r, 'size', instance.size))
+            self.sabit_etiketler[f'lbl_{i}'] = lbl
+            
+        self.lbl_skor = Label(font_size="22sp", bold=True, size_hint=(None, None), pos_hint={'x': 0.02, 'y': 0.05}, padding=(25, 15))
+        with self.lbl_skor.canvas.before:
+            Color(0.08, 0.08, 0.08, 0.60)
+            self.rect_skor = Rectangle()
+        self.lbl_skor.bind(texture_size=lambda instance, value: setattr(self.lbl_skor, 'size', value))
+        self.lbl_skor.bind(pos=lambda instance, value: setattr(self.rect_skor, 'pos', instance.pos))
+        self.lbl_skor.bind(size=lambda instance, value: setattr(self.rect_skor, 'size', instance.size))
+
+        self.lbl_acele = Label(
+            text="ACELE ET!", font_size="45sp", bold=True, color=(0.9, 0.29, 0.23, 1),
+            size_hint=(None, None), pos_hint={'center_x': 0.5, 'center_y': 0.78}, padding=(35, 20)
+        )
+        with self.lbl_acele.canvas.before:
+            Color(0.08, 0.08, 0.08, 0.60)
+            self.rect_acele = Rectangle()
+        self.lbl_acele.bind(texture_size=lambda instance, value: setattr(self.lbl_acele, 'size', value))
+        self.lbl_acele.bind(pos=lambda instance, value: setattr(self.rect_acele, 'pos', instance.pos))
+        self.lbl_acele.bind(size=lambda instance, value: setattr(self.rect_acele, 'size', instance.size))
+
+        self.lbl_gs = Label(
+            font_size="60sp", bold=True, size_hint=(None, None),
+            pos_hint={'center_x': 0.5, 'center_y': 0.5}, padding=(40, 25)
+        )
+        with self.lbl_gs.canvas.before:
+            Color(0.08, 0.08, 0.08, 0.60)
+            self.rect_gs = Rectangle()
+        self.lbl_gs.bind(texture_size=lambda instance, value: setattr(self.lbl_gs, 'size', value))
+        self.lbl_gs.bind(pos=lambda instance, value: setattr(self.rect_gs, 'pos', instance.pos))
+        self.lbl_gs.bind(size=lambda instance, value: setattr(self.rect_gs, 'size', instance.size))
+
+        self.lbl_tebrik = Label(font_size='35sp', bold=True, color=(39/255.0, 174/255.0, 96/255.0, 1), pos_hint={'center_x': 0.5, 'center_y': 0.5})
+        self.lbl_bitti = Label(font_size='40sp', bold=True, color=(0.9, 0.3, 0.25, 1), pos_hint={'center_x': 0.5, 'center_y': 0.80})
+
+        Clock.schedule_interval(self.ui_guncelle, 1.0 / 60.0)
+        return self.main_layout
+
+    def ui_guncelle(self, dt):
+        self.btn_ayarlar.text = "Kapat" if self.oyun_ekrani.ui_panel_acik else "Ayarlar"
+
+        for btn in self.menu_butonlari:
+            if self.oyun_ekrani.ui_panel_acik:
+                if btn not in self.root.children: self.root.add_widget(btn)
+            else:
+                if btn in self.root.children: self.root.remove_widget(btn)
+
+        dakika = self.oyun_ekrani.kalan_sure // 60
+        saniye = self.oyun_ekrani.kalan_sure % 60
+        kare_hiz_seviyesi = round(0.18 / global_settings['base_delay'], 1)
+
+        ui_veriler = [
+            (f"Hız Seviyesi: {global_settings['speed']}", (1, 1, 0, 1)),
+            (f"Kalan Süre: {dakika:02d}:{saniye:02d}", (1, 0.4, 0.4, 1)),
+            (f"Ölçek: %{int(self.oyun_ekrani.global_scale_factor * 100)}", (1, 1, 0.35, 1)),
+            (f"Ayak Hızı: {kare_hiz_seviyesi}x", (1, 0.58, 1, 1)),
+            (f"Aktif Görünüm: {global_settings['animation']}", (100/255.0, 255/255.0, 100/255.0, 1)),
+            (f"Görsel Yönü: {global_settings['sprite_facing_direction']}", (200/255.0, 200/255.0, 255/255.0, 1))
+        ]
+
+        for i, (metin, renk) in enumerate(ui_veriler):
+            lbl = self.sabit_etiketler[f'lbl_{i}']
+            lbl.text = metin
+            lbl.color = renk
+            if not self.oyun_ekrani.game_over:
+                if lbl not in self.root.children: self.root.add_widget(lbl)
+
+            else:
+                if lbl in self.root.children: self.root.remove_widget(lbl)
+
+        skor_font_boyutu = int(22 * self.oyun_ekrani.skor_pop_efekti)
+        self.lbl_skor.font_size = f"{skor_font_boyutu}sp"
+        self.lbl_skor.color = (0, 1, 1, 1) if self.oyun_ekrani.skor >= 5 else (1, 0, 1, 1)
+        self.lbl_skor.text = f"Skor: {self.oyun_ekrani.skor} / 5 | Tur: {self.oyun_ekrani.toplam_tebrik_sayisi}"
+
+        if not self.oyun_ekrani.game_over:
+            if self.lbl_skor not in self.root.children: self.root.add_widget(self.lbl_skor)
+        else:
+            if self.lbl_skor in self.root.children: self.root.remove_widget(self.lbl_skor)
+
+        if self.oyun_ekrani.kalan_sure <= 10 and self.oyun_ekrani.kalan_sure > 0 and not self.oyun_ekrani.game_over and not self.oyun_ekrani.geri_sayim_aktif:
+            if self.lbl_acele not in self.root.children: self.root.add_widget(self.lbl_acele)
+        else:
+            if self.lbl_acele in self.root.children: self.root.remove_widget(self.lbl_acele)
+
+        if self.oyun_ekrani.geri_sayim_aktif:
+            self.lbl_gs.text = str(self.oyun_ekrani.geri_sayim_deger) if self.oyun_ekrani.geri_sayim_deger > 0 else "BAŞLA!"
+            self.lbl_gs.color = (241/255.0, 196/255.0, 15/255.0, 1) if self.oyun_ekrani.geri_sayim_deger > 0 else (46/255.0, 204/255.0, 113/255.0, 1)
+            if self.lbl_gs not in self.root.children: self.root.add_widget(self.lbl_gs)
+        else:
+            if self.lbl_gs in self.root.children: self.root.remove_widget(self.lbl_gs)
+
+        if self.oyun_ekrani.tebrik_gosteriliyor and not self.oyun_ekrani.game_over:
+            self.lbl_tebrik.text = "BÖLÜM TAMAMLANDI!" if self.oyun_ekrani.toplam_tebrik_sayisi >= 3 else "Harika Avcı!"
+            if self.lbl_tebrik not in self.root.children: self.root.add_widget(self.lbl_tebrik)
+        else:
+            if self.lbl_tebrik in self.root.children: self.root.remove_widget(self.lbl_tebrik)
+
+        if self.oyun_ekrani.game_over and not self.oyun_ekrani.ruh_aktif:
+            if not hasattr(self, 'pnl_gameover'):
+                self.pnl_gameover = FloatLayout(size_hint=(0.85, 0.50), pos_hint={'center_x': 0.5, 'center_y': 0.50})
+                with self.pnl_gameover.canvas.before:
+                    Color(0.10, 0.10, 0.12, 0.97)
+                    self.rect_pnl = Rectangle()
+                    Color(0.9, 0.3, 0.25, 1)
+                    self.line_pnl = Line(width=3)
+
+                def guncelle_panel_canvas(instance, value):
+                    self.rect_pnl.pos = instance.pos
+                    self.rect_pnl.size = instance.size
+                    self.line_pnl.rectangle = (instance.x, instance.y, instance.width, instance.height)
+                self.pnl_gameover.bind(pos=guncelle_panel_canvas, size=guncelle_panel_canvas)
+
+                self.pnl_gameover.add_widget(self.lbl_bitti)
+                self.lbl_bitti.text = "OYUN BİTTİ"
+
+                self.lbl_ozet = Label(
+                    text=f"Tebrikler! Toplamda {self.oyun_ekrani.toplam_tebrik_sayisi} Tur Başarıyla Tamamlandı.\nAvlanma süresi dolduğu için simülasyon sonlandırıldı.",
+                    font_size='18sp', color=(0.8, 0.8, 0.8, 1),
+                    size_hint=(0.9, None), pos_hint={'center_x': 0.5, 'center_y': 0.58}
+                )
+                self.pnl_gameover.add_widget(self.lbl_ozet)
+
+                btn_tekrar = Button(
+                    text="Yeniden Başlat", font_size='18sp', bold=True, size_hint=(0.35, 0.14),
+                    pos_hint={'center_x': 0.32, 'center_y': 0.25}, background_color=(39/255.0, 174/255.0, 96/255.0, 1),
+                    background_normal=''
+                )
+                btn_tekrar.bind(on_press=lambda x: self.oyun_sifirla_ve_paneli_kapat())
+                self.pnl_gameover.add_widget(btn_tekrar)
+
+                btn_cikis = Button(
+                    text="Oyundan Çık", font_size='18sp', bold=True, size_hint=(0.35, 0.14),
+                    pos_hint={'center_x': 0.68, 'center_y': 0.25}, background_color=(192/255.0, 57/255.0, 43/255.0, 1),
+                    background_normal=''
+                )
+                btn_cikis.bind(on_press=lambda x: App.get_running_app().stop())
+                self.pnl_gameover.add_widget(btn_cikis)
+
+            if self.pnl_gameover not in self.root.children:
+                self.root.add_widget(self.pnl_gameover)
+        else:
+            if hasattr(self, 'pnl_gameover') and self.pnl_gameover in self.root.children:
+                self.root.remove_widget(self.pnl_gameover)
+
+    def oyun_sifirla_ve_paneli_kapat(self):
+        self.oyun_ekrani.oyunu_sifirla()
+        if hasattr(self, 'pnl_gameover') and self.pnl_gameover in self.root.children:
+            self.root.remove_widget(self.pnl_gameover)
+
+    def ayarlar_tetikle(self, instance):
+        self.oyun_ekrani.son_ayar_zamani = time.time()
+        self.oyun_ekrani.ui_panel_acik = not self.oyun_ekrani.ui_panel_acik
 
 if __name__ == '__main__':
-    CreatureOverlayApp().run()
+    try:
+        OrumcekOyunApp().run()
+    except Exception as e:
+        import traceback
+        hata_detayi = traceback.format_exc()
+        print(hata_detayi)
+        hata_yaz(f"KRİTİK ÇÖKME:\n{hata_detayi}")
+        input("Çıkmak için Enter tuşuna basın...")
