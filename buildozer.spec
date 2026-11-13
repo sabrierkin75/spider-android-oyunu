@@ -1,6 +1,6 @@
 [app]
-title = Spider Android
-package.name = spiderandroid
+title = Hunter Spider
+package.name = hunterspider
 package.domain = org.sabrierkin
 
 source.dir = .
@@ -10,7 +10,7 @@ android.ignore_setup_py = True
 # (Büyük/küçük harf duyarlılığı veya alt klasör kaçırma riskini bitirir)
 source.include_patterns = anims/*, anims/**/*
 icon.filename = %(source.dir)s/spider.png
-version = 1.4.0
+version = 1.0.0
 requirements = python3,kivy==2.3.0,pyjnius
 
 orientation = portrait, landscape
