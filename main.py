@@ -362,7 +362,7 @@ class SpiderGame(Widget):
         if self.game_over or self.geri_sayim_aktif: return False
         if touch.x > Window.width * 0.80 and touch.y > Window.height * 0.88:
             return False
-        if self.ui_panel_acik and touch.x > Window.width * 0.70:
+        if self.ui_panel_acik and touch.x > Window.width * 0.80:
             return False
 
         if (self.sprite_x <= touch.x <= self.sprite_x + self.sprite_w and
@@ -869,7 +869,7 @@ class OrumcekOyunApp(App):
 
         for i, (txt, fn) in enumerate(buton_verileri):
             # İlk butonu 0.84 yerine 0.81'den başlatıp aralıkları 0.068 yapıyoruz
-            y_pos = 0.81 - (i * 0.068)
+            y_pos = 0.84 - (i * 0.068)
             btn = Button(
                 text=txt, font_size='14sp', bold=True,
                 size_hint=(None, 0.055), padding=(20, 0),
