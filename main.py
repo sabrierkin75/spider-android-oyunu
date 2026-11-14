@@ -771,12 +771,12 @@ class CreatureOverlayApp(App):
             self.ui_layer.add_widget(btn_tab3)
             
             def _setup_setting_row(label, btn_m, btn_p, y_pos, bg_m_color=(0.2, 0.25, 0.33, 1), bg_p_color=(0.2, 0.25, 0.33, 1)):
-                btn_m.size_hint = (0.12, btn_h)
+                btn_m.size_hint = (0.09, btn_h)
                 btn_m.pos_hint = {'x': 0.65, 'y': y_pos}
                 btn_m.font_size = '18sp'
                 btn_m.background_color = (0, 0, 0, 0)
                 
-                btn_p.size_hint = (0.12, btn_h)
+                btn_p.size_hint = (0.09, btn_h)
                 btn_p.pos_hint = {'x': 0.79, 'y': y_pos}
                 btn_p.font_size = '18sp'
                 btn_p.background_color = (0, 0, 0, 0)
