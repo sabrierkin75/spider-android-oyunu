@@ -1,5 +1,15 @@
 {
     "kara": {
+        "ESHEEP": [
+            "0.png",
+            "1.png",
+            "bg1_h.png",
+            "bg1_v.png",
+            "bg2_h.png",
+            "bg2_v.png",
+            "bg_h.png",
+            "bg_v.png"
+        ],
         "KAPLAN": [
             "0.png",
             "1.png",
@@ -490,6 +500,9 @@
             "80.png",
             "9.png"
         ],
+        "ISS": [
+            "0.png"
+        ],
         "JUPITER": [
             "0.png",
             "1.png",
@@ -727,6 +740,9 @@
             "3.png",
             "4.png"
         ],
+        "TIANGONG": [
+            "0.png"
+        ],
         "UFO": [
             "0.png",
             "1.png",
@@ -888,7 +904,11 @@
             "8.png",
             "9.png",
             "bg_h.png",
-            "bg_v.png"
+            "bg_v.png",
+            "bg1_h.png",
+            "bg1_v.png",
+            "bg2_h.png",
+            "bg2_v.png"
         ],
         "KELEBEK": [
             "0.png",
