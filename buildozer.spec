@@ -9,7 +9,7 @@ source.include_exts = py,png,jpg,kv,atlas,json
 android.ignore_setup_py = True
 # (Büyük/küçük harf duyarlılığı veya alt klasör kaçırma riskini bitirir)
 source.include_patterns = anims/*, anims/**/*
-icon.filename = %(source.dir)s/spider.png
+icon.filename = %(source.dir)s/hunter.png
 version = 1.0.0
 requirements = python3,kivy==2.3.0,pyjnius
 
