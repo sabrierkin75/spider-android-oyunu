@@ -13,6 +13,8 @@ import math
 import time
 import os
 import json
+from kivy.config import Config
+Config.set('graphics', 'allow_screensaver', '0')
 
 # Android ve PC için doğru ana dizini (anims klasörünün olduğu yeri) bulur
 if 'ANDROID_ARGUMENT' in os.environ:
@@ -942,6 +944,24 @@ class OrumcekOyunApp(App):
         Clock.schedule_interval(self.ui_guncelle, 1.0 / 60.0)
         return self.main_layout
 
+    def on_start(self):
+        # Android cihazlarda ekran uykusunu ve arka ışık sönmesini engeller
+        if 'ANDROID_ARGUMENT' in os.environ:
+            try:
+                from jnius import autoclass
+                from android.runnable import run_on_ui_thread
+
+                @run_on_ui_thread
+                def ekran_acik_tut():
+                    PythonActivity = autoclass('org.kivy.android.PythonActivity')
+                    WindowManager = autoclass('android.view.WindowManager$LayoutParams')
+                    activity = PythonActivity.mActivity
+                    activity.getWindow().addFlags(WindowManager.FLAG_KEEP_SCREEN_ON)
+
+                ekran_acik_tut()
+            except Exception as e:
+                hata_yaz(f"Ekran açık tutma hatası: {str(e)}")
+
     def ui_guncelle(self, dt):
         self.btn_ayarlar.text = "Kapat" if self.oyun_ekrani.ui_panel_acik else "Ayarlar"
 
@@ -997,7 +1017,7 @@ class OrumcekOyunApp(App):
             if self.lbl_gs in self.root.children: self.root.remove_widget(self.lbl_gs)
 
         if self.oyun_ekrani.tebrik_gosteriliyor and not self.oyun_ekrani.game_over:
-            self.lbl_tebrik.text = "BÖLÜM TAMAMLANDI!" if self.oyun_ekrani.toplam_tebrik_sayisi >= 3 else "Harika Avcı!"
+            self.lbl_tebrik.text = "BÖLÜM\nTAMAMLANDI!" if self.oyun_ekrani.toplam_tebrik_sayisi >= 3 else "Harika Avcı!"
             if self.lbl_tebrik not in self.root.children: self.root.add_widget(self.lbl_tebrik)
         else:
             if self.lbl_tebrik in self.root.children: self.root.remove_widget(self.lbl_tebrik)
