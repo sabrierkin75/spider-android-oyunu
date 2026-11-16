@@ -1594,7 +1594,7 @@ class CreatureOverlayApp(App):
         with self.wall_layer.canvas:
             for wall in self.walls:
                 Color(*wall["color"])
-                • Rectangle(pos=(wall["rect"][0], wall["rect"][1]), size=(wall["rect"][2], wall["rect"][3]))
+                Rectangle(pos=(wall["rect"][0], wall["rect"][1]), size=(wall["rect"][2], wall["rect"][3]))
 
     def update(self, dt):
         if self.spider_active or self.demo_active:
