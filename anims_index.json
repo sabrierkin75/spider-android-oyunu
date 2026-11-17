@@ -1,5 +1,11 @@
 {
     "kara": {
+        "BSHEEP": [
+            "0.png",
+            "1.png",
+            "bg_h.png",
+            "bg_v.png"
+        ],
         "ESHEEP": [
             "0.png",
             "1.png",
