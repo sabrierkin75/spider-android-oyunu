@@ -58,7 +58,7 @@ class GameCanvas(Widget):
 
 class KorsanMacerasiApp(App):
     def build(self):
-        self.title = "Korsan Macerasi"
+        self.title = "Korsan Macerası"
         self.base_dir = os.path.dirname(os.path.abspath(__file__))
 
         self.WIDTH = Window.width if Window.width > 100 else 1080
