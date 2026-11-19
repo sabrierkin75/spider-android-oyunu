@@ -65,9 +65,9 @@ class KorsanMacerasiApp(App):
         self.HEIGHT = Window.height if Window.height > 100 else 1920
 
         # Sabitler ve Varsayılan Ayarlar
-        self.BOYUT = 110
+        self.BOYUT = 120
         self.ADA_BOYUT = 135
-        self.BUYUK_ADA_BOYUT = 250
+        self.BUYUK_ADA_BOYUT = 350
         self.BASLANGIC_HIZI = 4.0
         self.MAX_CAN = 3
 
