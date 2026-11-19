@@ -1,6 +1,6 @@
 [app]
-title = Spider Android
-package.name = spiderandroid
+title = Korsan Macerası
+package.name = korsanmacerasi
 package.domain = org.sabrierkin
 
 source.dir = .
@@ -8,14 +8,14 @@ source.include_exts = py,png,jpg,kv,atlas,json
 # Proje dizininde setup.py algılanması için şu satırın önündeki '#' işaretini kaldırın veya ekleyin:
 android.ignore_setup_py = True
 # (Büyük/küçük harf duyarlılığı veya alt klasör kaçırma riskini bitirir)
-source.include_patterns = anims/*, anims/**/*
-icon.filename = %(source.dir)s/spider.png
+source.include_patterns = images/*, images/**/*
+icon.filename = %(source.dir)s/korsan.png
 version = 1.4.0
 requirements = python3,kivy==2.3.0,pyjnius
 
 orientation = portrait, landscape
 fullscreen = 1
-android.archs = armeabi-v7a
+android.archs = arm64-v8a
 android.allow_backup = True
 android.api = 33
 android.minapi = 21
