@@ -10,7 +10,7 @@ android.ignore_setup_py = True
 # (Büyük/küçük harf duyarlılığı veya alt klasör kaçırma riskini bitirir)
 source.include_patterns = images/*, images/**/*
 icon.filename = %(source.dir)s/korsan.png
-version = 1.4.0
+version = 1.0.0
 requirements = python3,kivy==2.3.0,pyjnius
 
 orientation = portrait, landscape
