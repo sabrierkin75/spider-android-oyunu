@@ -28,7 +28,7 @@
             "bg_h.png",
             "bg_v.png"
         ],
-        "KKUŞ": [
+        "KKUS": [
             "0.png",
             "1.png",
             "10.png",
@@ -98,7 +98,7 @@
             "bg_h.png",
             "bg_v.png"
         ],
-        "MKUŞ": [
+        "MKUS": [
             "0.png",
             "1.png",
             "2.png",
@@ -301,6 +301,11 @@
             "2.png"
         ],
         "BALIK5": [
+            "0.png",
+            "1.png",
+            "2.png"
+        ],
+        "BALIK6": [
             "0.png",
             "1.png",
             "2.png"
@@ -1008,7 +1013,7 @@
             "bg_h.png",
             "bg_v.png"
         ],
-        "MAVİKELEBEK": [
+        "MAVIKELEBEK": [
             "0.png",
             "1.png",
             "10.png",
@@ -1034,7 +1039,7 @@
             "bg_h.png",
             "bg_v.png"
         ],
-        "ÖRÜMCEK": [
+        "ORUMCEK": [
             "0.png",
             "1.png",
             "10.png",
@@ -1113,7 +1118,7 @@
             "bg_h.png",
             "bg_v.png"
         ],
-        "ÖRÜMCEK2": [
+        "ORUMCEK2": [
             "0.png",
             "1.png",
             "2.png",
@@ -1121,7 +1126,7 @@
             "bg_h.png",
             "bg_v.png"
         ],
-        "ÖRÜMCEK3": [
+        "ORUMCEK3": [
             "0.png",
             "1.png",
             "10.png",
