@@ -26,4 +26,4 @@ android.enable_androidx = 1
 android.sdk_buildtools_source = cmdline-tools
 android.accept_sdk_license = True
 p4a.branch = release-2024.01.21
-android.permissions = READ_EXTERNAL_STORAGE, WRITE_EXTERNAL_STORAGE
+android.permissions = MANAGE_EXTERNAL_STORAGE
