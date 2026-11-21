@@ -11,7 +11,7 @@ android.ignore_setup_py = True
 source.include_patterns = anims/*, anims/**/*
 icon.filename = %(source.dir)s/spider.png
 version = 1.4.0
-requirements = python3,kivy==2.3.0,pyjnius
+requirements = python3,kivy==2.3.0,pyjnius,android
 
 orientation = portrait, landscape
 fullscreen = 1
