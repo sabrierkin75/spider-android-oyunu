@@ -15,7 +15,7 @@ requirements = python3,kivy==2.3.0,pyjnius,android
 
 orientation = portrait, landscape
 fullscreen = 1
-android.archs = arm64-v8a
+android.archs = armeabi-v7a
 android.allow_backup = True
 android.api = 33
 android.minapi = 21
@@ -27,3 +27,4 @@ android.sdk_buildtools_source = cmdline-tools
 android.accept_sdk_license = True
 p4a.branch = release-2024.01.21
 android.permissions = READ_EXTERNAL_STORAGE, WRITE_EXTERNAL_STORAGE, MANAGE_EXTERNAL_STORAGE
+
