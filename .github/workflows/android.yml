@@ -45,6 +45,6 @@ jobs:
     - name: Üretilen APK Dosyasını artifact Olarak Yükle
       uses: actions/upload-artifact@v4
       with:
-        name: Spider-Android-Kumandalı-Demolu-yedekli_armeabi-v7a
+        name: Spider-Android-Demolu-yedekli_arm64-v8a
         path: bin/*.apk
 
