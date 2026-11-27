@@ -1,0 +1,55 @@
+#EXTM3U x-tvg-url="https://www.example.com/epg.xml"
+#EXTINF:-1 tvg-id="" tvg-name="tabii spor" tvg-logo="https://cms-tabii-public-image.tabii.com/int/43022.png" group-title="🜲ÜⲘ𝖎ţ Ⲙ0Ď🜲Tabii Canlı",tabii spor
+https://kL9mR2vXw7nQ5pY1sH4tJ3gB6.medya.trt.com.tr/master.m3u8
+#EXTINF:-1 tvg-id="" tvg-name="tabii TV" tvg-logo="https://cms-tabii-public-image.tabii.com/int/45154_0-0-1500-1500.png" group-title="🜲ÜⲘ𝖎ţ Ⲙ0Ď🜲Tabii Canlı",tabii TV
+https://ceokzokgtd.erbvr.com/tabiitv/tabiitv.m3u8
+#EXTINF:-1 tvg-id="150002" tvg-name="TRT 1" tvg-logo="https://cms-tabii-public-image.tabii.com/int/22938_0-0-1500-1500.png" group-title="🜲ÜⲘ𝖎ţ Ⲙ0Ď🜲TRT Kanalları",TRT 1
+https://tv-trt1.medya.trt.com.tr/master.m3u8
+#EXTINF:-1 tvg-id="" tvg-name="tabii Çocuk" tvg-logo="https://cms-tabii-public-image.tabii.com/int/51550_0-0-1500-1500.png" group-title="🜲ÜⲘ𝖎ţ Ⲙ0Ď🜲Tabii Canlı",tabii Çocuk
+https://rfw2clwss2go9glm.medya.trt.com.tr/out/v1/trt-tabiispor/tabiicocuk/trt-tabiicocuk-hls-drm/trt-tabiicocuk.m3u8
+#EXTINF:-1 tvg-id="150007" tvg-name="TRT 2" tvg-logo="https://cms-tabii-public-image.tabii.com/int/22942_0-0-1500-1500.png" group-title="🜲ÜⲘ𝖎ţ Ⲙ0Ď🜲TRT Kanalları",TRT 2
+https://tv-trt2.medya.trt.com.tr/master.m3u8
+#EXTINF:-1 tvg-id="150022" tvg-name="TRT SPOR" tvg-logo="https://cms-tabii-public-image.tabii.com/int/22961_0-0-1500-1500.png" group-title="🜲ÜⲘ𝖎ţ Ⲙ0Ď🜲TRT Kanalları",TRT SPOR
+https://trt.daioncdn.net/trtspor/master.m3u8?app=clean
+#EXTINF:-1 tvg-id="150028" tvg-name="TRT SPOR YILDIZ" tvg-logo="https://cms-tabii-public-image.tabii.com/int/22956_0-0-1500-1500.png" group-title="🜲ÜⲘ𝖎ţ Ⲙ0Ď🜲TRT Kanalları",TRT SPOR YILDIZ
+https://trt.daioncdn.net/trtspor-yildiz/master.m3u8?app=clean
+#EXTINF:-1 tvg-id="150017" tvg-name="TRT HABER" tvg-logo="https://cms-tabii-public-image.tabii.com/int/22979_0-0-1500-1500.png" group-title="🜲ÜⲘ𝖎ţ Ⲙ0Ď🜲TRT Kanalları",TRT HABER
+https://tv-trthaber.medya.trt.com.tr/master.m3u8
+#EXTINF:-1 tvg-id="150038" tvg-name="TRT ÇOCUK" tvg-logo="https://cms-tabii-public-image.tabii.com/int/22984_0-0-1500-1500.png" group-title="🜲ÜⲘ𝖎ţ Ⲙ0Ď🜲TRT Kanalları",TRT ÇOCUK
+https://tv-trtcocuk.medya.trt.com.tr/master.m3u8
+#EXTINF:-1 tvg-id="150063" tvg-name="TRT WORLD" tvg-logo="https://cms-tabii-public-image.tabii.com/int/22947.png" group-title="🜲ÜⲘ𝖎ţ Ⲙ0Ď🜲TRT Kanalları",TRT WORLD
+https://tv-trtworld.medya.trt.com.tr/master.m3u8
+#EXTINF:-1 tvg-id="150012" tvg-name="TRT BELGESEL" tvg-logo="https://cms-tabii-public-image.tabii.com/int/22988_0-0-1500-1500.png" group-title="🜲ÜⲘ𝖎ţ Ⲙ0Ď🜲TRT Kanalları",TRT BELGESEL
+https://tv-trtbelgesel.medya.trt.com.tr/master.m3u8
+#EXTINF:-1 tvg-id="150033" tvg-name="TRT MÜZİK" tvg-logo="https://cms-tabii-public-image.tabii.com/int/22966_0-0-1500-1500.png" group-title="🜲ÜⲘ𝖎ţ Ⲙ0Ď🜲TRT Kanalları",TRT MÜZİK
+https://tv-trtmuzik.medya.trt.com.tr/master.m3u8
+#EXTINF:-1 tvg-id="150043" tvg-name="TRT TÜRK" tvg-logo="https://cms-tabii-public-image.tabii.com/int/22951_0-0-1500-1500.png" group-title="🜲ÜⲘ𝖎ţ Ⲙ0Ď🜲TRT Kanalları",TRT TÜRK
+https://tv-trtturk.medya.trt.com.tr/master.m3u8
+#EXTINF:-1 tvg-id="150053" tvg-name="TRT KURDÎ" tvg-logo="https://cms-tabii-public-image.tabii.com/int/22975_0-0-1500-1500.png" group-title="🜲ÜⲘ𝖎ţ Ⲙ0Ď🜲TRT Kanalları",TRT KURDÎ
+https://tv-trtkurdi.medya.trt.com.tr/master.m3u8
+#EXTINF:-1 tvg-id="150058" tvg-name="TRT ARABİ" tvg-logo="https://cms-tabii-public-image.tabii.com/int/22996_0-0-1500-1500.png" group-title="🜲ÜⲘ𝖎ţ Ⲙ0Ď🜲TRT Kanalları",TRT ARABİ
+https://tv-trtarabi.medya.trt.com.tr/master.m3u8
+#EXTINF:-1 tvg-id="150048" tvg-name="TRT AVAZ" tvg-logo="https://cms-tabii-public-image.tabii.com/int/51339_0-0-720-720.png" group-title="🜲ÜⲘ𝖎ţ Ⲙ0Ď🜲TRT Kanalları",TRT AVAZ
+https://tv-trtavaz.medya.trt.com.tr/master.m3u8
+#EXTINF:-1 tvg-id="171018" tvg-name="TRT Diyanet Çocuk" tvg-logo="https://cms-tabii-public-image.tabii.com/int/24238_0-0-467-262.png" group-title="🜲ÜⲘ𝖎ţ Ⲙ0Ď🜲TRT Kanalları",TRT Diyanet Çocuk
+https://tv-trtdiyanetcocuk.medya.trt.com.tr/master.m3u8
+#EXTINF:-1 tvg-id="293389" tvg-name="TRT eba" tvg-logo="https://cms-tabii-public-image.tabii.com/int/34581_0-0-2559-651.jpeg" group-title="🜲ÜⲘ𝖎ţ Ⲙ0Ď🜲TRT Kanalları",TRT eba
+https://tv-e-okul01.medya.trt.com.tr/master.m3u8
+#EXTINF:-1 tvg-id="606324" tvg-name="TRT Genç" tvg-logo="https://cms-tabii-public-image.tabii.com/int/60307_0-0-1500-1500.png" group-title="🜲ÜⲘ𝖎ţ Ⲙ0Ď🜲TRT Kanalları",TRT Genç
+https://tv-trtgenc.medya.trt.com.tr/master.m3u8
+#EXTINF:-1 tvg-id="" tvg-name="tabii spor 1" tvg-logo="https://cms-tabii-public-image.tabii.com/int/43216_0-0-1500-1500.png" group-title="🜲ÜⲘ𝖎ţ Ⲙ0Ď🜲Tabii Canlı",tabii spor 1
+https://Pz4qT7nW1mR9sH2vL5xK8jG3y.medya.trt.com.tr/master.m3u8
+#EXTINF:-1 tvg-id="" tvg-name="tabii Spor 2" tvg-logo="https://cms-tabii-public-image.tabii.com/int/43211_0-0-1500-1500.png" group-title="🜲ÜⲘ𝖎ţ Ⲙ0Ď🜲Tabii Canlı",tabii Spor 2
+https://mR8bV4kL1nQ7sH9tW2xP5zJ6g.medya.trt.com.tr/master.m3u8
+#EXTINF:-1 tvg-id="" tvg-name="tabii Spor 3" tvg-logo="https://cms-tabii-public-image.tabii.com/int/43212_0-0-1500-1500.png" group-title="🜲ÜⲘ𝖎ţ Ⲙ0Ď🜲Tabii Canlı",tabii Spor 3
+https://mR4vL7nQ2sH9tW5xP1zK3gJ8b.medya.trt.com.tr/master.m3u8
+#EXTINF:-1 tvg-id="" tvg-name="tabii Spor 4" tvg-logo="https://cms-tabii-public-image.tabii.com/int/43213_0-0-1500-1500.png" group-title="🜲ÜⲘ𝖎ţ Ⲙ0Ď🜲Tabii Canlı",tabii Spor 4
+https://sH7tQ2nW5mR1vL9xP4zK3gJ8k.medya.trt.com.tr/master.m3u8
+#EXTINF:-1 tvg-id="" tvg-name="tabii Spor 5" tvg-logo="https://cms-tabii-public-image.tabii.com/int/43214_0-0-1500-1500.png" group-title="🜲ÜⲘ𝖎ţ Ⲙ0Ď🜲Tabii Canlı",tabii Spor 5
+https://vL2nQ8sH4tW1mR7xP5zK9gJ3y.medya.trt.com.tr/master.m3u8
+#EXTINF:-1 tvg-id="" tvg-name="tabii Spor 6" tvg-logo="https://cms-tabii-public-image.tabii.com/int/43215_0-0-1500-1500.png" group-title="🜲ÜⲘ𝖎ţ Ⲙ0Ď🜲Tabii Canlı",tabii Spor 6
+https://nW5mR1vL9xP4zK2sH7tQ3gJ6b.medya.trt.com.tr/master.m3u8
+#EXTINF:-1 tvg-id="" tvg-name="tabii Spor 7" tvg-logo="https://cms-tabii-public-image.tabii.com/int/51611_0-0-1500-1500.png" group-title="🜲ÜⲘ𝖎ţ Ⲙ0Ď🜲Tabii Canlı",tabii Spor 7
+https://Pz2rT7nW1mR9sH4vL6xK3gJ5b.medya.trt.com.tr/master.m3u8
+#EXTINF:-1 tvg-id="" tvg-name="tabii Spor 8" tvg-logo="https://cms-tabii-public-image.tabii.com/int/60593_0-0-1500-1500.png" group-title="🜲ÜⲘ𝖎ţ Ⲙ0Ď🜲Tabii Canlı",tabii Spor 8
+https://vL9nQ2sH5tW1mR7xP4zK8gJ3k.medya.trt.com.tr/master.m3u8

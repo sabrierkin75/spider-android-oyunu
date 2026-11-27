@@ -1,0 +1,550 @@
+#EXTM3U
+#EXTINF:-1 group-title="TR", TRT 1 HD
+https://tv-trt1.medya.trt.com.tr/master_1440.m3u8
+#EXTINF:-1, Kanal d
+https://demiroren.daioncdn.net/kanald/kanald.m3u8?app=da2109ea-5dfe-4107-89ab-23593336ed61
+#EXTINF:-1,trt 4k
+https://trn03.tulix.tv/gt-trt-4k/index.m3u8?token=0631e8753bcdf25bb2a5015db22ec082
+#EXTINF:0 logo="https://i.imgur.com/u5TdCsE.png",TRT 4K
+http://c3921155.edmonst.net/iptv/DVHP2VB5QXL7UC/4001/index.m3u8
+#EXTINF:-1,trt 4k tv
+http://umperisn.mywire.org/index.php?id=1842&token=DeaTHLesS
+#EXTINF:-1,ATV
+http://116.202.238.88/ATV_TR/index.m3u8
+#EXTINF:-1,star
+https://dogus-live.daioncdn.net/startv/playlist.m3u8
+#EXTINF:-1,star 
+https://dogus.daioncdn.net/startv/startv.m3u8?ce=3&app=a20ac41e-bdc3-4aa1-934d-26b484480ac9
+#EXTINF:-1,TV 2 HD
+https://demiroren.daioncdn.net/teve2/teve2_1080p.m3u8?=&sid=7u24ptt7g6bv&app=6aab838a-437e-4a1b-bbd0-e30f79cdbbbd&ce=3
+#EXTINF:0,360
+https://turkmedya-live.ercdn.net/tv360/tv360_720p.m3u8
+#EXTINF:-1,now
+http://116.202.238.88/FOXTV_TR/index.m3u8
+#EXTINF:-1,BEYAZ TV HD 
+https://beyaztv-live.daioncdn.net/beyaztv/beyaztv_1080p.m3u8
+#EXTINF:-1, Lalegül
+https://lbl.netmedya.net/hls/lalegultv.m3u8
+#EXTINF:-1,kanal7 hd
+https://kanal7-live.daioncdn.net/kanal7/kanal7_1080p.m3u8
+#EXTINF:0,tv4
+https://turkmedya-live.ercdn.net/tv4/tv4.m3u8
+#EXTINF:0,dmax
+https://trn03.tulix.tv/gt-dmax-tv/index.m3u8
+#EXTINF:-1,TLC
+https://dogus.daioncdn.net/tlc/tlc_720p.m3u8?token=ZEZxamVTQ002emJFYko5MnhTcDBPbDhSby9xTDRhRGxkSlNQSldxNzNaYz0=&sid=7un09nnrxb4w&app=1aca0aa1-06e3-41ff-a8e5-38d7df475469&ce=3
+#EXTINF:-1,lovenature
+http://95.67.12.82:9098
+#EXTINF: -1,cartoon network
+http://c3921155.edmonst.net/iptv/DVHP2VB5QXL7UC/6846/index.m3u8
+#EXTINF: -1,cartoonito
+http://c3921155.edmonst.net/iptv/DVHP2VB5QXL7UC/6850/index.m3u8
+#EXTINF:0,arb tv
+https://raw.githubusercontent.com/UzunMuhalefet/streams/refs/heads/main/myvideo-az/arb.m3u8
+#EXTINF:0,arb güneş tv
+https://raw.githubusercontent.com/UzunMuhalefet/streams/refs/heads/main/myvideo-az/arb-gunes.m3u8
+#EXTINF:0,azad tv
+https://raw.githubusercontent.com/UzunMuhalefet/streams/refs/heads/main/myvideo-az/atv-azad.m3u8
+#EXTINF:0,az tv
+https://raw.githubusercontent.com/UzunMuhalefet/streams/refs/heads/main/myvideo-az/az-tv.m3u8
+#EXTINF:0,kepez
+http://85.132.78.122:8050/dashjs/stream/index.mpd
+#EXTINF:0,baku tv
+https://raw.githubusercontent.com/UzunMuhalefet/streams/refs/heads/main/myvideo-az/baku-tv.m3u8
+#EXTINF:0,xəzər tv
+https://raw.githubusercontent.com/UzunMuhalefet/streams/refs/heads/main/myvideo-az/xezer-tv.m3u8
+#EXTINF:0,baku tv
+https://rtmp.baku.tv/hls/bakutv_1080p.m3u8
+#EXTINF:0,showplus tv
+https://rtmp.showplus.tv/hls/myshow.m3u8
+#EXTINF: 0,medeniyyet
+https://str.yodacdn.net/medeniyyet/index.m3u8
+#EXTINF:0,xəzər
+http://185.129.1.242:80/xezertv/mpegts
+#EXTINF: 0,kinoteatr
+https://s7.iptv-24.net/1009/tracks-v1a1a1/mono.m3u8
+#EXTINF: 0,navo
+https://s7.iptv-24.net/1008/tracks-v1a1a1/mono.m3u8
+#EXTINF: 0,sci fi
+http://90.170.214.40:9700/stream/avatel/syfyhd/master.m3u8
+#EXTINF:-1,bbc series (es)
+https://amg00793-amg00793c40-rakuten-es-5444.playouts.now.amagi.tv/playlist.m3u8
+#EXTINF:0,charge!
+https://fast-channels.sinclairstoryline.com/CHARGE/index.m3u8
+#EXTINF:0,comet
+https://fast-channels.sinclairstoryline.com/COMET/index.m3u8
+#EXTINF:0,dark matter
+https://tricoast-tv-dark-matter-01-us.ono.wurl.tv/playlist.m3u8
+#EXTINF:0,grit extra
+https://cdn-uw2-prod.tsv2.amagi.tv/linear/amg01438-ewscrippscompan-gritxtra-tablo/playlist.m3u8
+#EXTINF:0,mbc3 usa
+https://shd-gcp-live.edgenextcdn.net/live/bitmovin-mbc-3-usa/5d58265a862a476dc7f97694addb5ded/index.m3u8
+#EXTINF:0,explore
+https://cdn-uw2-prod.tsv2.amagi.tv/linear/amg00111-hearstmediaprod-xploreintlnl-samsungnl/playlist.m3u8
+#EXTINF:-1,3sat
+https://dash4.antik.sk/live/test_drei_sat_tizen/playlist.m3u8
+#EXTINF:0,kabel1
+https://dash4.antik.sk/live/test_kabel_eins_tizen/playlist.m3u8
+#EXTINF:0,disney
+https://s6.hopslan.com/disneyX/tracks-v1a1/mono.m3u8
+#EXTINF:0,rictv
+https://rictv.iptv-playoutcenter.de/rictv/rictv-web/playlist.m3u8
+#EXTINF:-1,sixx
+https://dash4.antik.sk/live/test_sixx_tizen/playlist.m3u8
+#EXTINF:0,pro7maxx
+https://s6.hopslan.com/pro7maxxX/tracks-v1a1/mono.m3u8
+#EXTINF:0,srf
+https://srfs.akamaized.net/hls/live/689649/srfsgeo/master.m3u8
+#EXTINF:-1,panda
+https://cdnvod.panda-os.com/livehls/68c525e1063044539b09c253/master.m3u8
+#EXTINF:0,teletoon+
+http://151.80.18.177:86/Teletoon+_HD/index.m3u8
+#EXTINF:0,c+cinema
+http://151.80.18.177:86/Canal+_cinema_HD/index.m3u8
+#EXTINF:0,w9
+http://151.80.18.177:86/W9_HD/index.m3u8
+#EXTINF:0,m6
+http://151.80.18.177:86/M6_HD/index.m3u8
+#EXTINF:0,fr2
+http://151.80.18.177:86/France_2_HD/index.m3u8
+#EXTINF:0,fr3
+http://151.80.18.177:86/France_3_HD/index.m3u8
+#EXTINF:0,fr5
+http://151.80.18.177:86/France_5_HD/index.m3u8
+https://raw.githubusercontent.com/Paradise-91/ParaTV/main/streams/t18/t18-dm.m3u8
+#EXTINF:0,ketnet jr
+https://virtch.vrtcdn.be/v1/channel/KETNET_JUNIOR_PROD_HLS/ketnet_junior_prod_hls-hls/6.m3u8
+#EXTINF:0,red
+https://edge8.pink.rs/redtv/chunklist_w276398575.m3u8
+#EXTINF:0,cps action
+http://hls127.freeott.top:8080/CPS_Action/video.m3u8
+#EXTINF:0,cps oscar
+http://hls127.freeott.top:8080/CPS_Oscar/video.m3u8
+#EXTINF:0,tv1000 action
+http://80.77.52.3/streams/media/tv1000action_720x576/index.m3u8
+#EXTINF:0,tv1000 action
+https://stream8.cinerama.uz/1225/tracks-v1a1/mono.m3u8
+#EXTINF:0,tv1000
+https://stream8.cinerama.uz/1058/tracks-v1a1/mono.m3u8
+#EXTINF:0,tv1000 action
+http://stream.mcquack.net/100/index.m3u8
+#EXTINF:0,viju+ Megahit
+http://hls127.freeott.top:8080/ViP_Megahit/video.m3u8
+#EXTINF:0,viju+ planet
+http://sewv654wfcsdwfi87fwvgbngh.siauliairsavlt.pw/iptv/D4WWHMT9VMU2MW/9027/index.m3u8
+#EXTINF:0,viju+ explore
+http://sewv654wfcsdwfi87fwvgbngh.siauliairsavlt.pw/iptv/D4WWHMT9VMU2MW/6381/index.m3u8
+#EXTINF:0,lovenature 4k
+https://pb-ehs1glsha1juy.akamaized.net/Love_Nature_4K.m3u8
+#EXTINF:0,lovenature hd
+https://aegis-cloudfront-1.tubi.video/6d6d0f24-8445-4b4c-bdf6-44f9e38beaa4/playlist.m3u8
+#EXTINF:0,naturetime
+https://amg00090-blueantllc-lovenatureau-samsungnz-r3iaz.amagi.tv/playlist/amg00090-blueantllc-lovenatureau-samsungnz/playlist.m3u8
+#EXTINF:-1,kinozal
+http://filmtvgroup.hopto.org/FILMTVKinozaL/tracks-v1a1/mono.m3u8
+#EXTINF:0,c
+http://iptv.prosto.tv:7000/ch4/video.m3u8
+#EXTINF:0,Н
+http://iptv.prosto.tv:7000/ch6/video.m3u8
+#EXTINF:0,ОЦЕ
+http://iptv.prosto.tv:7000/ch18/video.m3u8
+#EXTINF:0,5
+http://iptv.prosto.tv:7000/ch20/video.m3u8
+#EXTINF:0,tiji (ru)
+http://iptv.prosto.tv:7000/ch73/video.m3u8
+#EXTINF:0,gulli (ru)
+http://iptv.prosto.tv:7000/ch74/video.m3u8
+#EXTINF:0,lale
+http://iptv.prosto.tv:7000/ch77/video.m3u8
+#EXTINF:0,davinci
+http://iptv.prosto.tv:7000/ch78/video.m3u8
+#EXTINF:0,filmbox
+http://iptv.prosto.tv:7000/ch64/video.m3u8
+#EXTINF:0,filmbox arthouse
+http://iptv.prosto.tv:7000/ch63/video.m3u8
+#EXTINF:0,star cinema
+http://iptv.prosto.tv:7000/ch56/video.m3u8
+#EXTINF:0,Hollywood
+http://iptv.prosto.tv:7000/ch50/video.m3u8
+#EXTINF:0,cine+ hit
+http://iptv.prosto.tv:7000/ch40/video.m3u8
+#EXTINF:0,cine+ legend
+http://iptv.prosto.tv:7000/ch34/video.m3u8
+#EXTINF:0,cine+
+http://iptv.prosto.tv:7000/ch33/video.m3u8
+#EXTINF:0,bigudi
+http://iptv.prosto.tv:7000/ch16/video.m3u8
+#EXTINF:0,1+1
+http://iptv.prosto.tv:7000/ch14/video.m3u8
+#EXTINF:0,ntn
+http://iptv.prosto.tv:7000/ch12/video.m3u8
+#EXTINF:0,mega
+http://iptv.prosto.tv:7000/ch11/video.m3u8
+#EXTINF:0,tet
+http://iptv.prosto.tv:7000/ch7/video.m3u8
+#EXTINF:0,subsea
+http://iptv.prosto.tv:7000/ch305/video.m3u8?secret=pafoa7eu
+#EXTINF:0,space time
+http://iptv.prosto.tv:7000/ch314/video.m3u8?secret=pafoa7eu
+#EXTINF:0,zoo
+http://iptv.prosto.tv:7000/ch319/video.m3u8?secret=pafoa7eu
+#EXTINF:0,city eden fantastik
+https://cityeden.catcast.tv/content/41333/index.m3u8
+#EXTINF:0,city eden dizi
+https://cityeden.catcast.tv/content/46209/index.m3u8
+#EXTINF:-1,city eden fantastik
+https://cityeden.catcast.tv/content/45268/index.m3u8
+#EXTINF:-1,red
+http://5.188.159.128:8070/RED/index.m3u8
+#EXTINF:-1,k premiere
+http://5.188.159.128:8070/KINOPREMIERA/index.m3u8
+#EXTINF:-1,солнце
+http://217.114.191.150/Solnce/index.m3u8
+#EXTINF:-1,суббота
+http://217.114.191.150/Subbota/index.m3u8
+#EXTINF:-1,стс
+http://185.91.177.13/sts/index.m3u8
+#EXTINF:-1,n g w
+http://217.20.112.199/natgeowild/index.m3u8
+#EXTINF:-1,a p
+http://217.20.112.199/animalplanet/index.m3u8
+#EXTINF:-1,5channel
+http://178.134.1.158:8081/5channel/index.m3u8
+#EXTINF:-1,a&e
+http://79.127.238.228:14551/
+#EXTINF:-1,wb tv
+http://79.127.238.228:14647/
+#EXTINF:-1,p prem
+http://151.80.18.177:86/Paris_Premiere_HD/index.m3u8
+#EXTINF:-1,Canal+
+http://151.80.18.177:86/Canal+_HD/index.m3u8
+#EXTINF:-1,Canal+ cinema
+http://151.80.18.177:86/Canal+_cinema_HD/index.m3u8
+#EXTINF:-1,Discovery
+http://151.80.18.177:86/Discovery_HD/index.m3u8
+#EXTINF:-1,National_Geo
+http://151.80.18.177:86/National_Geo_HD/index.m3u8
+#EXTINF:-1,Comedie+
+http://151.80.18.177:86/Comedie+_HD/index.m3u8
+#EXTINF:-1,ab1
+http://151.80.18.177:86/AB1/index.m3u8
+#EXTINF:-1,rtl9
+http://151.80.18.177:86/RTL9/index.m3u8
+#EXTINF:-1,w9
+http://151.80.18.177:86/W9_HD/index.m3u8
+#EXTINF:-1,m6
+http://151.80.18.177:86/M6_HD/index.m3u8
+#EXTINF:-1,cstar
+http://151.80.18.177:86/D17_HD/index.m3u8
+#EXTINF:-1,teva
+http://151.80.18.177:86/Teva_HD/index.m3u8
+#EXTINF:-1,tf1
+http://151.80.18.177:86/TF1_HD/index.m3u8
+#EXTINF:-1,tmc
+http://151.80.18.177:86/TMC/index.m3u8
+#EXTINF:-1,France_3
+http://151.80.18.177:86/France_3_HD/index.m3u8
+#EXTINF:-1,France_5
+http://151.80.18.177:86/France_5_HD/index.m3u8
+#EXTINF:-1,disney
+http://151.80.18.177:86/Disney_Channel_HD/index.m3u8
+#EXTINF:-1,tiji
+http://151.80.18.177:86/Tiji_HD/index.m3u8
+#EXTINF:-1,kino polska
+https://racitonsen.s.gy/KINO_POLSKA
+#EXTINF:-1 group-title="stvp",mech+
+https://jmp2.uk/stvp-GBBD500005ZG
+#EXTINF:0,rakuten sci-fi (gb)
+https://jmp2.uk/stvp-GB2600013BO
+#EXTINF:0,rakuten action (gb)
+https://jmp2.uk/stvp-GB2600015OS
+#EXTINF:0,rakuten sci-fi (es)
+https://jmp2.uk/stvp-ES500004NO
+#EXTINF:0,rakuten fantastik (it)
+https://jmp2.uk/stvp-IT260000131
+#EXTINF:0,fantasja (de)
+https://jmp2.uk/stvp-DEBA1500011RJ
+#EXTINF:0,fantasja (ch)
+https://jmp2.uk/stvp-CHBA150001090
+#EXTINF:0,fantasja (at)
+https://jmp2.uk/stvp-ATBA1500010H3
+#EXTINF:-1,stargate
+https://jmp2.uk/rok-11c7c3660c6b6f18a21838fd404a7a1d.m3u8
+#EXTINF:0,star trek (de)
+https://jmp2.uk/stvp-DEBA33000038I
+#EXTINF:-1,MGM presents
+https://jmp2.uk/rok-5263332f746c6b1bed25aa6c105a79d9.m3u8
+#EXTINF:0,pluto fantastik (us)
+https://jmp2.uk/stvp-USBA300017PK
+#EXTINF:0,top sci-fi (de)
+https://jmp2.uk/stvp-DE2300002KX
+#EXTINF:0,top sci-fi (ch)
+https://jmp2.uk/stvp-CH23000031M
+#EXTINF:0,top sci-fi (at)
+https://jmp2.uk/stvp-AT230000238
+#EXTINF:0,top sci-fi (fr)
+https://jmp2.uk/stvp-FR4600001FK
+#EXTINF:-1,pop
+https://cdn-uw2-prod.tsv2.amagi.tv/linear/amg01753-narrativeentert-popkids-lggb/playlist.m3u8
+#EXTINF:0,pop
+https://narrative-popkids-rakuten.amagi.tv/playlist.m3u8
+#EXTINF:0,tv+ pop
+https://jmp2.uk/stvp-GBBC430000128
+#EXTINF:0,tv+ pop up
+https://jmp2.uk/stvp-GB25000016G
+#EXTINF:0,tv+ tiny pop
+https://jmp2.uk/stvp-GBBD3200003T6
+#EXTINF:-1,pink panther
+https://jmp2.uk/rok-65f83bbbf7a2eb952b798c96300bb329.m3u8
+#EXTINF:0,tv+ smurfs
+https://jmp2.uk/stvp-GBBD1300001WA
+#EXTINF:-1,şirinler (roku)
+https://jmp2.uk/rok-2bc36154da3310eaa692d0ea141ef8e0.m3u8
+#EXTINF:0,tv+ sonic
+https://jmp2.uk/stvp-GB370000369
+#EXTINF:0,batteryPOP (ca)
+https://jmp2.uk/stvp-CABD12000247O
+#EXTINF:-1,pop (uk)
+https://narrative-popkids-rakuten.amagi.tv/hls/amagi_hls_data_rakutenAA-narrative-popkids-rakuten/CDN/master.m3u8
+#EXTINF:-1,pop
+https://narrative-popkids-rakuten.amagi.tv/1080p/index.m3u8
+#EXTINF:-1 tvg-logo="https://blutv-images.mncdn.com/q/t/i/bluv2/75/70x70/63fdf561866ac31b149aa2de",TRT Çocuk
+http://tv-trtcocuk.medya.trt.com.tr/master_720.m3u8
+#EXTINF:-1,cn
+http://78.108.244.134:8899/cn
+#EXTINF:0,şirinler
+https://imps-smrfs.otteravision.com/imps/smrfs/smrfs.m3u8
+#EXTINF:-1,spark
+https://candlelightmedia-sparklightlove-4-us.roku.wurl.tv/3000.m3u8
+#EXTINF:0 group-title="fr",m6
+https://main.sonyrepairs.com/m6/index.m3u8
+#EXTINF:0,jimjam
+http://85.11.189.178:8080/JimJam/index.m3u8
+#EXTINF:0,ab3
+http://41.205.93.154/AB3/mpegts
+#EXTINF:0,ab1
+http://41.205.93.154/AB1/mpegts
+#EXTINF:0,tfx
+http://41.205.93.154/TFX/mpegts
+#EXTINF:0,tf1
+http://41.205.93.154/TF1/mpegts
+#EXTINF:0,teva
+http://41.205.93.154/TEVA/mpegts
+#EXTINF:0,Tiji
+http://41.205.93.154/TIJI/mpegts
+#EXTINF:-1,gulli
+https://lbcdn.6cloud.fr/resource/m6web/l/gulli_hls_sd_short_q2hyb21h.m3u8?groups[]=m6web-live-gulli_ext
+#EXTINF:-1,chérie25
+https://cherie25.nrjaudio.fm/hls/live/2038375/c25/master.m3u8
+#EXTINF:-1,bbc series(fr-vpn)
+https://jmp2.uk/stvp-FR2900001UF
+#EXTINF:-1,nature time (fr)
+https://amg00090-blueantmedia-naturetime-samsungfr-yakbf.amagi.tv/playlist/amg00090-blueantmedia-naturetime-samsungfr/playlist.m3u8
+#EXTINF:-1,Sony One series thriller
+https://483a1e90c18641c9a6d27becd41ad892.mediatailor.us-west-2.amazonaws.com/v1/master/ba62fe743df0fe93366eba3a257d792884136c7f/LINEAR-821-FR-SONYONESRIESTHRILLER-LG_FR/playlist.m3u8
+#EXTINF:-1,Sony One series comedie
+https://4f2a3e1ff5274297b115cf0f7da1c2cd.mediatailor.us-west-2.amazonaws.com/v1/master/ba62fe743df0fe93366eba3a257d792884136c7f/LINEAR-819-FR-SONYONESRIESCOMDIE-LG_FR/playlist.m3u8
+#EXTINF:-1,Sony One hits comedie
+https://7aa9671895264ec9a384dfed1b992171.mediatailor.us-west-2.amazonaws.com/v1/master/ba62fe743df0fe93366eba3a257d792884136c7f/LINEAR-818-FR-SONYONEHITSCOMDIE-LG_FR/playlist.m3u8
+#EXTINF:-1,Sony One hits action
+https://5098a8b860504a3690fd2e7c0a18d68f.mediatailor.us-west-2.amazonaws.com/v1/master/ba62fe743df0fe93366eba3a257d792884136c7f/LINEAR-817-FR-SONYONEHITSACTION-LG_FR/playlist.m3u8
+#EXTINF:-1,Sony One blacklist
+https://06cb85ad6ccb4a6b97f561e62d16ad3f.mediatailor.us-west-2.amazonaws.com/v1/master/ba62fe743df0fe93366eba3a257d792884136c7f/LINEAR-822-FR-SONYONETHEBLACKLIST-LG_FR/playlist.m3u8
+#EXTINF:-1,Sony One Emocoes
+https://f9387554367349db8374885adb2d48cf.mediatailor.us-east-1.amazonaws.com/v1/master/0fb304b2320b25f067414d481a779b77db81760d/Samsung-br_SonyOneEmocoes/playlist.m3u8?ManoTV
+
+#EXTINF:-1,star tve
+https://rtvelivestream-rtveplayplus.rtve.es/rtvesec/int/star_main_dvr_1080.m3u8
+#EXTINF:-1, kanal D drama
+https://amg01602-themahqfrance-vivekanald-samsungspain-uu2zn.amagi.tv/playlist/amg01602-themahqfrance-vivekanald-samsungspain/playlist.m3u8
+#EXTINF: -1,Universal monsters
+https://xumo-xumoent-ch824-d4q5c.fast.nbcuni.com/live/master.m3u8
+#EXTINF: -1,Universal action
+https://xumo-xumoent-ch828-w6val.fast.nbcuni.com/live/master.m3u8
+#EXTINF: -1,sony one classicas (br)
+https://spt-sonyoneclassicas-1-br.samsung.wurl.tv/1200.m3u8
+#EXTINF: -1,sony cine
+https://a-cdn.klowdtv.com/live1/cine_720p/playlist.m3u8
+#EXTINF: -1,BBC earth
+https://amg00793-amg00793c6-xumo-us-2669.playouts.now.amagi.tv/BBCStudios-BBCEarthA-hls/playlist540p.m3u8
+#EXTINF:-1 group-title="rus",kino tv
+http://vod.tuva.ru/kinotv/tracks-v1a1/mono.m3u8
+#EXTINF: -1,cineboxcine hd
+http://66.160.192.241/cineboxcinehd/index.m3u8
+#EXTINF: -1,vhs22
+http://autopilot.catcast.tv/content/41333/index.m3u8
+#EXTINF: -1,mistik
+http://autopilot.catcast.tv/content/40783/index.m3u8
+#EXTINF: -1,akvaryum
+http://iptv.prosto.tv:7000/ch325/video.m3u8?secret=pafoa7eu
+#EXTINF:-1,zylo cine nanar
+https://zylo-cinenanar-rakuten.amagi.tv/hls/amagi_hls_data_rakutenAA-zylo-cinenanar-rakuten/CDN/master.m3u8
+#EXTINF:-1,zylo emotion'L
+https://zylo-emotional-lg.amagi.tv/playlist.m3u8
+#EXTINF:-1,megapix
+http://79.127.238.228:14592
+#EXTINF:-1,tty
+http://57.128.231.171:8080/231/index.m3u8
+#EXTINF:-1,carto
+http://57.128.231.171:8080/293/index.m3u8
+#EXTINF:-1,cart
+http://57.128.231.171:8080/303/index.m3u8
+#EXTINF:-1,turbo
+https://dash3.antik.sk/live/turbo_tv_avc_25p/playlist.m3u8
+#EXTINF:-1 group-title="us" ,buzzr
+https://cdn.igocast.com/channel1_hls/channel1_master.m3u8
+#EXTINF:-1,ace
+https://cdn.igocast.com/channel3_hls/channel3_master.m3u8
+#EXTINF:-1,action channel
+https://cdn.igocast.com/channel4_hls/channel4_master.m3u8
+#EXTINF:-1,retro channel
+https://cdn.igocast.com/channel8_hls/channel8_master.m3u8
+#EXTINF:-1,fail army
+https://jmp2.uk/stvp-GBAJ40003642
+#EXTINF:-1,charge
+https://fast-channels.sinclairstoryline.com/CHARGE/index_2.m3u8
+#EXTINF:-1,charge
+https://fast-channels.sinclairstoryline.com/CHARGE/index.m3u8
+#EXTINF:-1,comet
+https://fast-channels.sinclairstoryline.com/COMET/index_2.m3u8
+#EXTINF:0,vh1
+http://23.237.104.106:8080/USA_VH1/index.m3u8
+#EXTINF:-1,cartoon network
+http://23.237.104.106:8080/USA_CARTOON_NETWORK/index.m3u8
+#EXTINF:-1,boomerang
+http://23.237.104.106:8080/USA_BOOMERANG/index.m3u8
+#EXTINF:0,Moviebox
+https://cdn1.skygo.mn/live/disk1/Moviebox/HLS-FTA/Moviebox.m3u8
+#EXTINF:-1,jupiter
+https://streams2.sofast.tv/v1/master/611d79b11b77e2f571934fd80ca1413453772ac7/c7e85b21-ea01-42b4-85db-15dcfec98942/manifest.m3u8
+#EXTINF:-1,fusion
+https://edge20.vedge.infomaniak.com/livecast/ik:fusiontv/manifest.m3u8
+#EXTINF:-1,fx1
+https://fxtvhls.wns.live/hls/stream.m3u8
+#EXTINF:-1 group-title="İran",FX2
+https://toonixhls.wns.live/hls/stream.m3u8
+#EXTINF:-1,grand CINEMA
+https://gcinemahls.wns.live/hls/stream.m3u8
+#EXTINF:-1,ava family
+https://familyhls.avatv.live/hls/stream.m3u8
+#EXTINF:-1,ava series
+https://avaserieshls.wns.live/hls/stream.m3u8
+#EXTINF:-1,afra
+https://afrafhls.wns.live/hls/stream.m3u8
+#EXTINF:-1,4u family
+https://familyhls.4utv.live/hls/stream.m3u8
+#EXTINF:-1,oxir tv
+https://hls.oxir.live/hls/stream.m3u8
+#EXTINF:-1,vox1
+https://hls.vox1.live/hls/stream.m3u8
+#EXTINF:-1,maah tv
+https://hls.maahtv.live/hls/stream.m3u8
+#EXTINF:-1,mtc tv
+https://mtchls.wns.live/hls/stream.m3u8
+#EXTINF:-0,toonami movies
+http://api.toonamiaftermath.com:3000/movies/playlist.m3u8
+#EXTINF:0 group-title="Kids",toonami aftermath west
+http://api.toonamiaftermath.com:3000/pst/playlist.m3u8
+#EXTINF:-0,toonami aftermath east
+http://api.toonamiaftermath.com:3000/est/playlist.m3u8
+#EXTINF:0,ch4teen kids
+http://ch14.tv/live/ch4teenkids/playlist.m3u8
+#EXTINF:0,loading
+https://stmv1.srvif.com/loadingtv/loadingtv/playlist.m3u8
+#EXTINF:0,zoomoo
+https://zoomoo-samsungau.amagi.tv/playlist.m3u8
+#EXTINF:-1 group-title="Kids",moonbug
+https://moonbug-rokuus.amagi.tv/playlist.m3u8
+#EXTINF:-1,Смайлик ТВ
+https://5d23269b3ec0c.streamlock.net/WEB_Smilik/Smilik.stream/playlist.m3u8
+#EXTINF:-1,afarin TV
+https://5ab29cc78f681.streamlock.net/afarinTV/livestream/playlist.m3u8
+#EXTINF:0,jednotka
+http://88.212.15.19/live/test_jednotka_25p/playlist.m3u8
+#EXTINF:0,dvojka
+http://88.212.15.19/live/test_dvojka_25p/playlist.m3u8
+#EXTINF:-1,cine 4k
+https://endpnt.com/hls/cine4k/playlist.m3u8
+#EXTINF:-1,sony movies
+https://a-cdn.klowdtv.com/live1/smc_720p/playlist.m3u8
+#EXTINF:-1,Sky Aksion HD
+http://5.206.237.251:1288/AksionHD
+#EXTINF:-1,Sky Max
+http://5.206.237.251:1288/SkyMax
+#EXTINF:-1,Sky Komedi
+http://5.206.237.251:1288/SkyKomedi
+#EXTINF:-1,Sky Novela
+http://5.206.237.251:1288/SkyNovela
+#EXTINF:-1,kanal d (ro)
+https://stream1.kanald.ro/iphone/knd-live.m3u8
+#EXTINF: -1,electricnow
+https://aka-live1050.delivery.roku.com/6c9268f6-d17b-49c8-bafb-23b74ae6aa45/t2-origin/out/v1/live.m3u8
+#EXTINF:-1,action hollywood
+https://amg01076-lightningintern-actionhollywood-samsungnz-82rry.amagi.tv/playlist/amg01076-lightningintern-actionhollywood-samsungnz/playlist.m3u8
+#EXTINF:-1,IZ
+http://hls-igi.cdnvideo.ru/igi/igi_hq/playlist.m3u8
+#EXTINF:0,ch8 (th)
+http://usa.login.in.th:1935/ch8/ch8/playlist.m3u8
+#EXTINF:-1,MyTime (uk)
+https://cdn-uw2-prod.tsv2.amagi.tv/linear/amg00500-studiocitypictu-mytimeuk-xiaomi/playlist.m3u8
+#EXTINF:-1,MyTime (br)
+https://appletree-mytime-samsungbrazil.amagi.tv/playlist.m3u8
+#EXTINF:-1,MyTime (mx)
+https://appletree-mytime-samsungmexico.amagi.tv/playlist.m3u8
+#EXTINF:-1,mytime movie
+https://appletree-mytimeuk-rakuten.amagi.tv/playlist.m3u8
+#EXTINF:-1,lone star
+https://lonestar-rakuten.amagi.tv/playlist.m3u8
+#EXTINF:-1,mhz
+https://mhz-samsung-linear-us.samsung.wurl.tv/playlist.m3u8
+#EXTINF:-1,autentic adventure earth
+https://autentic-adventure-earth-1-ie.lg.wurl.tv/playlist.m3u8
+#EXTINF:-1,CINEwestern
+https://amg00711-zylo-amg00711c8-rakuten-uk-2686.playouts.now.amagi.tv/playlist/amg00711-zylofast-cinewestern-rakutenuk/playlist.m3u8
+#EXTINF:0,КИНО детское
+https://v2.catcast.tv/content/38720/index.m3u8
+#EXTINF:-1 group-title="Film",Moviesphere (gb)
+https://moviesphereuk-samsunguk.amagi.tv/playlist.m3u8
+#EXTINF:-1,estrella
+https://estrellatv-plex.amagi.tv/playlist.m3u8
+#EXTINF:-1,and pictures
+http://tv.cloudcdn.me:80/live.ts?channelId=139&uid=4246&deviceMac=00:1A:79:99:EC:D3
+#EXTINF:-1,Love the Planet
+https://jmp2.uk/stvp-GBBD500001F5
+#EXTINF:-1,Wild Planet
+https://jmp2.uk/stvp-GBBB5000002PL
+#EXTINF:-0,wilder planet
+https://cdn-ue1-prod.tsv2.amagi.tv/linear/amg00477-samsunguk-wilderplanet-samsunguk-samsunguk/playlist.m3u8
+#EXTINF:-1,Adventure Earth
+https://jmp2.uk/stvp-GBBC900015D3
+#EXTINF:-1,Jack Hanna
+https://jmp2.uk/stvp-GBBD50000084W
+#EXTINF:-1,INWILD
+https://jmp2.uk/stvp-GBBA220000751
+#EXTINF:-1, WaterBear
+https://jmp2.uk/stvp-GBBC300003UQ
+#EXTINF:-1, WaterBear
+https://cdn-ue1-prod.tsv2.amagi.tv/linear/amg01415-waterbearnetwor-waterbear-samsungse/playlist.m3u8
+#EXTINF:0,Polar TV
+https://stream.polar.cz/polar/polarlive-1/playlist.m3u8
+#EXTINF:-1,Red Bull TV
+http://rbmn-live.akamaized.net/hls/live/590964/BoRB-AT/master.m3u8
+#EXTINF: 0,augsburgtv hd
+https://augsburgtv.iptv-playoutcenter.de/augsburgtv/augsburgtv.stream_1/playlist.m3u8
+#EXTINF:-1,carac 1
+https://rougetv.vedge.infomaniak.com/livecast/rougetv/playlist.m3u8
+#EXTINF:-1,carac 2
+https://edge13.vedge.infomaniak.com/livecast/ik:onefmmd/manifest.m3u8?spark=7b93fd8b-2725-49c0-97ab-88d9b765c8bd&token=
+#EXTINF:-1,carac 3
+https://edge16.vedge.infomaniak.com/livecast/ik:lfmmd/manifest.m3u8?spark=f2ba807f-4260-41e7-85a9-4b7e89ecfaf4&token=
+#EXTINF:-1,carac 4
+https://edge13.vedge.infomaniak.com/livecast/ik:compack_media_1/manifest.m3u8?spark=c93b82ea-ea93-4f9b-b24f-aa7ca701776a&token=
+#EXTINF:-1,carac 5
+https://edge13.vedge.infomaniak.com/livecast/ik:carac5/chunklist_w1572059377_b3001080.m3u8?spark=4e3be142-f771-4974-850d-17123eb9aadf&token=
+#EXTINF:-1,Carac 1
+https://edge17.vedge.infomaniak.com/livecast/ik:event/chunklist_w1373231372.m3u8
+#EXTINF:-1,Carac 1
+https://edge20.vedge.infomaniak.com/livecast/ik:event/manifest.m3u8?spark=5b29658a-4e1a-4daf-ba15-88793bad6e30&token=
+#EXTINF:-1,TV TORUŃ
+http://217.173.176.107:1935/live/ngrp:tvk.stream_all/master.m3u8
+ 

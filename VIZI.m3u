@@ -1,0 +1,183 @@
+﻿#EXTM3U
+#EXTINF:0 ,TRT 1
+http://live.cdn-vizi.workers.dev/?ID=1
+#EXTINF:0 ,ATV HD
+http://live.cdn-vizi.workers.dev/?ID=2
+#EXTINF:0 ,SHOW TV HD
+http://live.cdn-vizi.workers.dev/?ID=3
+#EXTINF:0 ,NOW TV HD
+http://live.cdn-vizi.workers.dev/?ID=4
+#EXTINF:0 ,STAR TV HD
+http://live.cdn-vizi.workers.dev/?ID=5
+#EXTINF:0 ,EURO D HD
+http://live.cdn-vizi.workers.dev/?ID=6
+#EXTINF:0 ,KANAL 7 AVRUPA
+http://live.cdn-vizi.workers.dev/?ID=7
+#EXTINF:0 ,TV8 HD
+http://live.cdn-vizi.workers.dev/?ID=8
+#EXTINF:0 ,BEYAZ TV HD
+http://live.cdn-vizi.workers.dev/?ID=9
+#EXTINF:0 ,VIZIYESILCAM 1 TV
+http://live.cdn-vizi.workers.dev/?ID=10
+#EXTINF:0 ,VIZIYESILCAM 2 TV
+http://live.cdn-vizi.workers.dev/?ID=11
+#EXTINF:0 ,CNN TURK HD
+http://live.cdn-vizi.workers.dev/?ID=12
+#EXTINF:0 ,HABERTURK HD
+http://live.cdn-vizi.workers.dev/?ID=13
+#EXTINF:0 ,AHABER HD
+http://live.cdn-vizi.workers.dev/?ID=14
+#EXTINF:0 ,TRT HABER HD
+http://live.cdn-vizi.workers.dev/?ID=15
+#EXTINF:0 ,HALK TV HD
+http://live.cdn-vizi.workers.dev/?ID=16
+#EXTINF:0 ,NTV HD
+http://live.cdn-vizi.workers.dev/?ID=17
+#EXTINF:0 ,SOZCU TV HD
+http://live.cdn-vizi.workers.dev/?ID=18
+#EXTINF:0 ,ASPOR HD
+http://live.cdn-vizi.workers.dev/?ID=19
+#EXTINF:0 ,TRT SPOR HD
+http://live.cdn-vizi.workers.dev/?ID=20
+#EXTINF:0 ,TRT COCUK HD
+http://live.cdn-vizi.workers.dev/?ID=21
+#EXTINF:0 ,MINIKA COCUK HD
+http://live.cdn-vizi.workers.dev/?ID=22
+#EXTINF:0 ,MINIKA GO HD
+http://live.cdn-vizi.workers.dev/?ID=23
+#EXTINF:0 ,TRT DIYANET COCUK HD
+http://live.cdn-vizi.workers.dev/?ID=24
+#EXTINF:0 ,CARTOON NETWORK HD
+http://live.cdn-vizi.workers.dev/?ID=25
+#EXTINF:0 ,A2 HD
+http://live.cdn-vizi.workers.dev/?ID=26
+#EXTINF:0 ,TV2 HD
+http://live.cdn-vizi.workers.dev/?ID=27
+#EXTINF:0 ,TV8.5 HD
+http://live.cdn-vizi.workers.dev/?ID=28
+#EXTINF:0 ,360 HD
+http://live.cdn-vizi.workers.dev/?ID=29
+#EXTINF:0 ,SHOW MAX HD
+http://live.cdn-vizi.workers.dev/?ID=30
+#EXTINF:0 ,TRT BELGESEL HD
+http://live.cdn-vizi.workers.dev/?ID=31
+#EXTINF:0 ,TLC HD
+http://live.cdn-vizi.workers.dev/?ID=32
+#EXTINF:0 ,DMAX HD
+http://live.cdn-vizi.workers.dev/?ID=33
+#EXTINF:0 ,TRT2 HD
+http://live.cdn-vizi.workers.dev/?ID=34
+#EXTINF:0 ,TELE1 HD
+http://live.cdn-vizi.workers.dev/?ID=35
+#EXTINF:0 ,TV100 HD
+http://live.cdn-vizi.workers.dev/?ID=36
+#EXTINF:0 ,24TV HD
+http://live.cdn-vizi.workers.dev/?ID=37
+#EXTINF:0 ,HABER GLOBAL HD
+http://live.cdn-vizi.workers.dev/?ID=38
+#EXTINF:0 ,TGRT HABER HD
+http://live.cdn-vizi.workers.dev/?ID=39
+#EXTINF:0 ,FLASH HABER HD
+http://live.cdn-vizi.workers.dev/?ID=40
+#EXTINF:0 ,KRT TV HD
+http://live.cdn-vizi.workers.dev/?ID=41
+#EXTINF:0 ,ULKE TV HD
+http://live.cdn-vizi.workers.dev/?ID=42
+#EXTINF:0 ,TVNET HD
+http://live.cdn-vizi.workers.dev/?ID=43
+#EXTINF:0 ,TRT MUZIK HD
+http://live.cdn-vizi.workers.dev/?ID=44
+#EXTINF:0 ,NR1 TURK HD
+http://live.cdn-vizi.workers.dev/?ID=46
+#EXTINF:0 ,DREAM TURK HD
+http://live.cdn-vizi.workers.dev/?ID=48
+#EXTINF:0 ,APARA HD
+http://live.cdn-vizi.workers.dev/?ID=49
+#EXTINF:0 ,BLOOMBERG HT HD
+http://live.cdn-vizi.workers.dev/?ID=50
+#EXTINF:0 ,EKOTURK HD
+http://live.cdn-vizi.workers.dev/?ID=51
+#EXTINF:0 ,CBC SPORT AZ
+http://live.cdn-vizi.workers.dev/?ID=52
+#EXTINF:0 ,IDMAN TV AZ
+http://live.cdn-vizi.workers.dev/?ID=53
+#EXTINF:0 ,TRT SPOR YILDIZ HD
+http://live.cdn-vizi.workers.dev/?ID=54
+#EXTINF:0 ,AKIT TV HD
+http://live.cdn-vizi.workers.dev/?ID=56
+#EXTINF:0 ,TV5 HD
+http://live.cdn-vizi.workers.dev/?ID=57
+#EXTINF:0 ,ULUSAL KANAL HD
+http://live.cdn-vizi.workers.dev/?ID=58
+#EXTINF:0 ,KANAL B
+http://live.cdn-vizi.workers.dev/?ID=59
+#EXTINF:0 ,BENGU TURK HD
+http://live.cdn-vizi.workers.dev/?ID=60
+#EXTINF:0 ,DIYANET TV HD
+http://live.cdn-vizi.workers.dev/?ID=62
+#EXTINF:0 ,VAV TV HD
+http://live.cdn-vizi.workers.dev/?ID=63
+#EXTINF:0 ,LALEGUL TV HD
+http://live.cdn-vizi.workers.dev/?ID=64
+#EXTINF:0 ,SEMERKAND TV HD
+http://live.cdn-vizi.workers.dev/?ID=65
+#EXTINF:0 ,AL QURAN AL KAREEM HD
+http://live.cdn-vizi.workers.dev/?ID=66
+#EXTINF:0 ,DOST TV
+http://live.cdn-vizi.workers.dev/?ID=67
+#EXTINF:0 ,TGRT BELGESEL TV
+http://live.cdn-vizi.workers.dev/?ID=68
+#EXTINF:0 ,TGRT EU HD
+http://live.cdn-vizi.workers.dev/?ID=69
+#EXTINF:0 ,KANAL AVRUPA HD
+http://live.cdn-vizi.workers.dev/?ID=70
+#EXTINF:0 ,KOY TV
+http://live.cdn-vizi.workers.dev/?ID=71
+#EXTINF:0 ,TV4 HD
+http://live.cdn-vizi.workers.dev/?ID=72
+#EXTINF:0 ,BRT1 HD KKTC
+http://live.cdn-vizi.workers.dev/?ID=73
+#EXTINF:0 ,ZAROK TV
+http://live.cdn-vizi.workers.dev/?ID=78
+#EXTINF:0 ,CNBC E HD
+http://live.cdn-vizi.workers.dev/?ID=89
+#EXTINF:0 ,EKOL TV HD
+http://live.cdn-vizi.workers.dev/?ID=91
+#EXTINF:0 ,VIZISINEMA HD
+http://live.cdn-vizi.workers.dev/?ID=94
+#EXTINF:0 ,VIZIBELGESEL HD
+http://live.cdn-vizi.workers.dev/?ID=96
+#EXTINF:0 ,MELTEM TV HD
+http://live.cdn-vizi.workers.dev/?ID=98
+#EXTINF:0 ,GZT TV HD
+http://live.cdn-vizi.workers.dev/?ID=99
+#EXTINF:0 ,TYT TURK HD
+http://live.cdn-vizi.workers.dev/?ID=100
+#EXTINF:0 ,ANEWS HD
+http://live.cdn-vizi.workers.dev/?ID=101
+#EXTINF:0 ,EUROSTAR HD
+http://live.cdn-vizi.workers.dev/?ID=102
+#EXTINF:0 ,BI KANAL HD
+http://live.cdn-vizi.workers.dev/?ID=103
+#EXTINF:0 ,MAVI KARADENIZ TV
+http://live.cdn-vizi.workers.dev/?ID=105
+#EXTINF:0 ,SIFIR TV HD
+http://live.cdn-vizi.workers.dev/?ID=106
+#EXTINF:0 ,ITV AZ
+http://live.cdn-vizi.workers.dev/?ID=109
+#EXTINF:0 ,FB TV
+http://live.cdn-vizi.workers.dev/?ID=110
+#EXTINF:0 ,LIDER HABER TV
+http://live.cdn-vizi.workers.dev/?ID=111
+#EXTINF:0 ,STOON TV
+http://live.cdn-vizi.workers.dev/?ID=112
+#EXTINF:0 ,TIVI6 
+http://live.cdn-vizi.workers.dev/?ID=113
+#EXTINF:0 ,CIFTCI TV
+http://live.cdn-vizi.workers.dev/?ID=114
+#EXTINF:0 ,TRT GENC HD
+http://live.cdn-vizi.workers.dev/?ID=115
+#EXTINF:0 ,AL SUNNAH AL NABAWIYAH HD
+http://live.cdn-vizi.workers.dev/?ID=128
+#EXTINF:0 ,HABITAT TV HD
+http://live.cdn-vizi.workers.dev/?ID=129

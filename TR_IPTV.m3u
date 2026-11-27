@@ -1,0 +1,660 @@
+#EXTM3U
+#EXTINF:-1 group-title="TR", TRT1 hd
+https://tv-trt1.medya.trt.com.tr/master_1440.m3u8
+#EXTINF:-1,trt1 hd
+https://trt.daioncdn.net/trt-1/master_1080p.m3u8?&sid=7uqvag61gnys&app=ed3904e8-737b-4a5e-856a-1b0d7a0a94e2&ce=2
+#EXTINF:-1,trt1 hd
+https://tv-trt1.medya.trt.com.tr/master.m3u8
+#EXTINF:-1, Kanal D
+https://demiroren.daioncdn.net/kanald/kanald.m3u8?app=da2109ea-5dfe-4107-89ab-23593336ed61
+#EXTINF:-1, Kanal D
+https://demiroren.daioncdn.net/kanald/kanald_1080p.m3u8?=&sid=7u24vyzar8pz&app=da2109ea-5dfe-4107-89ab-23593336ed61&ce=3
+#EXTINF:-1,Kanal D
+https://ackaxsqacw.turknet.ercdn.net/ozfkfbbjba/kanald/kanald_1080p.m3u8
+#EXTINF:0 logo="https://i.imgur.com/u5TdCsE.png",TRT 4K
+http://c3921155.edmonst.net/iptv/DVHP2VB5QXL7UC/4001/index.m3u8
+#EXTINF:-1,trt 4k tv
+http://umperisn.mywire.org/index.php?id=1842&token=DeaTHLesS
+#EXTINF: -1,home4k
+http://c3921155.edmonst.net/iptv/DVHP2VB5QXL7UC/4002/index.m3u8
+#EXTINF: -1,naşa sibir4k
+http://c3921155.edmonst.net/iptv/DVHP2VB5QXL7UC/4003/index.m3u8
+#EXTINF: -1,cinema uhd
+http://c3921155.edmonst.net/iptv/DVHP2VB5QXL7UC/4000/index.m3u8
+#EXTINF:-1,atv
+https://rnttwmjcin.turknet.ercdn.net/lcpmvefbyo/atv/atv.m3u8
+#EXTINF: 0 group-title="TR" tvg-logo="https://www.lyngsat-logo.com/logo/tv/ss/star_tv_tr.png",star tv
+http://dygvideo.dygdigital.com/live/hls/startv4puhu?m3u8
+#EXTINF: -1,star tv
+https://dogus.daioncdn.net/startv/startv.m3u8?app=startv_web&ce=3
+#EXTINF:-1,star
+https://dogus.daioncdn.net/startv/startv_720p.m3u8?&sid=80z7lk4ex7wu&app=a20ac41e-bdc3-4aa1-934d-26b484480ac9&ce=3
+#EXTINF:0,star
+https://trn03.tulix.tv/gt-star-tv1/index.m3u8
+#EXTINF:-1 group-title="TR",teve2 hd
+https://ackaxsqacw.turknet.ercdn.net/ozfkfbbjba/teve2/teve2.m3u8
+#EXTINF:0,now
+https://nowtv.umitm0d.workers.dev/
+#EXTINF:-1,NOW
+https://nowtv-live-ad.ercdn.net/nowtv/nowtv_720p.m3u8?e=1779867400&st=bM0Kd6F2K0QSbIZRrd8q1w
+#EXTINF:-1,NOW
+https://nowtv.daioncdn.net/nowtv/nowtv_720p.m3u8?ex=1779835000&st=gxKtgFRPhNygWtBeM5D9vw&sid=8g21jzqmme5c&app=65fa8997-2b2f-4529-85ea-84318628a608&ce=3
+#EXTINF:-1,now
+https://uycyyuuzyh.turknet.ercdn.net/nphindgytw/nowtv/nowtv_720p.m3u8
+#EXTINF:-1,SHOW TV HD
+https://ciner.daioncdn.net/showtv/showtv_1080p.m3u8?ex=1664766175&st=RBzhSuGauna0OGld-DJUVA&tv=1&sid=8a41c98ylrc0&app=4bc856ef-4c68-4a94-bc87-37dfaaa66558&ce=3
+#EXTINF:-1,SHOW TV hd
+https://rmtftbjlne.turknet.ercdn.net/bpeytmnqyp/showtv/showtv.m3u8
+#EXTINF:-1,SHOW TV
+https://ciner.daioncdn.net/showtv/showtv.m3u8?ce=3&app=4bc856ef-4c68-4a94-bc87-37dfaaa66558
+#EXTINF:-1 group-title="TR",360
+https://turkmedya-live.ercdn.net/tv360/tv360.m3u8
+#EXTINF:-1,360
+https://turkmedya-live.ercdn.net/tv360/tv360_1080p.m3u8
+#EXTINF:-1,BEYAZ TV HD 
+https://beyaztv-live.daioncdn.net/beyaztv/beyaztv_1080p.m3u8
+#EXTINF:-1,A2
+https://rnttwmjcin.turknet.ercdn.net/lcpmvefbyo/a2tv/a2tv.m3u8
+#EXTINF:-1,a2
+https://trn03.tulix.tv/gt-atva2tv/index.m3u8
+#EXTINF:-1,fx
+https://saran-live.ercdn.net/fx/index.m3u8
+#EXTINF:-1,filmscreen
+https://edge-e3.evrideo.tv/f2dcbecf-5af0-47db-a82e-032112050a23_1000027346_HLS/manifest.m3u8
+#EXTINF: -1,tv 4
+https://turkmedya-live.ercdn.net/tv4/tv4_1080p.m3u8
+#EXTINF:-1,trt Genç
+https://tv-trtgenc.medya.trt.com.tr/master.m3u8
+#EXTINF:-1,a2
+https://rnttwmjcin.turknet.ercdn.net/lcpmvefbyo/a2tv/a2tv.m3u8
+#EXTINF:-1 group-title="TR",kanal 7 hd
+https://kanal7-live.daioncdn.net/kanal7/kanal7_1080p.m3u8
+#EXTINF:-1,TV 8buçuk
+https://tv8.daioncdn.net/tv8bucuk/tv8bucuk.m3u8?app=tv8bucuk_web
+#EXTINF: -1,tv 4
+http://trn03.tulix.tv/gt-tv4/tracks-v1a1/mono.m3u8
+#EXTINF:-1,KANAL 7
+https://yurhnwtpys.turknet.ercdn.net/cvmbjbpmdx/kanal7/kanal7_1080p.m3u8
+#EXTINF:-1,soap turco
+https://fast-channels-network-soapturco-1-it.rakuten.wurl.tv/playlist.m3u8
+#EXTINF:-1,pink
+http://line.tivi-one.net:80/play/live.php?mac=A0:BB:3E:75:52:64&stream=559371&extension=ts&play_token=QZxMeAAIy5
+#EXTINF:0,merhaba film_vpn
+https://jmp2.uk/stvp-DE3900004ZH
+#EXTINF:0,merhaba dizi_vpn
+https://jmp2.uk/stvp-DE20004336
+#EXTINF:0,merhaba amour_vpn
+https://jmp2.uk/stvp-DE3100005JK
+#EXTINF:-1,trt belgesel
+https://tv-trtbelgesel.medya.trt.com.tr/master_1440.m3u8
+#EXTINF:-1,dmax
+https://dogus.daioncdn.net/dmax/dmax_720p.m3u8?token=M0Z5OUJEZ05wQVc0eGJiRzVON2ZLMFFsRmxFcms1U0pMcW0xbDZoYjJzUT0=&sid=7v4qlmt5f2ak&app=5a02c599-d17e-4982-9b04-090934d51af7&ce=3&dfp_paln=AQzzBGQEJ4uYRpm4Vbg73cgBKUW9BujM8hTqUl3XWZGpwRivdElplhPSo1ZKIOYaaYRP1bqE9WR2sN92pcoyi95yVenLtZ8IQJQdbxC-mra2HfAgx2JUIRe8ahjMQ6NLZsQQqJ3EjhoOndsTf1XPRDno4weXBvb7mJW7c6kllwP-fk0Axtfq9qshCbV5OjgZ8FITXJNzYF_jmEyoUaEAygjOlKd5bR9OAIm_xaKRuhaTGpuybeJey2h7ZUSiw9zrd5S1cRzWbchWUQelvWY8FNI-kgyzKTwjsGYHAQli6YDbr5V_5vAQHI-0PqKuZ2NqbiehsgqqaGafGqNjgSSgCYI-8nLODqob6y0qiFEFOmR5vbCAqpn5Fv1Ft2CSvqDhhd2AGNRJVts_BEJBYJfurcFFy4lv9fnsbnMuHpNAirOo8scgx6MVAaQRI19dpxLPUi5oTAQF4M6RLuMVjUMmX2JeYSag_XPrvGqtL-vh0_ZjEHsVs_UzJ9o5_w2rvifXbzbb81aO9_5fxw3CY8ZuVqWIHbOp1NPCEHRTLzRX-FUCeSMWD0k2SkJgm7sjKZ8FezBX6VUyXDmtjss_Yz5qG8IHrrCxcIfH7SHRVcXb87fv9yjtYuLCmiAsK7T4My3IK5XUxOCc_VrPNYoCrDImDmgx-EP9Ej87jGwTgXswaBKIuvTa6BdDws4U0CyMVZryuvnfZluZXlCJ5tUN70ht19yK4qaUs9tcA5VEv9T4wehdcGcSY7kZ6CD1fl5_4rKwQVU59uahCWdJdPcs-qwVKmF6XomeCHbFBxvFsVXeKkqxYgUhAJypE7eyDbMonqcE8xaP4qaq01p-PKmXXhsdTrneBelt54LJ7my_2jh9ZL0DmbGkqvEOOKa1ri3v9h8LTuwDeN1ZAav0fm51v1_bo55dowaQu94-BVgSl-ZDRbk8SSZ3Tr0nsszbxXWEI38reS_svET-wLrB9LoVRsUsVv1SsQWsxxRs0EHkSP-OtL2XHC3xKqFFxgOkPJnGZ45DC49OeT0Wtd_l-cI_wXCc1EiO2uE
+#EXTINF:-1,TLC
+https://dogus.daioncdn.net/tlc/tlc_720p.m3u8?token=ZEZxamVTQ002emJFYko5MnhTcDBPbDhSby9xTDRhRGxkSlNQSldxNzNaYz0=&sid=7un09nnrxb4w&app=1aca0aa1-06e3-41ff-a8e5-38d7df475469&ce=3
+#EXTINF:0,tlc
+https://dogus.daioncdn.net/tlc/tlc.m3u8?app=tlc_web&ce=3
+#EXTINF:0,dmax
+https://dogus.daioncdn.net/dmax/dmax.m3u8?app=dmax_web&ce=3
+#EXTINF:-1 tvg-logo="https://blutv-images.mncdn.com/q/t/i/bluv2/75/70x70/63fdf561866ac31b149aa2de",TRT Çocuk
+https://tv-trtcocuk.medya.trt.com.tr/master_1440.m3u8
+#EXTINF:0,CARTOON network
+http://c3921155.edmonst.net/iptv/AVNFCNQBEC9VQU/2325/index.m3u8
+#EXTINF:-1 tvg-logo="https://blutv-images.mncdn.com/q/t/i/bluv2/100/70x70/64669b4f866ac317104ebeac",TRT Diyanet Çocuk
+https://tv-trtdiyanetcocuk.medya.trt.com.tr/master.m3u8
+#EXTINF:0,cartoon network
+http://sewv654wfcsdwfi87fwvgbngh.siauliairsavlt.pw/iptv/DEZWG4KWUAEXFK/6846/index.m3u8
+#EXTINF:0,cartoonito
+http://sewv654wfcsdwfi87fwvgbngh.siauliairsavlt.pw/iptv/LVFGLXHUW45A8PBECGUURD6K/6850/index.m3u8
+#EXTINF:0,cartoon network
+https://square-leaf-d613.panorea1000.workers.dev/?xml=ch768
+#EXTINF:0,minika go
+https://square-leaf-d613.panorea1000.workers.dev/?xml=ch766
+#EXTINF:0,minika çocuk
+https://square-leaf-d613.panorea1000.workers.dev/?xml=ch765
+#EXTINF:0,cartoon network
+https://square-leaf-d613.panorea1000.workers.dev/?xml=ch764
+#EXTINF:0,cartoon network
+https://square-leaf-d613.panorea1000.workers.dev/?xml=ch763
+#EXTINF:0,cartoon network
+https://square-leaf-d613.panorea1000.workers.dev/?xml=ch762
+#EXTINF:0,cartoon network
+https://square-leaf-d613.panorea1000.workers.dev/?xml=ch761
+#EXTINF:0,cartoon network
+https://square-leaf-d613.panorea1000.workers.dev/?xml=ch760
+#EXTINF:-1,minika ÇOCUK
+https://rnttwmjcin.turknet.ercdn.net/lcpmvefbyo/minikago_cocuk/minikago_cocuk_720p.m3u8
+#EXTINF:-1,minika GO
+https://rnttwmjcin.turknet.ercdn.net/lcpmvefbyo/minikago/minikago_720p.m3u8
+#EXTINF:0,disney jr.
+https://saran-live.ercdn.net/disneyjunior/index.m3u8
+#EXTINF:-1,babytv
+https://saran-live.ercdn.net/babytv/index.m3u8
+#EXTINF:0,max çocuk
+http://162.212.179.32/akamaissh101/ssh101/animasyon/playlist.m3u8
+#EXTINF: -1, sözcü tv HD
+http://176.65.153.3:8042/play/a019/index.m3u8
+#EXTINF:-1,sözcü tv
+https://cdn.tecostream.xyz/Sozcu_Tv.m3u8
+#EXTINF:-1,HABERTÜRK
+https://rmtftbjlne.turknet.ercdn.net/bpeytmnqyp/haberturktv/haberturktv_1080p.m3u8
+#EXTINF:0,gzt tv
+https://mn-nl.mncdn.com/gzttv/gzttv/playlist.m3u8
+#EXTINF:-1, KANAL D
+http://116.202.238.88/KANALD_TR/index.m3u8
+#EXTINF:-1,Tv2 HD
+https://demiroren.daioncdn.net/teve2/teve2_1080p.m3u8?=&sid=7u24ptt7g6bv&app=6aab838a-437e-4a1b-bbd0-e30f79cdbbbd&ce=3
+#EXTINF:-1,SHOW TV HD
+https://rmtftbjlne.turknet.ercdn.net/bpeytmnqyp/showtv/showtv_1080p.m3u8
+#EXTINF:-1,TV8
+https://rkhubpaomb.turknet.ercdn.net/fwjkgpasof/tv8/tv8_1080p.m3u8
+#EXTINF:-1,TV8
+http://149.13.0.66:4002/tv8hd
+#EXTINF:-1,tlc
+http://dygvideo.dygdigital.com/live/hls/tlctvdai?m3u8
+#EXTINF:-1,tlc
+https://dogus.daioncdn.net/tlc/tlc.m3u8?app=1aca0aa1-06e3-41ff-a8e5-38d7df475469
+#EXTINF:-1,ATV hd
+http://89.187.191.41/ATV-HD-TR/video.m3u8
+#EXTINF:-1,Star tv
+https://emmazbvkkf.turknet.ercdn.net/cnifuowzza/startv/startv_720p.m3u8
+#EXTINF:-1,tgrt tv
+http://umperisn.mywire.org/index.php?id=594199&token=DeaTHLesS
+#EXTINF:-1 group-title="film",tabii tv
+https://ceokzokgtd.erbvr.com/tabiitv/tabiitv.m3u8
+#EXTINF:-1,ksunal
+https://stream41.radyotelekom.com.tr/stream/m3u8/a94fc44623d98b825183db41afd87634/a94fc44623d98b825183db41afd87634.m3u8
+#EXTINF:-1,şaban tv
+https://canaktv.sabantv.net:3996/stream/play.m3u8
+#EXTINF:-1,ks
+http://cineplus-yesilcam.supersatadmin.workers.dev/cineplusyesilcam.m3u8
+#EXTINF:0,b m türk
+http://88.99.165.164:6878/ace/getstream?id=1de17a996f8618578035dbc4c7ecbf4b0395d0f7
+#EXTINF:-1,bi kanal
+https://bikanal-live.ercdn.net/bikanal/bikanal_720p.m3u8
+#EXTINF:0,ekol tv
+https://ekoltv-live.ercdn.net/ekoltv/ekoltv.m3u8
+#EXTINF:-1,ekol
+http://176.65.153.40:6002/play/a01g/index.m3u8
+#EXTINF:0,boncuk tv
+http://104.238.23.191/BoncukTV/live/index.m3u8
+#EXTINF:0,fusion
+http://162.212.179.32/akamaissh101/ssh101/084952510aa/chunks.m3u8
+#EXTINF:0,cine x
+https://gcinemahls.wns.live/hls/stream.m3u8
+#EXTINF:-1 group-title="film",tabii tv
+https://ceokzokgtd.erbvr.com/tabiitv/tabiitv.m3u8?sid=aePzYBwko0uFy0f8miUVmA
+#EXTINF:-1,biz cinema
+https://fl.biztv.media/cinema_720_EMfSyXgoRdiIHgldXTZICucKTIeCKO/tracks-v1a1/mono.m3u8
+#EXTINF:-1,biz tv
+https://fl.biztv.media/biz_tv_720_uni8jhub4h8fub4idejswh8dh3j94finbu4nidj39inwsj92in3d/index.m3u8
+#EXTINF:-1,kanal34
+https://live.euromediacenter.com/kanal34/index.m3u8
+#EXTINF:-1,rize türk
+https://yayin.rizeturk.com:3777/hybrid/play.m3u8
+#EXTINF:-1,star movies
+https://stream41.radyotelekom.com.tr/stream/m3u8/e1723d5fa4ae557850ec082f00a82e1d/e1723d5fa4ae557850ec082f00a82e1d.m3u8
+#EXTINF:-1,star horror
+https://stream41.radyotelekom.com.tr/stream/m3u8/c40e203f317f6d5709c493f714ac8d69/c40e203f317f6d5709c493f714ac8d69.m3u8
+#EXTINF:-1,movie action
+https://stream41.radyotelekom.com.tr/stream/m3u8/e6aa356126c0bce3cebe4c01fc4e3a7c/e6aa356126c0bce3cebe4c01fc4e3a7c.m3u8
+#EXTINF:-1,movie platin
+https://stream41.radyotelekom.com.tr/stream/m3u8/9d08afd4f146dd37174c3d760d35193e/9d08afd4f146dd37174c3d760d35193e.m3u8
+#EXTINF:-1,movie vizyon
+https://stream41.radyotelekom.com.tr/stream/m3u8/12eea8831e724d27af574d56cea769ec/12eea8831e724d27af574d56cea769ec.m3u8
+#EXTINF:0,max tv
+http://maxmedya.duckdns.org/akamaissh101/ssh101/maxtv/playlist.m3u8
+#EXTINF:0,max premier
+http://maxmedya.duckdns.org/akamaissh101/ssh101/maxpremier/playlist.m3u8
+#EXTINF:0,max yerli
+http://maxmedya.duckdns.org/akamaissh101/ssh101/maxyerli/playlist.m3u8
+#EXTINF:0,max star
+http://maxmedya.duckdns.org/akamaissh101/ssh101/maxstar/playlist.m3u8
+#EXTINF:-1,movie yerli
+https://stream41.radyotelekom.com.tr/stream/m3u8/2300ea2515c004bb9829d85873651e3a/2300ea2515c004bb9829d85873651e3a.m3u8
+#EXTINF:-1,filmbox yeşilçam
+https://stream41.radyotelekom.com.tr/stream/m3u8/e688e0709df3c92502f66f7e1ecfe7fa/e688e0709df3c92502f66f7e1ecfe7fa.m3u8
+#EXTINF:-1,filmbox premier
+https://stream41.radyotelekom.com.tr/stream/m3u8/d97db7d925be1de722d392600d29dc8f/d97db7d925be1de722d392600d29dc8f.m3u8
+#EXTINF:-1,vizon gold
+https://stream41.radyotelekom.com.tr/stream/m3u8/e6d82958aaf4c291d271b2c0ef1c6f20/e6d82958aaf4c291d271b2c0ef1c6f20.m3u8
+#EXTINF:-1,vizon stars
+https://stream41.radyotelekom.com.tr/stream/m3u8/334a629f93a4770a1a0dc0e9d674ca1f/334a629f93a4770a1a0dc0e9d674ca1f.m3u8
+#EXTINF:-1,vizon aile
+https://stream41.radyotelekom.com.tr/stream/m3u8/9f7069374ba85bc7f8f702128032df54/9f7069374ba85bc7f8f702128032df54.m3u8
+#EXTINF:-1,vizon komedi
+https://stream41.radyotelekom.com.tr/stream/m3u8/cb54dde167c02793c531159b035a0e67/cb54dde167c02793c531159b035a0e67.m3u8
+#EXTINF:-1,vizon türk
+https://stream41.radyotelekom.com.tr/stream/m3u8/4a09e7dc05e79bf503afe5ccd58c3741/4a09e7dc05e79bf503afe5ccd58c3741.m3u8
+#EXTINF:-1,vizon dizi
+https://stream41.radyotelekom.com.tr/stream/m3u8/aba97510626962d8e019e6a121f77e95/aba97510626962d8e019e6a121f77e95.m3u8
+#EXTINF:-1,cine6
+https://stream41.radyotelekom.com.tr/stream/m3u8/fa473591a1014f820d78260293ea45ad/fa473591a1014f820d78260293ea45ad.m3u8
+#EXTINF:0,akkon tv
+https://ip.akkontv.com:3205/stream/play.m3u8
+#EXTINF:0,göpsen tv
+https://canli.gopsentv.com:3604/stream/play.m3u8
+#EXTINF:-1,sdm sinema
+https://host.onlineradyotv.net:8081/sdmtv/tracks-v1a1/mono.m3u8
+#EXTINF:0,GRT
+https://live.artidijitalmedya.com/artidijital_grt/grt/chunks.m3u8
+#EXTINF:-1,diginet cinema
+https://a8.radyotelekom.com.tr:3276/stream/play.m3u8
+#EXTINF:-1,artworld
+https://live.artidijitalmedya.com/artidijital_artworld/artworld/chunks.m3u8
+#EXTINF:-1,tivi6
+https://live.artidijitalmedya.com/artidijital_tivi6/tivi6/playlist.m3u8
+#EXTINF:-1,teleON
+https://cdn-teleonchannels.yayin.com.tr/teleonchannels/teleonchannels/chunklist_w2028408927.m3u8
+#EXTINF:-1,myway1
+http://45.88.139.140/d/live/out.m3u8
+#EXTINF:-1,myway2
+http://45.88.139.156/d/live/out.m3u8
+#EXTINF:0,şirvan
+https://a8.radyotelekom.com.tr:3326/stream/play.m3u8
+#EXTINF:-1,Trakya türk
+https://live.euromediacenter.com/trakyaturk/tracks-v1a1/mono.m3u8
+#EXTINF:0,NEF
+https://ip44.radyotelekomtv.com:3628/stream/play.m3u8
+#EXTINF:-1,ton tv
+https://live.artidijitalmedya.com/artidijital_tontv/tontv/playlist.m3u8
+#EXTINF:-1,cine 1
+https://canliyayin.cine1.com.tr/memfs/cbaef080-a742-4644-9e9e-2b9f6a5103c3_output_0.m3u8?session=mxsBratJGoHhF7GEvTbGQx
+#EXTINF:-1,kastamonu tv
+http://51.91.118.139:8080/live/kastamonutv/kastamonutv/3385.m3u8
+#EXTINF: -1,deniz postası
+https://live.artidijitalmedya.com/artidijital_denizpostasi/denizpostasi/playlist.m3u8
+#EXTINF:-1,isviçre tv 
+https://i41.ozelip.com:3269/hybrid/play.m3u8
+#EXTINF:0,kanal19
+https://live.euromediacenter.com/kanal19/tracks-v1a1/mono.m3u8
+#EXTINF: -1,eski dizi tv
+https://playlist.fasttvcdn.com/pl/rfrk9821hdy9dayo8wfyha/dizi-tv/playlist/0.m3u8
+#EXTINF:-1,balkan türk
+https://live.euromediacenter.com/balkanturktv/tracks-v1a1/mono.m3u8
+#EXTINF:0,cine1
+https://canliyayin.cine1.com.tr/memfs/cbaef080-a742-4644-9e9e-2b9f6a5103c3.m3u8
+#EXTINF:-1,life
+https://live.artidijitalmedya.com/artidijital_lifetv/lifetv/playlist.m3u8
+#EXTINF:-1,ViYANA TV HD
+http://nrttn172.kesintisizyayin.com:29010/nrttn/nrttn/playlist.m3u8
+#EXTINF:0,kıbrıs tv
+https://play.kibristv.com/stream/hls/stream.m3u8
+#EXTINF: 0,kanal f
+http://162.212.179.32/akamaissh101/ssh101/kanalfmedya/chunks.m3u8
+#EXTINF:0,yansıma sinema
+http://162.212.179.32/akamaissh101/ssh101/ysmtvmedya/chunks.m3u8
+#EXTINF:0,yansıma nostalji
+http://162.212.179.32/akamaissh101/ssh101/ymdanstv/chunks.m3u8
+#EXTINF:-1,muğla türk
+https://edge1.socialsmart.tv/muglaturk/bant1/chunks.m3u8
+#EXTINF:-1,cine5
+ tv
+https://host.onlineradyotv.net:8081/cine5tv/index.m3u8
+#EXTINF:-1,mavi karadeniz
+https://live.artidijitalmedya.com/artidijital_mavikaradeniz/mavikaradeniz/playlist.m3u8
+#EXTINF:-1,fix tv
+http://venomlink.com/fix/index.m3u8
+#EXTINF:-1,fix
+https://yayin.venomlink.com/live/mystream/main_stream.m3u8
+#EXTINF:-1,tv b
+https://ip44.radyotelekomtv.com:3958/stream/play.m3u8
+#EXTINF:-1,channel6tv
+https://cdn4.yayin.com.tr/channel6tv/tracks-v1a1/mono.m3u8
+#EXTINF:-1,düzgün tv
+http://duzguntv1616.ozelip.net:25192/duzguntv/duzguntv/playlist.m3u8
+#EXTINF:-1,bbc first tv
+http://88.212.15.29/live/bbc_first/index.m3u8
+#EXTINF:0,sirius
+https://raw.githubusercontent.com/Elvin4K/restream/pro4k/1siriustv.m3u8
+#EXTINF:0,hygtytrtty
+https://ip100.radyotelekomtv.com:3274/hybrid/play.m3u8
+#EXTINF:-1,baku tv
+https://rtmp.baku.tv/hls/bakutv_1080p.m3u8
+#EXTINF: -1,azad tv
+https://lives.atv.az:5443/ATV_TV_STREAM/streams/atvcanli.m3u8
+#EXTINF:-1,live az
+https://tv.mobyservice.ru/livetv/index.m3u8
+#EXTINF:-1,konul tv az
+http://cdn-konultvazerbaijan.yayin.com.tr/konultvazerbaijan/konultvazerbaijan/playlist.m3u8
+#EXTINF: -1,kanal F
+http://stream.ftv.az/live/ftv.m3u8
+#EXTINF: -1,atv cinema
+http://sewv654wfcsdwfi87fwvgbngh.siauliairsavlt.pw/iptv/ZEEDV4QP6HVZU3YXP49H3ECB/2120/index.m3u8
+#EXTINF:-1,kepez
+http://85.132.78.122:8050/dashjs/stream/index.mpd
+#EXTINF:-1,showplus
+https://rtmp.showplus.tv/hls/myshow.m3u8
+#EXTINF:0,retro
+https://a8.radyotelekom.com.tr:3706/hybrid/play.m3u8
+#EXTINF:-1,az tv
+https://str.yodacdn.net/azertv/index.m3u8
+#EXTINF:-1,neoplay
+https://a8.radyotelekom.com.tr:3800/hybrid/play.m3u8
+#EXTINF:-1, Anadolu net
+https://live.artidijitalmedya.com/artidijital_anadolunet/anadolunet/playlist.m3u8
+#EXTINF:-1,resurrection
+https://raw.githubusercontent.com/ibrahim9071/kick/main/streams/resurrection-channel-tv.m3u8
+#EXTINF:0,egemax
+http://egemaxtv.radyotelekom.com.tr:29010/egemaxtv/egemaxtv/chunklist_w1407682428.m3u8
+#EXTINF:-1,olay Türk
+https://live.artidijitalmedya.com/artidijital_olayturk/olayturk/playlist.m3u8
+#EXTINF:-1,edirne
+https://yayin.edirnetv.com:8088/hls/etvcanliyayin.m3u8
+#EXTINF: -1,as tv
+https://live.artidijitalmedya.com/artidijital_astv/astv/playlist.m3u8
+#EXTINF: -1,kardelen
+https://edge1.socialsmart.tv/kardelentv/bant1/playlist.m3u8
+#EXTINF:-1,konya olay tv
+http://nrttn172.kesintisizyayin.com:29010/olay/olay/playlist.m3u8
+#EXTINF:0,haber61
+https://cdn-haber61tv.yayin.com.tr/haber61tv/smil:haber61tv.smil/index.m3u8
+#EXTINF:-1,uygur tv
+https://592f1881b3d5f.streamlock.net:1443/santraltv_742/santraltv_742/chunklist_w1333397898.m3u8
+#EXTINF:0,MELTEM TV FHD
+https://vhxyrsly.rocketcdn.com/meltemtv/playlist.m3u8
+#EXTINF:0 group-title="TR",Lalegül
+https://lbl.netmedya.net/hls/lalegultv.m3u8
+#EXTINF:-1,Semerkand
+https://b01c02nl.mediatriple.net/videoonlylive/mtisvwurbfcyslive/broadcast_58d915bd40efc.smil/playlist.m3u8
+#EXTINF:-1,vav aile
+https://playlist.fasttvcdn.com/pl/rfrk9821hdy9dayo8wfyha/aile-tv/playlist/0.m3u8
+#EXTINF:-1,vav tarih
+https://playlist.fasttvcdn.com/pl/rfrk9821hdy9dayo8wfyha/tarih-tv/playlist/0.m3u8
+#EXTINF:-1,vav sağlık
+https://playlist.fasttvcdn.com/pl/rfrk9821hdy9dayo8wfyha/saglikli-gunler/playlist/0.m3u8
+#EXTINF:-1,vav çizgi film
+https://playlist.fasttvcdn.com/pl/rfrk9821hdy9dayo8wfyha/cizgi-film-tv/playlist/0.m3u8
+#EXTINF:-1,vav çocuklara özel
+https://playlist.fasttvcdn.com/pl/rfrk9821hdy9dayo8wfyha/cocuklara-ozel-tv/playlist/0.m3u8
+#EXTINF:-1,vav islam
+https://playlist.fasttvcdn.com/pl/rfrk9821hdy9dayo8wfyha/islamtv/playlist/0.m3u8
+#EXTINF:-1,vav ilmihal
+https://playlist.fasttvcdn.com/pl/rfrk9821hdy9dayo8wfyha/ilm-tv/playlist/0.m3u8
+#EXTINF:-1,vav vaaz
+https://playlist.fasttvcdn.com/pl/rfrk9821hdy9dayo8wfyha/vaaz-tv/playlist/0.m3u8
+#EXTINF:-1,vav kültür sanat
+https://playlist.fasttvcdn.com/pl/rfrk9821hdy9dayo8wfyha/kltr-sanat-tv/playlist/0.m3u8
+#EXTINF:-1,vav mukabele
+https://playlist.fasttvcdn.com/pl/rfrk9821hdy9dayo8wfyha/mukabele-tv/playlist/0.m3u8
+#EXTINF:-1,vav ilahi
+https://playlist.fasttvcdn.com/pl/rfrk9821hdy9dayo8wfyha/ilahiler-tv/playlist/0.m3u8
+#EXTINF:-1,vav kuran dersleri
+https://playlist.fasttvcdn.com/pl/rfrk9821hdy9dayo8wfyha/kurani-kerim-dersleri-tv/playlist/0.m3u8
+#EXTINF:0,line
+https://edge1.socialsmart.tv/linetv/bant1/chunks.m3u8
+#EXTINF:-1,MCeu tv
+https://rrr.sz.xlcdn.com/?account=mceutv&file=mc2&type=live&service=wowza&protocol=https&output=playlist.m3u8
+#EXTINF:-1,MCeu tv
+https://n2.burst.cdn.jetstre.am/session/450f4c594b612903b7d42d421fb93c21/sz/mceutv/wowza4/live/mc2/chunklist.m3u8
+#EXTINF:-1,TV 8.5
+https://rkhubpaomb.turknet.ercdn.net/fwjkgpasof/tv8bucuk/tv8bucuk_1080p.m3u8
+#EXTINF:-1,tv2 hd
+https://live.duhnet.tv/S2/HLS_LIVE/teve2np/playlist.m3u8
+#EXTINF:-1,tv2 hd
+https://live.duhnet.tv/S2/HLS_LIVE/teve2np/track_4_1000/playlist.m3u8
+#EXTINF:-1,tv2 hd
+https://ackaxsqacw.turknet.ercdn.net/ozfkfbbjba/teve2/teve2_1080p.m3u8
+#EXTINF:-1,TRT HABER
+https://tv-trthaber.medya.trt.com.tr/master_1440.m3u8
+#EXTINF:-1,TRT 2
+https://tv-trt2.medya.trt.com.tr/master_1440.m3u8
+#EXTINF:-1,TRT TURK
+https://tv-trtturk.medya.trt.com.tr/master_1440.m3u8
+#EXTINF:-1,TRT AVAZ
+https://tv-trtavaz.medya.trt.com.tr/master_1440.m3u8
+#EXTINF:-1,TRT Müzik
+https://tv-trtmuzik.medya.trt.com.tr/master_1440.m3u8
+#EXTINF:-1,TRT Belgesel
+https://tv-trtbelgesel.medya.trt.com.tr/master_1440.m3u8
+#EXTINF:-1,TRT SPOR
+https://tv-trtspor1.medya.trt.com.tr/master_1440.m3u8
+#EXTINF:-1,TRT SPOR yıldız
+https://tv-trtspor2.medya.trt.com.tr/master_1440p.m3u8
+#EXTINF:-1,MECLİS TV
+https://meclistv-live.ercdn.net/meclistv/meclistv.m3u8
+#EXTINF:0,afro TÜRK
+https://edge1.socialsmart.tv/naturaltv/bant1/playlist.m3u8
+#EXTINF:-1,kuzey kıbrıs
+http://old.kuzeykibris.tv/m3u8/kktv.m3u8
+#EXTINF:-1,Türkmenstar TV
+https://live.euromediacenter.com/turkmenstartv/tracks-v1a1/mono.m3u8
+#EXTINF:-1,Altın Asır TV
+https://alpha.tv.online.tm/legacyhls/ch001_720/index.m3u8
+#EXTINF:-1,Asgabat TV
+https://alpha.tv.online.tm/legacyhls/ch006_720/index.m3u8
+#EXTINF:-1,Miras
+https://alpha.tv.online.tm/legacyhls/ch003_720/index.m3u8
+#EXTINF:-1,Türkmen Owazy
+https://alpha.tv.online.tm/legacyhls/ch005_720/index.m3u8
+#EXTINF:-1,Türkmenistan TV
+http://alpha.tv.online.tm/hls/ch007_400/index.m3u8
+#EXTINF:-1,Yaslık TV
+https://alpha.tv.online.tm/legacyhls/ch002_720/index.m3u8
+#EXTINF:-1,Türkmen Sport
+https://alpha.tv.online.tm/legacyhls/ch004_720/index.m3u8
+#EXTINF:-1,kanal d drama
+https://cdn-uw2-prod.tsv2.amagi.tv/linear/amg01602-themahqfrance-vivekanald-samsungspain/playlist.m3u8
+#EXTINF:-1,kanald.ro
+https://stream1.kanald.ro/iphone/knd-live.m3u8
+#EXTINF:-1,kanald.ro
+https://stream2.kanald.ro/iphone/knd-live_low/index.m3u8
+#EXTINF:-1,kanald.ro 2
+https://stream2.kanald.ro/iphone/knd2-live.m3u8
+#EXTINF:-1,kanald.ro 2
+https://stream2.kanald.ro/iphone/knd2-live_low/index.m3u8
+#EXTINF:-1,ttyytt
+https://turkuaz.tecostream.xyz/proxy?url=http://190.123.76.22:8002/play/a06j/index.m3u8
+#EXTINF:0,zoomoo
+https://zoomoo-samsungau.amagi.tv/playlist.m3u8
+#EXTINF:0 group-title="Kids",Boomerang (us)
+http://23.237.104.106:8080/USA_BOOMERANG/index.m3u8
+#EXTINF:-1,CARTOON_NETWORK
+http://23.237.104.106:8080/USA_CARTOON_NETWORK/index.m3u8
+#EXTINF:-1,disney
+http://151.80.18.177:86/Disney_Channel_HD/index.m3u8
+#EXTINF: -1,disney xd
+http://23.237.104.106:8080/USA_DISNEY_XD/index.m3u8
+#EXTINF:-1 group-title="Film",5starMAX
+http://23.237.104.106:8080/USA_5STARMAX/index.m3u8
+#EXTINF:-1,animal planet
+http://23.237.104.106:8080/USA_ANIMAL_PLANET/index.m3u8
+#EXTINF:-1,bbc america
+http://23.237.104.106:8080/USA_BBC_AMERICA/index.m3u8
+#EXTINF:-1,cinemax
+http://23.237.104.106:8080/USA_CINEMAX/index.m3u8
+#EXTINF:-1,freeform
+http://190.11.225.124:5000/live/freeform_hd/playlist.m3u8
+#EXTINF:-1,fuse
+http://23.237.104.106:8080/USA_FUSE/index.m3u8
+#EXTINF:-1,fx
+http://23.237.104.106:8080/USA_FX/index.m3u8
+#EXTINF:-1,hallmark
+http://23.237.104.106:8080/USA_HALLMARK/index.m3u8
+#EXTINF:-1,hbo
+http://23.237.104.106:8080/USA_HBO/index.m3u8
+#EXTINF:-1,hbo2
+http://23.237.104.106:8080/USA_HBO2/index.m3u8
+#EXTINF:-1,hbo zone
+http://23.237.104.106:8080/USA_HBO_ZONE/index.m3u8
+#EXTINF:-1,hbo comedy
+http://23.237.104.106:8080/USA_HBO_COMEDY/index.m3u8
+#EXTINF:-1,ion
+http://23.237.104.106:8080/USA_ION/index.m3u8
+#EXTINF: -1,moremax
+http://23.237.104.106:8080/USA_MOREMAX/index.m3u8
+#EXTINF:-1,nat geo wild
+http://23.237.104.106:8080/USA_NAT_GEO_WILD/index.m3u8
+#EXTINF:-1,PARAMOUNT
+http://23.237.104.106:8080/USA_PARAMOUNT_NETWORK/index.m3u8
+#EXTINF: -1,showtime family
+http://23.237.104.106:8080/USA_SHOWTIME_FAMILY/index.m3u8
+#EXTINF: -1,showtime women
+http://starlite.best/api/stream/hurt/hurt/livetv.epg/showtime.women.eastern.us.m3u8
+#EXTINF: -1,starz
+http://23.237.104.106:8080/USA_STARZ/index.m3u8
+#EXTINF: -1,starz cinema
+http://23.237.104.106:8080/USA_STARZ_CINEMA/index.m3u8
+#EXTINF: -1,starz
+http://23.237.104.106:8080/USA_STARZ_COMEDY/index.m3u8
+#EXTINF: -1,starz family
+http://23.237.104.106:8080/USA_STARZ_FAMILY/index.m3u8
+#EXTINF:-1,syfy
+http://23.237.104.106:8080/USA_SYFY/index.m3u8
+#EXTINF:-1,usa network
+http://190.11.225.124:5000/live/usa_hd/playlist.m3u8
+#EXTINF:-1,vh1
+http://23.237.104.106:8080/USA_VH1/index.m3u8
+#EXTINF:-1,sony cine
+https://a-cdn.klowdtv.com/live1/cine_720p/playlist.m3u8
+#EXTINF:-1,pro7
+https://dash4.antik.sk/live/test_pro_sieben_tizen/playlist.m3u8
+
+#EXTINF:-1 group-title="stvp",mech+
+https://jmp2.uk/stvp-GBBD500005ZG
+#EXTINF:0,Stargate
+https://jmp2.uk/rok-11c7c3660c6b6f18a21838fd404a7a1d.m3u8
+#EXTINF:0,rakuten sci-fi (gb)
+https://jmp2.uk/stvp-GB2600013BO
+#EXTINF:0,rakuten action (gb)
+https://jmp2.uk/stvp-GB2600015OS
+#EXTINF:0,rakuten sci-fi (es)
+https://jmp2.uk/stvp-ES500004NO
+#EXTINF:0,rakuten fantastik (it)
+https://jmp2.uk/stvp-IT260000131
+#EXTINF:0,rakuten sci-fi (fr)
+https://jmp2.uk/stvp-FR4100001D0
+#EXTINF:0,Xena
+https://jmp2.uk/rok-302d8d86738c0ab83d0ca3a5e2df3492.m3u8
+#EXTINF:0,fantasja (de)
+https://jmp2.uk/stvp-DEBA1500011RJ
+#EXTINF:0,the asylum
+https://jmp2.uk/rok-7e202ec14b17515a8e732f662aec155d.m3u8
+#EXTINF:0,fear zone
+https://jmp2.uk/rok-28d3ed9e6ad36c56204da57cd84d2036.m3u8
+#EXTINF:-1,fail army
+https://jmp2.uk/stvp-GBAJ40003642
+#EXTINF:0,paramount movie channel
+https://jmp2.uk/stvp-USAJ26000054W
+#EXTINF:0,midnight pulp (ca)
+https://jmp2.uk/stvp-CABC5200021HG
+#EXTINF:0,pluto fantastic
+https://jmp2.uk/stvp-USBA300017PK
+#EXTINF:0,pluto action
+https://jmp2.uk/stvp-GBAK3504503A
+#EXTINF:0,carac1 TV
+https://rougetv.vedge.infomaniak.com/livecast/rougetv/playlist.m3u8
+
+#EXTINF:-1 group-title="tr radyo",Ankara havaları
+https://moondigitalmaster.radyotvonline.net/ankarahavalari/playlist.m3u8
+#EXTINF:-1,İstanbul FM
+https://yayin.istanbulfm.com.tr/istanbulfm
+#EXTINF:-1,İstanbul fm
+https://rdfenlive.mediatriple.net/fenomen/istanbulfm/chunks.m3u8
+#EXTINF:-1,TRAKYA FM
+https://stream.netradyom.com/listen/trakyafm/radio.mp3
+#EXTINF:-1,KÜPE FM
+https://icecast.netmedya.net/kupefm
+#EXTINF:-1,BEST FM
+https://ssldyg.radyotvonline.com/best/bestfm.stream/chunklist_w2059109010.m3u8
+#EXTINF:-1,LOKUM FM
+http://37.247.98.9/stream/493/?/;stream.mp3
+#EXTINF:0,alem fm
+https://alemfm.radyotvonline.net/alemfmaac
+#EXTINF:-1,SHOW RADYO
+http://46.20.3.229/;
+#EXTINF:-1,SÜPER FM
+https://playerservices.streamtheworld.com/api/livestream-redirect/SUPER_FM_SC?/;
+#EXTINF:-1,radyo mega
+http://radyo.yayin.com.tr:4052/stream
+#EXTINF:-1,radyo ses
+https://oyunzade.yayin.com.tr/stream?type=https&nocache=8205
+#EXTINF:-1,radyo mega
+http://radyomega.ozelip.com:8210/;
+#EXTINF:-1,istanbul
+https://ssl123.ozelip.com/8014/stream
+#EXTINF:-1,RADYO VİVA
+http://46.20.3.231/;
+#EXTINF: -1 group-title="RADYO",best FM
+http://37.247.100.100:1935/best/bestfm.stream/playlist.m3u8
+#EXTINF:-1,radyo mega
+http://radyomega.ozelip.com:8210/;
+#EXTINF:-1,JOYTÜRK FM
+https://playerservices.streamtheworld.com/api/livestream-redirect/JOY_TURK_SC?/;
+#EXTINF:-1,BEST FM
+http://46.20.7.125/bestfmaac
+#EXTINF:-1,90'LAR
+http://37.247.98.8/stream/166/
+#EXTINF:-1,pop90
+https://playerservices.streamtheworld.com/api/livestream-redirect/POP90128AAC.aac
+#EXTINF:-1,90'LAR
+https://moondigitaledge.radyotvonline.net/90lar/playlist.m3u8
+#EXTINF:-1,90'LAR
+https://moondigitaledge.radyotvonline.net/radyolanddoksanlar/playlist.m3u8
+#EXTINF:-1,90'lar
+https://moondigitalmaster.radyotvonline.net/90lar/playlist.m3u8
+#EXTINF:-1,KRAL POP RADYO
+http://kralpopwmp.radyotvonline.com/;
+#EXTINF:-1,TRT TÜRKİYE'NİN SESİ RADYOSU
+https://radio-trttsr.medya.trt.com.tr/master.m3u8
+#EXTINF:0,fenomen Türk
+https://live.radyofenomen.com/fenomenturk/abr/playlist.m3u8
+#EXTINF:-1,PARK FM
+http://yayin.netradyom.com:8050/PARKFM
+#EXTINF:-1,POWERTÜRK TAPTAZE
+https://listen.powerapp.com.tr/powerturktaptaze/abr/powerturktaptaze/128/playlist.m3u8
+#EXTINF:-1,KARADENİZ FM
+https://moondigitalmaster.radyotvonline.net/karadenizfm/playlist.m3u8
+#EXTINF:-1,RADYO 7
+http://46.20.3.251/stream/169/
+#EXTINF:-1,RADYO İZMİR
+https://usa4.fastcast4u.com/proxy/radyoizmirfm?mp=/mp3stream128
+#EXTINF:-1,RADYO MEGA Sakarya
+http://radyo.yayin.com.tr:4052/;
+#EXTINF:-1,RADYO VATAN TÜRKÜ
+http://95.0.173.195:9000/turku
+#EXTINF:-1,RETRO TURK
+https://playerservices.streamtheworld.com/api/livestream-redirect/RETROTURK_SC?/;
+#EXTINF:-1,TÜRKÜ RADYO
+http://radyo.turkuradyo.net:4591/;
+#EXTINF:-1,TÜRKÜLERLE TÜRKİYE
+http://moondigitalmaster.radyotvonline.net/turkulerleturkiye/playlist.m3u8
+
+#EXTINF:-1,dron tv 1
+https://airvuz-dronetv-1-de.tcl.wurl.tv/playlist.m3u8
+#EXTINF:-1,dron tv 2
+https://airvuz-dronetv-1-au.tcl.wurl.tv/playlist.m3u8
+#EXTINF:-1,dron tv 3
+https://airvuz-dronetv-1-us.tcl.wurl.tv/playlist.m3u8
+#EXTINF:-1,dron tv 4
+https://airvuz-dronetv-1-mx.tcl.wurl.tv/playlist.m3u8
+#EXTINF:-1,dron tv 5
+https://airvuz-dronetv-1-eu.xiaomi.wurl.tv:443/4300.m3u8
+#EXTINF:-1,dron tv 6
+https://airvuz-dronetv-1-fr.tcl.wurl.tv/playlist.m3u8
+#EXTINF:-1,dron tv 7
+https://airvuz-dronetv-1-br.tcl.wurl.tv/playlist.m3u8
+
+#EXTINF:-1,KanalD
+https://demiroren.daioncdn.net/kanald/kanald_1080p.m3u8?ce=3&app=da2109ea-5dfe-4107-89ab-23593336ed61
+#EXTINF:-1,tv2
+https://demiroren.daioncdn.net/teve2/teve2_1080p.m3u8?ce=3&app=6aab838a-437e-4a1b-bbd0-e30f79cdbbbd
+#EXTINF:-1,SHOW
+https://ciner.daioncdn.net/showtv/showtv_1080p.m3u8?ce=3&app=4bc856ef-4c68-4a94-bc87-37dfaaa66558
+#EXTINF:-1,STAR
+https://dogus.daioncdn.net/startv/startv_720p.m3u8?ce=3&app=a20ac41e-bdc3-4aa1-934d-26b484480ac9
+#EXTINF:-1,tv8
+https://tv8.daioncdn.net/tv8/tv8_1080p.m3u8?ce=3&app=7ddc255a-ef47-4e81-ab14-c0e5f2949788
+#EXTINF:-1,tv8.5
+https://tv8.daioncdn.net/tv8bucuk/tv8bucuk_1080p.m3u8?ce=3&app=bf58ab52-4865-4c81-b223-26b41009801e
+#EXTINF:-1,Kanal 7
+https://kanal7.daioncdn.net/kanal7/kanal7_1080p.m3u8?ce=3&app=f99587ad-1637-494d-8255-da35b09d17a1
+#EXTINF:-1,HABERTURK
+https://ciner.daioncdn.net/haberturktv/haberturktv_1080p.m3u8?ce=3&app=c98ab0b0-50cc-495b-bb37-778e91f5ff5b
+#EXTINF:-1,HALK TV
+https://halktv.daioncdn.net/halktv/halktv_1080p.m3u8?ce=3&app=c86957d3-74a7-44da-9ad2-dc358c769609
+#EXTINF:-1,TLC
+https://dogus.daioncdn.net/tlc/tlc_720p.m3u8?ce=3&app=1aca0aa1-06e3-41ff-a8e5-38d7df475469
+
+
+#PASSWORD: SSae1975_+
+   N37cdfu232()

@@ -1,0 +1,823 @@
+#EXTM3U
+#EXTINF:-1 tvg-id="" tvg-name="♦️ TRT 1 8K" group-title="♦️ ULUSAL",♦️ TRT 1 8K
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=196699&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ ATV 8K" group-title="♦️ ULUSAL",♦️ ATV 8K
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=196698&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ SHOW TV 8K" group-title="♦️ ULUSAL",♦️ SHOW TV 8K
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=196697&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ KANAL D 8K" group-title="♦️ ULUSAL",♦️ KANAL D 8K
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=196696&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ STAR TV 8K" group-title="♦️ ULUSAL",♦️ STAR TV 8K
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=196695&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ NOW TV 8K" group-title="♦️ ULUSAL",♦️ NOW TV 8K
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=196694&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ TV 8 8K" group-title="♦️ ULUSAL",♦️ TV 8 8K
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=196693&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ TV 8.5 8K" group-title="♦️ ULUSAL",♦️ TV 8.5 8K
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=196692&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ BEYAZ TV 8K" group-title="♦️ ULUSAL",♦️ BEYAZ TV 8K
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=196675&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ KANAL 7 8K" group-title="♦️ ULUSAL",♦️ KANAL 7 8K
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=196690&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ TEVE 2 8K" group-title="♦️ ULUSAL",♦️ TEVE 2 8K
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=196689&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ TRT 2 8K" group-title="♦️ ULUSAL",♦️ TRT 2 8K
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=196688&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ TRT 4K 8K" group-title="♦️ ULUSAL",♦️ TRT 4K 8K
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=197438&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ A2 8K" group-title="♦️ ULUSAL",♦️ A2 8K
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=196687&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ 360 8K" group-title="♦️ ULUSAL",♦️ 360 8K
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=196686&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ SHOW MAX 8K" group-title="♦️ ULUSAL",♦️ SHOW MAX 8K
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=196700&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="☰ ♦️ ULUSAL 4K ☰" group-title="♦️ ULUSAL",☰ ♦️ ULUSAL 4K ☰
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=0&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ TRT 1 4K" group-title="♦️ ULUSAL",♦️ TRT 1 4K
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=196683&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ ATV 4K" group-title="♦️ ULUSAL",♦️ ATV 4K
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=196682&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ SHOW TV 4K" group-title="♦️ ULUSAL",♦️ SHOW TV 4K
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=196681&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ KANAL D 4K" group-title="♦️ ULUSAL",♦️ KANAL D 4K
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=196680&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ STAR TV 4K" group-title="♦️ ULUSAL",♦️ STAR TV 4K
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=196679&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ NOW TV 4K" group-title="♦️ ULUSAL",♦️ NOW TV 4K
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=196678&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ TV 8 4K" group-title="♦️ ULUSAL",♦️ TV 8 4K
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=196677&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ TV 8.5 4K" group-title="♦️ ULUSAL",♦️ TV 8.5 4K
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=196676&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ BEYAZ TV 4K" group-title="♦️ ULUSAL",♦️ BEYAZ TV 4K
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=196691&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ KANAL 7 4K" group-title="♦️ ULUSAL",♦️ KANAL 7 4K
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=196674&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ TEVE 2 4K" group-title="♦️ ULUSAL",♦️ TEVE 2 4K
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=196673&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ TRT 2 4K" group-title="♦️ ULUSAL",♦️ TRT 2 4K
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=196672&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ A2 4K" group-title="♦️ ULUSAL",♦️ A2 4K
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=196671&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ 360 4K" group-title="♦️ ULUSAL",♦️ 360 4K
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=196670&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ SHOW MAX 4K" group-title="♦️ ULUSAL",♦️ SHOW MAX 4K
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=196669&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="☰ ♦️ ULUSAL HD ☰" group-title="♦️ ULUSAL",☰ ♦️ ULUSAL HD ☰
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=0&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ TRT 1 HD" group-title="♦️ ULUSAL",♦️ TRT 1 HD
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=196715&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ ATV HD" group-title="♦️ ULUSAL",♦️ ATV HD
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=196714&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ SHOW TV HD" group-title="♦️ ULUSAL",♦️ SHOW TV HD
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=196713&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ KANAL D HD" group-title="♦️ ULUSAL",♦️ KANAL D HD
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=196712&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ STAR TV HD" group-title="♦️ ULUSAL",♦️ STAR TV HD
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=196711&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ NOW TV HD" group-title="♦️ ULUSAL",♦️ NOW TV HD
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=196710&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ TV 8 HD" group-title="♦️ ULUSAL",♦️ TV 8 HD
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=196709&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ TV 8.5 HD" group-title="♦️ ULUSAL",♦️ TV 8.5 HD
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=196708&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ BEYAZ TV HD" group-title="♦️ ULUSAL",♦️ BEYAZ TV HD
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=196707&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ KANAL 7 HD" group-title="♦️ ULUSAL",♦️ KANAL 7 HD
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=196706&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ TEVE 2 HD" group-title="♦️ ULUSAL",♦️ TEVE 2 HD
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=196705&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ TRT 2 HD" group-title="♦️ ULUSAL",♦️ TRT 2 HD
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=196704&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ A2 HD" group-title="♦️ ULUSAL",♦️ A2 HD
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=196703&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ 360 HD" group-title="♦️ ULUSAL",♦️ 360 HD
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=196702&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ SHOW MAX HD" group-title="♦️ ULUSAL",♦️ SHOW MAX HD
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=196701&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="☰ ♦️ KANALLAR SD ☰" group-title="♦️ ULUSAL",☰ ♦️ KANALLAR SD ☰
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=0&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ ATV AVRUPA" group-title="♦️ ULUSAL",♦️ ATV AVRUPA
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=196666&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ SHOW TURK" group-title="♦️ ULUSAL",♦️ SHOW TURK
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=196664&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ EURO D" group-title="♦️ ULUSAL",♦️ EURO D
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=196663&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ TV 8 INT" group-title="♦️ ULUSAL",♦️ TV 8 INT
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=196662&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ KANAL 7 AVRUPA" group-title="♦️ ULUSAL",♦️ KANAL 7 AVRUPA
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=196661&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ KANAL FIRAT" group-title="♦️ ULUSAL",♦️ KANAL FIRAT
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=196660&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ TV1" group-title="♦️ ULUSAL",♦️ TV1
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=196659&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ BRT 1 HD" group-title="♦️ ULUSAL",♦️ BRT 1 HD
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=196657&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ BRT 2 HD" group-title="♦️ ULUSAL",♦️ BRT 2 HD
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=196656&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ AKIT TV" group-title="♦️ YEREL",♦️ AKIT TV
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=197233&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ AKILLI TV" group-title="♦️ YEREL",♦️ AKILLI TV
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=197231&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ BENGÜ TÜRK" group-title="♦️ YEREL",♦️ BENGÜ TÜRK
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=197227&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ CEM TV" group-title="♦️ YEREL",♦️ CEM TV
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=197223&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ EKOTURK TV" group-title="♦️ YEREL",♦️ EKOTURK TV
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=197215&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ KANAL 68" group-title="♦️ YEREL",♦️ KANAL 68
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=197200&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ KANAL AVRUPA" group-title="♦️ YEREL",♦️ KANAL AVRUPA
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=197199&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ KANAL B" group-title="♦️ YEREL",♦️ KANAL B
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=197198&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ KRT TV" group-title="♦️ YEREL",♦️ KRT TV
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=197195&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ KÖY TV" group-title="♦️ YEREL",♦️ KÖY TV
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=197193&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ KON TV" group-title="♦️ YEREL",♦️ KON TV
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=197191&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ RUMELI TV" group-title="♦️ YEREL",♦️ RUMELI TV
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=197188&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ MAVI KARADENIZ" group-title="♦️ YEREL",♦️ MAVI KARADENIZ
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=197183&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ MELTEM TV" group-title="♦️ YEREL",♦️ MELTEM TV
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=197182&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ PAMUKKALE TV" group-title="♦️ YEREL",♦️ PAMUKKALE TV
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=197179&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ ULUSAL KANAL" group-title="♦️ YEREL",♦️ ULUSAL KANAL
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=197178&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ SAT7 TURK" group-title="♦️ YEREL",♦️ SAT7 TURK
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=197177&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ MC EU" group-title="♦️ YEREL",♦️ MC EU
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=197176&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ TGRT EU" group-title="♦️ YEREL",♦️ TGRT EU
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=197175&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ KAYSERI TV" group-title="♦️ YEREL",♦️ KAYSERI TV
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=197173&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ TV 1 KAYSERI" group-title="♦️ YEREL",♦️ TV 1 KAYSERI
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=197171&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ VAV TV" group-title="♦️ YEREL",♦️ VAV TV
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=197167&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ VIZYON 58" group-title="♦️ YEREL",♦️ VIZYON 58
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=197166&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ YOL TV" group-title="♦️ YEREL",♦️ YOL TV
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=197164&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ YILDIZ EN" group-title="♦️ YEREL",♦️ YILDIZ EN
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=197163&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ UZAY HABER" group-title="♦️ YEREL",♦️ UZAY HABER
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=197161&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ TV 5" group-title="♦️ YEREL",♦️ TV 5
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=197160&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ HABER TÜRK 8K" group-title="♦️ HABER",♦️ HABER TÜRK 8K
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=197264&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ TGRT HABER 8K" group-title="♦️ HABER",♦️ TGRT HABER 8K
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=197263&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ TRT HABER 8K" group-title="♦️ HABER",♦️ TRT HABER 8K
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=197262&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ TRT WORLD 8K" group-title="♦️ HABER",♦️ TRT WORLD 8K
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=197261&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ CNN TÜRK 8K" group-title="♦️ HABER",♦️ CNN TÜRK 8K
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=197260&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ A HABER 8K" group-title="♦️ HABER",♦️ A HABER 8K
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=197259&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ ULKE TV 8K" group-title="♦️ HABER",♦️ ULKE TV 8K
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=197258&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ TV NET 8K" group-title="♦️ HABER",♦️ TV NET 8K
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=197257&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ NTV 8K" group-title="♦️ HABER",♦️ NTV 8K
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=197266&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ FLASH HABER 8K" group-title="♦️ HABER",♦️ FLASH HABER 8K
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=197265&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ HABER GLOBAL 8K" group-title="♦️ HABER",♦️ HABER GLOBAL 8K
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=197268&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ BLOOMBERG 8K" group-title="♦️ HABER",♦️ BLOOMBERG 8K
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=197269&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ 24 HABER 8K" group-title="♦️ HABER",♦️ 24 HABER 8K
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=197270&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ A NEWS 8K" group-title="♦️ HABER",♦️ A NEWS 8K
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=197271&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ A PARA 8K" group-title="♦️ HABER",♦️ A PARA 8K
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=197272&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ TV 100 8K" group-title="♦️ HABER",♦️ TV 100 8K
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=197273&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ TRT TÜRK 8K" group-title="♦️ HABER",♦️ TRT TÜRK 8K
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=197240&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ HALK TV 8K" group-title="♦️ HABER",♦️ HALK TV 8K
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=197274&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ TELE 1 8K" group-title="♦️ HABER",♦️ TELE 1 8K
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=197275&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ KRT 8K" group-title="♦️ HABER",♦️ KRT 8K
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=197276&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ SÖZCÜ TV 8K" group-title="♦️ HABER",♦️ SÖZCÜ TV 8K
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=540949&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="☰ ♦️ HABER 4K ☰" group-title="♦️ HABER",☰ ♦️ HABER 4K ☰
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=0&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ HABER TÜRK 4K" group-title="♦️ HABER",♦️ HABER TÜRK 4K
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=197251&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ TGRT HABER 4K" group-title="♦️ HABER",♦️ TGRT HABER 4K
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=197255&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ TRT HABER 4K" group-title="♦️ HABER",♦️ TRT HABER 4K
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=197249&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ TRT WORLD 4K" group-title="♦️ HABER",♦️ TRT WORLD 4K
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=197254&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ CNN TÜRK 4K" group-title="♦️ HABER",♦️ CNN TÜRK 4K
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=197253&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ A HABER 4K" group-title="♦️ HABER",♦️ A HABER 4K
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=197252&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ ULKE TV 4K" group-title="♦️ HABER",♦️ ULKE TV 4K
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=197250&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ TV NET 4K" group-title="♦️ HABER",♦️ TV NET 4K
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=197248&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ NTV 4K" group-title="♦️ HABER",♦️ NTV 4K
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=197247&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ FLASH HABER 4K" group-title="♦️ HABER",♦️ FLASH HABER 4K
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=197246&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ HABER GLOBAL 4K" group-title="♦️ HABER",♦️ HABER GLOBAL 4K
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=197244&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ BLOOMBERG 4K" group-title="♦️ HABER",♦️ BLOOMBERG 4K
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=197243&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ 24 HABER 4K" group-title="♦️ HABER",♦️ 24 HABER 4K
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=197241&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ EKOL TV 4K" group-title="♦️ HABER",♦️ EKOL TV 4K
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=1257377&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ A NEWS 4K" group-title="♦️ HABER",♦️ A NEWS 4K
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=197239&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ A PARA 4K" group-title="♦️ HABER",♦️ A PARA 4K
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=197238&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ TV 100 4K" group-title="♦️ HABER",♦️ TV 100 4K
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=197237&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ TRT TÜRK 4K" group-title="♦️ HABER",♦️ TRT TÜRK 4K
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=197236&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ HALK TV 4K" group-title="♦️ HABER",♦️ HALK TV 4K
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=197235&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ TELE 1 4K" group-title="♦️ HABER",♦️ TELE 1 4K
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=197277&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ KRT 4K" group-title="♦️ HABER",♦️ KRT 4K
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=197278&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="☰ ♦️ HABER HD ☰" group-title="♦️ HABER",☰ ♦️ HABER HD ☰
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=0&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ HABER TÜRK HD" group-title="♦️ HABER",♦️ HABER TÜRK HD
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=197283&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ TGRT HABER HD" group-title="♦️ HABER",♦️ TGRT HABER HD
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=197284&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ TRT HABER HD" group-title="♦️ HABER",♦️ TRT HABER HD
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=197285&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ TRT WORLD HD" group-title="♦️ HABER",♦️ TRT WORLD HD
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=197286&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ CNN TÜRK HD" group-title="♦️ HABER",♦️ CNN TÜRK HD
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=197287&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ A HABER HD" group-title="♦️ HABER",♦️ A HABER HD
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=197288&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ ULKE TV HD" group-title="♦️ HABER",♦️ ULKE TV HD
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=197289&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ TV NET HD" group-title="♦️ HABER",♦️ TV NET HD
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=197290&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ NTV HD" group-title="♦️ HABER",♦️ NTV HD
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=197291&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ FLASH HABER HD" group-title="♦️ HABER",♦️ FLASH HABER HD
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=197292&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ HABER GLOBAL HD" group-title="♦️ HABER",♦️ HABER GLOBAL HD
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=197294&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ BLOOMBERG HD" group-title="♦️ HABER",♦️ BLOOMBERG HD
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=197295&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ 24 HABER HD" group-title="♦️ HABER",♦️ 24 HABER HD
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=197296&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ A NEWS HD" group-title="♦️ HABER",♦️ A NEWS HD
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=197297&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ A PARA HD" group-title="♦️ HABER",♦️ A PARA HD
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=197298&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ TV 100 HD" group-title="♦️ HABER",♦️ TV 100 HD
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=197299&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ HALK TV HD" group-title="♦️ HABER",♦️ HALK TV HD
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=197301&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ TELE 1 HD" group-title="♦️ HABER",♦️ TELE 1 HD
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=197302&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ KRT HD" group-title="♦️ HABER",♦️ KRT HD
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=197303&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ TRT TÜRK HD" group-title="♦️ HABER",♦️ TRT TÜRK HD
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=197300&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ POWER TÜRK HD" group-title="♦️ MÜZIK",♦️ POWER TÜRK HD
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=197364&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ POWER TV HD" group-title="♦️ MÜZIK",♦️ POWER TV HD
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=197362&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ KRAL POP HD" group-title="♦️ MÜZIK",♦️ KRAL POP HD
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=197361&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ KRAL TV HD" group-title="♦️ MÜZIK",♦️ KRAL TV HD
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=197360&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ NR1 HD" group-title="♦️ MÜZIK",♦️ NR1 HD
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=197359&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ NR1 TÜRK HD" group-title="♦️ MÜZIK",♦️ NR1 TÜRK HD
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=197358&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ DREAM TURK" group-title="♦️ MÜZIK",♦️ DREAM TURK
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=724290&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ TMB HD" group-title="♦️ MÜZIK",♦️ TMB HD
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=197344&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ TRT MUZIK HD" group-title="♦️ MÜZIK",♦️ TRT MUZIK HD
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=197363&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ VATAN TV HD" group-title="♦️ MÜZIK",♦️ VATAN TV HD
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=197349&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ TIVIBU TURKCE POP" group-title="♦️ MÜZIK",♦️ TIVIBU TURKCE POP
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=724311&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ TIVIBU TURKCE SLOW" group-title="♦️ MÜZIK",♦️ TIVIBU TURKCE SLOW
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=724310&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ TIVIBU TURK HALK MUZIK" group-title="♦️ MÜZIK",♦️ TIVIBU TURK HALK MUZIK
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=724309&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ TIVIBU TURK SANAT MUZIK" group-title="♦️ MÜZIK",♦️ TIVIBU TURK SANAT MUZIK
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=724308&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ TIVIBU TAS PLAK" group-title="♦️ MÜZIK",♦️ TIVIBU TAS PLAK
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=724307&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ TIVIBU DİNİ MUSİKİ" group-title="♦️ MÜZIK",♦️ TIVIBU DİNİ MUSİKİ
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=724306&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ TIVIBU ARABESK" group-title="♦️ MÜZIK",♦️ TIVIBU ARABESK
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=724305&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ TIVIBU 90 LAR" group-title="♦️ MÜZIK",♦️ TIVIBU 90 LAR
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=724304&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ TIVIBU YABANCI POP" group-title="♦️ MÜZIK",♦️ TIVIBU YABANCI POP
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=724303&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ TIVIBU YABANCI ROCK" group-title="♦️ MÜZIK",♦️ TIVIBU YABANCI ROCK
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=724302&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ TIVIBU YABANCI SLOW" group-title="♦️ MÜZIK",♦️ TIVIBU YABANCI SLOW
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=724301&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ TIVIBU FİLM MÜZİKLERİ" group-title="♦️ MÜZIK",♦️ TIVIBU FİLM MÜZİKLERİ
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=724300&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ TIVIBU OLDIES" group-title="♦️ MÜZIK",♦️ TIVIBU OLDIES
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=724299&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ TIVIBU BLUES" group-title="♦️ MÜZIK",♦️ TIVIBU BLUES
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=724298&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ TIVIBU JAZZ" group-title="♦️ MÜZIK",♦️ TIVIBU JAZZ
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=724297&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ TIVIBU KLASİK MÜZİK" group-title="♦️ MÜZIK",♦️ TIVIBU KLASİK MÜZİK
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=724296&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ TIVIBU RETRO" group-title="♦️ MÜZIK",♦️ TIVIBU RETRO
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=724295&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ TIVIBU AKUSTİK" group-title="♦️ MÜZIK",♦️ TIVIBU AKUSTİK
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=724294&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ TIVIBU LOUNGE" group-title="♦️ MÜZIK",♦️ TIVIBU LOUNGE
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=724293&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ TIVIBU MUTLU" group-title="♦️ MÜZIK",♦️ TIVIBU MUTLU
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=724292&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ TIVIBU ÇALIŞIRKEN" group-title="♦️ MÜZIK",♦️ TIVIBU ÇALIŞIRKEN
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=724291&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ NICK JR HD" group-title="♦️ COCUK",♦️ NICK JR HD
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=197419&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ BABY TV HD" group-title="♦️ COCUK",♦️ BABY TV HD
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=197418&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ TRT COCUK HD" group-title="♦️ COCUK",♦️ TRT COCUK HD
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=197417&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ COCUKSMART HD" group-title="♦️ COCUK",♦️ COCUKSMART HD
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=197391&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ DISNEY JR HD" group-title="♦️ COCUK",♦️ DISNEY JR HD
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=197416&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ MINIKA GO" group-title="♦️ COCUK",♦️ MINIKA GO
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=197415&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ MINIKA COCUK" group-title="♦️ COCUK",♦️ MINIKA COCUK
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=197414&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ NICKELODEON HD" group-title="♦️ COCUK",♦️ NICKELODEON HD
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=197412&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ CARTOON NETWORK" group-title="♦️ COCUK",♦️ CARTOON NETWORK
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=197411&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ CBEEBIES HD" group-title="♦️ COCUK",♦️ CBEEBIES HD
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=197366&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ DA VINCI KIDS HD" group-title="♦️ COCUK",♦️ DA VINCI KIDS HD
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=197390&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ TRT EBA TV ILKOKUL HD" group-title="♦️ COCUK",♦️ TRT EBA TV ILKOKUL HD
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=197369&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ TRT EBA TV ORTAOKUL HD" group-title="♦️ COCUK",♦️ TRT EBA TV ORTAOKUL HD
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=197368&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ TRT EBA TV LISE HD" group-title="♦️ COCUK",♦️ TRT EBA TV LISE HD
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=197367&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ BARBIE TV HD" group-title="♦️ COCUK",♦️ BARBIE TV HD
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=197408&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ PEPPA PIG HD" group-title="♦️ COCUK",♦️ PEPPA PIG HD
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=197407&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ KUZUCUK HD" group-title="♦️ COCUK",♦️ KUZUCUK HD
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=197405&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ KARE HD" group-title="♦️ COCUK",♦️ KARE HD
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=197404&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ RAFADAN TAYFA HD" group-title="♦️ COCUK",♦️ RAFADAN TAYFA HD
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=197403&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ KRAL SAKIR HD" group-title="♦️ COCUK",♦️ KRAL SAKIR HD
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=197401&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ PIJAMASKELILER HD" group-title="♦️ COCUK",♦️ PIJAMASKELILER HD
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=197400&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ MASA ILE KOCA AYI HD" group-title="♦️ COCUK",♦️ MASA ILE KOCA AYI HD
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=197399&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ BARBIE HD" group-title="♦️ COCUK",♦️ BARBIE HD
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=197398&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ KUKULI HD" group-title="♦️ COCUK",♦️ KUKULI HD
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=197397&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ NILOYA HD" group-title="♦️ COCUK",♦️ NILOYA HD
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=197396&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ PEPPE HD" group-title="♦️ COCUK",♦️ PEPPE HD
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=197395&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ SIRINLER HD" group-title="♦️ COCUK",♦️ SIRINLER HD
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=197394&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ CINE COCUK HD" group-title="♦️ COCUK",♦️ CINE COCUK HD
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=197392&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ KONUSAN TOM HD" group-title="♦️ COCUK",♦️ KONUSAN TOM HD
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=197386&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ DORU HD" group-title="♦️ COCUK",♦️ DORU HD
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=197385&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ CAILLOU HD" group-title="♦️ COCUK",♦️ CAILLOU HD
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=197382&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ DMND SERIES 1 HD" group-title="♦️ DMND PLATFORM",♦️ DMND SERIES 1 HD
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=1471673&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ DMND SERIES 2 HD" group-title="♦️ DMND PLATFORM",♦️ DMND SERIES 2 HD
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=1471674&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ DMND SERIES 3 HD" group-title="♦️ DMND PLATFORM",♦️ DMND SERIES 3 HD
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=1471675&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ DMND SERIES 4 HD" group-title="♦️ DMND PLATFORM",♦️ DMND SERIES 4 HD
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=1471676&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ DMND MOVIES PREMIERE HD" group-title="♦️ DMND PLATFORM",♦️ DMND MOVIES PREMIERE HD
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=1471678&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ DMND MOVIES PREMIERE 2 HD" group-title="♦️ DMND PLATFORM",♦️ DMND MOVIES PREMIERE 2 HD
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=1471679&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ DMND MOVIES ACTION HD" group-title="♦️ DMND PLATFORM",♦️ DMND MOVIES ACTION HD
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=1471677&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ DMND MOVIES STARS HD" group-title="♦️ DMND PLATFORM",♦️ DMND MOVIES STARS HD
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=1471680&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ DMND MOVIES TURK HD" group-title="♦️ DMND PLATFORM",♦️ DMND MOVIES TURK HD
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=1471681&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ DMND BOX OFFICE 1" group-title="♦️ DMND PLATFORM",♦️ DMND BOX OFFICE 1
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=1471698&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ DMND BOX OFFICE 2" group-title="♦️ DMND PLATFORM",♦️ DMND BOX OFFICE 2
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=1471699&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ DMND BOX OFFICE 3" group-title="♦️ DMND PLATFORM",♦️ DMND BOX OFFICE 3
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=1471700&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ DIZISMART MAX" group-title="♦️ SINEMA PLATFORM",♦️ DIZISMART MAX
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=1471682&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ DIZISMART PREMIUM" group-title="♦️ SINEMA PLATFORM",♦️ DIZISMART PREMIUM
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=1471683&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ MOVIESMART CLASSIC" group-title="♦️ SINEMA PLATFORM",♦️ MOVIESMART CLASSIC
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=1471684&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ MOVIESMART TÜRK" group-title="♦️ SINEMA PLATFORM",♦️ MOVIESMART TÜRK
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=1471685&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ SINEMA TV HD" group-title="♦️ SINEMA PLATFORM",♦️ SINEMA TV HD
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=1471688&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ SINEMA TV 2" group-title="♦️ SINEMA PLATFORM",♦️ SINEMA TV 2
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=1471689&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ SINEMA TV 1001" group-title="♦️ SINEMA PLATFORM",♦️ SINEMA TV 1001
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=1471686&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ SINEMA TV 1002" group-title="♦️ SINEMA PLATFORM",♦️ SINEMA TV 1002
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=1471687&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ SINEMA TV AKSIYON" group-title="♦️ SINEMA PLATFORM",♦️ SINEMA TV AKSIYON
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=1471692&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ SINEMA TV AKSIYON 2" group-title="♦️ SINEMA PLATFORM",♦️ SINEMA TV AKSIYON 2
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=1471693&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ SINEMA TV AILE" group-title="♦️ SINEMA PLATFORM",♦️ SINEMA TV AILE
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=1471690&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ SINEMA TV AILE 2" group-title="♦️ SINEMA PLATFORM",♦️ SINEMA TV AILE 2
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=1471691&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ SINEMA TV YERLI" group-title="♦️ SINEMA PLATFORM",♦️ SINEMA TV YERLI
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=1471695&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ SINEMA TV YERLI 2" group-title="♦️ SINEMA PLATFORM",♦️ SINEMA TV YERLI 2
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=1471696&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ SINEMA TV KOMEDI" group-title="♦️ SINEMA PLATFORM",♦️ SINEMA TV KOMEDI
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=1471694&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ DMND BOX OFFICE 1 HD" group-title="♦️ SINEMA YABANCI",♦️ DMND BOX OFFICE 1 HD
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=197154&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ DMND BOX OFFICE 2 HD" group-title="♦️ SINEMA YABANCI",♦️ DMND BOX OFFICE 2 HD
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=197153&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ DMND BOX OFFICE 3 HD" group-title="♦️ SINEMA YABANCI",♦️ DMND BOX OFFICE 3 HD
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=197152&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ DMND MOVIES PREMIERE 1 HD" group-title="♦️ SINEMA YABANCI",♦️ DMND MOVIES PREMIERE 1 HD
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=197143&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ DMND MOVIES PREMIERE 2 HD" group-title="♦️ SINEMA YABANCI",♦️ DMND MOVIES PREMIERE 2 HD
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=197142&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ DMND MOVIES STARS HD" group-title="♦️ SINEMA YABANCI",♦️ DMND MOVIES STARS HD
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=197149&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ DMND MOVIES TURK HD" group-title="♦️ SINEMA YABANCI",♦️ DMND MOVIES TURK HD
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=197155&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ DMND SERIES 1 HD" group-title="♦️ SINEMA YABANCI",♦️ DMND SERIES 1 HD
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=197146&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ DMND SERIES 2 HD" group-title="♦️ SINEMA YABANCI",♦️ DMND SERIES 2 HD
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=197148&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ DMND SERIES 3 HD" group-title="♦️ SINEMA YABANCI",♦️ DMND SERIES 3 HD
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=197151&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ DMND SERIES 4 HD" group-title="♦️ SINEMA YABANCI",♦️ DMND SERIES 4 HD
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=197150&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ FX HD" group-title="♦️ SINEMA YABANCI",♦️ FX HD
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=197158&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ DIZISMART PREMIUM HD" group-title="♦️ SINEMA YABANCI",♦️ DIZISMART PREMIUM HD
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=197141&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ DIZISMART MAX HD" group-title="♦️ SINEMA YABANCI",♦️ DIZISMART MAX HD
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=197140&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ MOVIESMART CLASSIC HD" group-title="♦️ SINEMA YABANCI",♦️ MOVIESMART CLASSIC HD
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=197139&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ MOVIESMART TURK HD" group-title="♦️ SINEMA YABANCI",♦️ MOVIESMART TURK HD
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=197136&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ EPIC DRAMA HD" group-title="♦️ SINEMA YABANCI",♦️ EPIC DRAMA HD
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=197138&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ FILMBOX HD" group-title="♦️ SINEMA YABANCI",♦️ FILMBOX HD
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=197128&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ SINEMA TV 1 HD" group-title="♦️ SINEMA YABANCI",♦️ SINEMA TV 1 HD
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=197130&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ SINEMA TV 2 HD" group-title="♦️ SINEMA YABANCI",♦️ SINEMA TV 2 HD
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=197129&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ SINEMA TV 1001 HD" group-title="♦️ SINEMA YABANCI",♦️ SINEMA TV 1001 HD
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=197121&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ SINEMA TV 1002 HD" group-title="♦️ SINEMA YABANCI",♦️ SINEMA TV 1002 HD
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=197120&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ SINEMA TV AKSIYON 1 HD" group-title="♦️ SINEMA YABANCI",♦️ SINEMA TV AKSIYON 1 HD
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=197134&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ SINEMA TV AKSIYON 2 HD" group-title="♦️ SINEMA YABANCI",♦️ SINEMA TV AKSIYON 2 HD
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=197133&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ SINEMA TV KOMEDI 1 HD" group-title="♦️ SINEMA YABANCI",♦️ SINEMA TV KOMEDI 1 HD
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=197126&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ SINEMA TV KOMEDI 2 HD" group-title="♦️ SINEMA YABANCI",♦️ SINEMA TV KOMEDI 2 HD
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=197125&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ SINEMA TV AILE 1 HD" group-title="♦️ SINEMA YABANCI",♦️ SINEMA TV AILE 1 HD
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=197131&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ SINEMA TV AILE 2 HD" group-title="♦️ SINEMA YABANCI",♦️ SINEMA TV AILE 2 HD
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=197132&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ SINEMA TV YERLI 1 HD" group-title="♦️ SINEMA YABANCI",♦️ SINEMA TV YERLI 1 HD
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=197123&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ SINEMA TV YERLI 2 HD" group-title="♦️ SINEMA YABANCI",♦️ SINEMA TV YERLI 2 HD
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=197122&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ HT SPOR 8K" group-title="♦️ SPOR",♦️ HT SPOR 8K
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=1245942&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ TRT SPOR 8K" group-title="♦️ SPOR",♦️ TRT SPOR 8K
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=709&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ TRT SPOR YILDIZ 8K" group-title="♦️ SPOR",♦️ TRT SPOR YILDIZ 8K
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=18644&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ TRT 3 SPOR 8K" group-title="♦️ SPOR",♦️ TRT 3 SPOR 8K
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=615829&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ A SPOR 8K" group-title="♦️ SPOR",♦️ A SPOR 8K
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=710&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ TAY TV 8K" group-title="♦️ SPOR",♦️ TAY TV 8K
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=18646&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ TJK TV 8K" group-title="♦️ SPOR",♦️ TJK TV 8K
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=18648&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="☰ ♦️ PAKET SPOR 4K ☰ " group-title="♦️ SPOR",☰ ♦️ PAKET SPOR 4K ☰ 
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=0&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ HT SPOR 4K" group-title="♦️ SPOR",♦️ HT SPOR 4K
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=1245940&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ TRT SPOR 4K" group-title="♦️ SPOR",♦️ TRT SPOR 4K
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=701&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ TRT SPOR YILDIZ 4K" group-title="♦️ SPOR",♦️ TRT SPOR YILDIZ 4K
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=18645&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ A SPOR 4K" group-title="♦️ SPOR",♦️ A SPOR 4K
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=702&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="☰ ♦️ PAKET SPOR HD ☰" group-title="♦️ SPOR",☰ ♦️ PAKET SPOR HD ☰
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=0&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ HT SPOR HD" group-title="♦️ SPOR",♦️ HT SPOR HD
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=1245941&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ TRT SPOR HD" group-title="♦️ SPOR",♦️ TRT SPOR HD
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=615826&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ TRT SPOR YILDIZ HD" group-title="♦️ SPOR",♦️ TRT SPOR YILDIZ HD
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=615827&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ A SPOR HD" group-title="♦️ SPOR",♦️ A SPOR HD
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=615828&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ FENERBACHE TV HD" group-title="♦️ SPOR",♦️ FENERBACHE TV HD
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=695&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ GALATASARAY TV HD" group-title="♦️ SPOR",♦️ GALATASARAY TV HD
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=696&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ TAY TV HD" group-title="♦️ SPOR",♦️ TAY TV HD
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=18647&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ SPORTS TV" group-title="♦️ SPOR",♦️ SPORTS TV
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=694&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ DMND SPORTS 1 RAW" group-title="♦️ DMND SPORTS RAW",♦️ DMND SPORTS 1 RAW
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=988867&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ DMND SPORTS 1 FHD" group-title="♦️ DMND SPORTS RAW",♦️ DMND SPORTS 1 FHD
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=988874&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ DMND SPORTS 1 HD" group-title="♦️ DMND SPORTS RAW",♦️ DMND SPORTS 1 HD
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=988881&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ DMND SPORTS 2 RAW" group-title="♦️ DMND SPORTS RAW",♦️ DMND SPORTS 2 RAW
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=988868&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ DMND SPORTS 2 FHD" group-title="♦️ DMND SPORTS RAW",♦️ DMND SPORTS 2 FHD
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=988875&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ DMND SPORTS 2 HD" group-title="♦️ DMND SPORTS RAW",♦️ DMND SPORTS 2 HD
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=988882&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ DMND SPORTS 3 RAW" group-title="♦️ DMND SPORTS RAW",♦️ DMND SPORTS 3 RAW
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=988869&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ DMND SPORTS 3 FHD" group-title="♦️ DMND SPORTS RAW",♦️ DMND SPORTS 3 FHD
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=988876&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ DMND SPORTS 3 HD" group-title="♦️ DMND SPORTS RAW",♦️ DMND SPORTS 3 HD
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=988883&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ DMND SPORTS 4 RAW" group-title="♦️ DMND SPORTS RAW",♦️ DMND SPORTS 4 RAW
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=988870&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ DMND SPORTS 4 FHD" group-title="♦️ DMND SPORTS RAW",♦️ DMND SPORTS 4 FHD
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=988877&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ DMND SPORTS 4 HD" group-title="♦️ DMND SPORTS RAW",♦️ DMND SPORTS 4 HD
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=988884&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ DMND SPORTS 5 RAW" group-title="♦️ DMND SPORTS RAW",♦️ DMND SPORTS 5 RAW
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=988871&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ DMND SPORTS 5 FHD" group-title="♦️ DMND SPORTS RAW",♦️ DMND SPORTS 5 FHD
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=988878&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ DMND SPORTS 5 HD" group-title="♦️ DMND SPORTS RAW",♦️ DMND SPORTS 5 HD
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=988885&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ DMND SPORTS MAX 1 RAW" group-title="♦️ DMND SPORTS RAW",♦️ DMND SPORTS MAX 1 RAW
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=988872&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ DMND SPORTS MAX 2 RAW" group-title="♦️ DMND SPORTS RAW",♦️ DMND SPORTS MAX 2 RAW
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=988873&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ DMND SPORTS HABER RAW" group-title="♦️ DMND SPORTS FHD",♦️ DMND SPORTS HABER RAW
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=988864&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ DMND SPORTS HABER FHD" group-title="♦️ DMND SPORTS FHD",♦️ DMND SPORTS HABER FHD
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=988865&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ DMND SPORTS HABER HD" group-title="♦️ DMND SPORTS FHD",♦️ DMND SPORTS HABER HD
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=988866&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ DMND SPORTS 1 RAW" group-title="♦️ DMND SPORTS FHD",♦️ DMND SPORTS 1 RAW
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=988849&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ DMND SPORTS 1 FHD" group-title="♦️ DMND SPORTS FHD",♦️ DMND SPORTS 1 FHD
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=988850&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ DMND SPORTS 1 HD" group-title="♦️ DMND SPORTS FHD",♦️ DMND SPORTS 1 HD
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=988851&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ DMND SPORTS 1 HD LQ" group-title="♦️ DMND SPORTS FHD",♦️ DMND SPORTS 1 HD LQ
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=988852&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ DMND SPORTS 1" group-title="♦️ DMND SPORTS FHD",♦️ DMND SPORTS 1
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=988853&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ DMND SPORTS 2 FHD" group-title="♦️ DMND SPORTS FHD",♦️ DMND SPORTS 2 FHD
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=988854&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ DMND SPORTS 2 HD" group-title="♦️ DMND SPORTS FHD",♦️ DMND SPORTS 2 HD
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=988855&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ DMND SPORTS 3 FHD" group-title="♦️ DMND SPORTS FHD",♦️ DMND SPORTS 3 FHD
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=988856&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ DMND SPORTS 3 HD" group-title="♦️ DMND SPORTS FHD",♦️ DMND SPORTS 3 HD
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=988857&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ DMND SPORTS 4 FHD" group-title="♦️ DMND SPORTS FHD",♦️ DMND SPORTS 4 FHD
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=988858&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ DMND SPORTS 4 HD" group-title="♦️ DMND SPORTS FHD",♦️ DMND SPORTS 4 HD
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=988859&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ DMND SPORTS 5 FHD" group-title="♦️ DMND SPORTS FHD",♦️ DMND SPORTS 5 FHD
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=988860&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ DMND SPORTS 5 HD" group-title="♦️ DMND SPORTS FHD",♦️ DMND SPORTS 5 HD
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=988861&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ DMND SPORTS MAX 1 HD" group-title="♦️ DMND SPORTS FHD",♦️ DMND SPORTS MAX 1 HD
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=988862&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ DMND SPORTS MAX 2 HD" group-title="♦️ DMND SPORTS FHD",♦️ DMND SPORTS MAX 2 HD
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=988863&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ DMND CONNECT INFO" group-title="♦️ DMND CONNECT",♦️ DMND CONNECT INFO
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=740&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ DMND CONNECT 1 HD" group-title="♦️ DMND CONNECT",♦️ DMND CONNECT 1 HD
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=739&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ DMND CONNECT 2 HD" group-title="♦️ DMND CONNECT",♦️ DMND CONNECT 2 HD
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=214066&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ DMND CONNECT 3 HD" group-title="♦️ DMND CONNECT",♦️ DMND CONNECT 3 HD
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=793282&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ DMND CONNECT 4 HD" group-title="♦️ DMND CONNECT",♦️ DMND CONNECT 4 HD
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=793283&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ DMND CONNECT 5 HD" group-title="♦️ DMND CONNECT",♦️ DMND CONNECT 5 HD
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=793284&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ DMND CONNECT 6 HD" group-title="♦️ DMND CONNECT",♦️ DMND CONNECT 6 HD
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=793285&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ DMND CONNECT 7 HD" group-title="♦️ DMND CONNECT",♦️ DMND CONNECT 7 HD
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=793286&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ DMND CONNECT 8 HD" group-title="♦️ DMND CONNECT",♦️ DMND CONNECT 8 HD
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=793287&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ EXXEN SPORTS 1 4K" group-title="♦️ EXXEN SPORTS",♦️ EXXEN SPORTS 1 4K
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=15340&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ EXXEN SPORTS 1 HD" group-title="♦️ EXXEN SPORTS",♦️ EXXEN SPORTS 1 HD
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=15521&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ EXXEN SPORTS 1" group-title="♦️ EXXEN SPORTS",♦️ EXXEN SPORTS 1
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=15522&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ EXXEN SPORTS 2 HD" group-title="♦️ EXXEN SPORTS",♦️ EXXEN SPORTS 2 HD
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=15341&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ EXXEN SPORTS 3 HD" group-title="♦️ EXXEN SPORTS",♦️ EXXEN SPORTS 3 HD
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=15342&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ EXXEN SPORTS 4 FHD" group-title="♦️ EXXEN SPORTS",♦️ EXXEN SPORTS 4 FHD
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=15515&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ EXXEN SPORTS 5 FHD" group-title="♦️ EXXEN SPORTS",♦️ EXXEN SPORTS 5 FHD
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=15516&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ EXXEN SPORTS 6 FHD" group-title="♦️ EXXEN SPORTS",♦️ EXXEN SPORTS 6 FHD
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=15517&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ EXXEN SPORTS 7 FHD" group-title="♦️ EXXEN SPORTS",♦️ EXXEN SPORTS 7 FHD
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=15518&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ EXXEN SPORTS 8 FHD" group-title="♦️ EXXEN SPORTS",♦️ EXXEN SPORTS 8 FHD
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=15519&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ TIVIBU SPOR 1 4K" group-title="♦️ TIVIBU SPOR",♦️ TIVIBU SPOR 1 4K
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=722&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ TIVIBU SPOR 2 4K" group-title="♦️ TIVIBU SPOR",♦️ TIVIBU SPOR 2 4K
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=721&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ TIVIBU SPOR 3 4K" group-title="♦️ TIVIBU SPOR",♦️ TIVIBU SPOR 3 4K
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=720&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ TIVIBU SPOR 4 4K" group-title="♦️ TIVIBU SPOR",♦️ TIVIBU SPOR 4 4K
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=15569&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ S SPORT 1 4K" group-title="♦️ S SPORTS",♦️ S SPORT 1 4K
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=712&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ S SPORT 2 4K" group-title="♦️ S SPORTS",♦️ S SPORT 2 4K
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=711&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ SPOR SMART 1 4K" group-title="♦️ S SPORTS",♦️ SPOR SMART 1 4K
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=713&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ SPOR SMART 2 4K" group-title="♦️ S SPORTS",♦️ SPOR SMART 2 4K
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=18631&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ EUROSPORT 1 4K" group-title="♦️ S SPORTS",♦️ EUROSPORT 1 4K
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=708&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ EUROSPORT 2 4K" group-title="♦️ S SPORTS",♦️ EUROSPORT 2 4K
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=707&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ NBA TV 4K" group-title="♦️ S SPORTS",♦️ NBA TV 4K
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=18632&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ FIGHTBOX 4K" group-title="♦️ S SPORTS",♦️ FIGHTBOX 4K
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=18635&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="☰ ♦️ PAKET S SPORTS HD ☰" group-title="♦️ S SPORTS",☰ ♦️ PAKET S SPORTS HD ☰
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=0&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ S SPORT 1 HD" group-title="♦️ S SPORTS",♦️ S SPORT 1 HD
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=703&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ S SPORT 2 HD" group-title="♦️ S SPORTS",♦️ S SPORT 2 HD
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=18638&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ SPOR SMART 1 HD" group-title="♦️ S SPORTS",♦️ SPOR SMART 1 HD
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=704&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ SPOR SMART 2 HD" group-title="♦️ S SPORTS",♦️ SPOR SMART 2 HD
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=18640&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ EUROSPORT 1 HD" group-title="♦️ S SPORTS",♦️ EUROSPORT 1 HD
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=700&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ EUROSPORT 2 HD" group-title="♦️ S SPORTS",♦️ EUROSPORT 2 HD
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=699&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ NBA TV HD" group-title="♦️ S SPORTS",♦️ NBA TV HD
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=698&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="☰ ♦️ PAKET S SPORTS+ FHD ☰" group-title="♦️ S SPORTS",☰ ♦️ PAKET S SPORTS+ FHD ☰
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=0&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ S SPORT+ 1 HD (MATCH TIME)" group-title="♦️ S SPORTS",♦️ S SPORT+ 1 HD (MATCH TIME)
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=15562&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ S SPORT+ 2 HD (MATCH TIME)" group-title="♦️ S SPORTS",♦️ S SPORT+ 2 HD (MATCH TIME)
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=15561&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ S SPORT+ 3 HD (MATCH TIME)" group-title="♦️ S SPORTS",♦️ S SPORT+ 3 HD (MATCH TIME)
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=15560&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ S SPORT+ 4 HD (MATCH TIME)" group-title="♦️ S SPORTS",♦️ S SPORT+ 4 HD (MATCH TIME)
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=15559&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ S SPORT+ 5 HD (MATCH TIME)" group-title="♦️ S SPORTS",♦️ S SPORT+ 5 HD (MATCH TIME)
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=15558&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ S SPORT+ 6 HD (MATCH TIME)" group-title="♦️ S SPORTS",♦️ S SPORT+ 6 HD (MATCH TIME)
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=15557&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ TABII SPOR 1 HD" group-title="♦️ TABII SPOR",♦️ TABII SPOR 1 HD
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=879139&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ TABII SPOR 2 HD" group-title="♦️ TABII SPOR",♦️ TABII SPOR 2 HD
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=879140&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ TABII SPOR 3 HD" group-title="♦️ TABII SPOR",♦️ TABII SPOR 3 HD
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=879141&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ TABII SPOR 4 HD" group-title="♦️ TABII SPOR",♦️ TABII SPOR 4 HD
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=879142&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ TABII SPOR 5 HD" group-title="♦️ TABII SPOR",♦️ TABII SPOR 5 HD
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=879143&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ TABII SPOR 6 HD" group-title="♦️ TABII SPOR",♦️ TABII SPOR 6 HD
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=879144&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ TRT BELGESEL HD" group-title="♦️ BELGESEL",♦️ TRT BELGESEL HD
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=197441&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ NAT GEO HD" group-title="♦️ BELGESEL",♦️ NAT GEO HD
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=197433&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ NAT GEO WILD HD" group-title="♦️ BELGESEL",♦️ NAT GEO WILD HD
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=197432&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ DISCOVERY CHANNEL HD" group-title="♦️ BELGESEL",♦️ DISCOVERY CHANNEL HD
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=197427&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ DISCOVERY SCIENCE HD" group-title="♦️ BELGESEL",♦️ DISCOVERY SCIENCE HD
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=197435&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ ID HD" group-title="♦️ BELGESEL",♦️ ID HD
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=197430&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ HISTORY CHANNEL HD" group-title="♦️ BELGESEL",♦️ HISTORY CHANNEL HD
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=197436&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ 24KITCHEN HD" group-title="♦️ BELGESEL",♦️ 24KITCHEN HD
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=197440&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ VIASAT HISTORY HD" group-title="♦️ BELGESEL",♦️ VIASAT HISTORY HD
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=197420&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ VIASAT EXPLORE HD" group-title="♦️ BELGESEL",♦️ VIASAT EXPLORE HD
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=197442&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ DMAX HD" group-title="♦️ BELGESEL",♦️ DMAX HD
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=197428&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ TLC HD" group-title="♦️ BELGESEL",♦️ TLC HD
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=197429&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ LOVE NATURE HD" group-title="♦️ BELGESEL",♦️ LOVE NATURE HD
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=197434&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ DMND GURME HD" group-title="♦️ BELGESEL",♦️ DMND GURME HD
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=197426&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ DMND IZ HD" group-title="♦️ BELGESEL",♦️ DMND IZ HD
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=197425&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ TGRT BELGESEL HD" group-title="♦️ BELGESEL",♦️ TGRT BELGESEL HD
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=197424&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ TRT AVAZ HD" group-title="♦️ BELGESEL",♦️ TRT AVAZ HD
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=197422&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ YABAN TV HD" group-title="♦️ BELGESEL",♦️ YABAN TV HD
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=197439&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ BBC EARTH HD" group-title="♦️ BELGESEL",♦️ BBC EARTH HD
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=197431&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ CHASSE AND PECHE HD" group-title="♦️ BELGESEL",♦️ CHASSE AND PECHE HD
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=197445&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ ANIMAUX HD" group-title="♦️ BELGESEL",♦️ ANIMAUX HD
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=197443&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ INSIGHT TV HD" group-title="♦️ BELGESEL",♦️ INSIGHT TV HD
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=197448&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ TARIH TV HD" group-title="♦️ BELGESEL",♦️ TARIH TV HD
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=197450&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ SEMERKAND TV HD" group-title="♦️ DINI",♦️ SEMERKAND TV HD
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=210473&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ DIYANET TV HD" group-title="♦️ DINI",♦️ DIYANET TV HD
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=210472&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ LALEGUL TV" group-title="♦️ DINI",♦️ LALEGUL TV
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=210470&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ REHBER TV" group-title="♦️ DINI",♦️ REHBER TV
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=210469&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️  MEDINE TV" group-title="♦️ DINI",♦️  MEDINE TV
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=801067&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ KUDUS TV" group-title="♦️ DINI",♦️ KUDUS TV
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=210468&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ KANAL 42 KONYA SD" group-title="♦️ DINI",♦️ KANAL 42 KONYA SD
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=210467&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ KABE TV" group-title="♦️ DINI",♦️ KABE TV
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=210466&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ DOST TV" group-title="♦️ DINI",♦️ DOST TV
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=210465&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ VAV TV HD" group-title="♦️ DINI",♦️ VAV TV HD
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=210464&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ MELTEM TV HD" group-title="♦️ DINI",♦️ MELTEM TV HD
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=210463&extension=ts
+#EXTINF:-1 tvg-id="" tvg-name="♦️ TV5 HD" group-title="♦️ DINI",♦️ TV5 HD
+http://185.102.171.235/play/live.php?mac=00%3A1B%3A79%3A4A%3A5D%3A23&stream=210462&extension=ts
